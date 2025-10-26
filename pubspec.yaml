@@ -1,0 +1,47 @@
+name: vet_anesthesia_helper
+description: Aplicativo auxiliar para anestesiologistas veterinários com calculadora de doses, checklist pré-operatório e guia de fármacos.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # UI
+  cupertino_icons: ^1.0.6
+  
+  # Estado (futuro)
+  # provider: ^6.1.1
+  
+  # Persistência (futuro)
+  # shared_preferences: ^2.2.2
+  # hive: ^2.2.3
+  # hive_flutter: ^1.1.0
+  
+  # PDF (futuro)
+  # pdf: ^3.10.7
+  # printing: ^5.11.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  # Ícones e assets (adicionar conforme necessário)
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
+
+  # Fontes customizadas (opcional)
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: fonts/Roboto-Regular.ttf
+  #       - asset: fonts/Roboto-Bold.ttf
+  #         weight: 700
