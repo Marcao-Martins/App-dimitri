@@ -3,14 +3,15 @@ import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/widgets/common_widgets.dart';
+import '../../core/widgets/modern_widgets.dart';
 import '../../models/medication.dart';
 import '../../services/medication_service.dart';
 
-/// Tela do Guia de Fármacos
+/// Tela do Guia de Fármacos - Design Moderno
 /// Banco de dados local com busca e informações detalhadas de medicamentos
 class DrugGuidePage extends StatefulWidget {
   const DrugGuidePage({Key? key}) : super(key: key);
-  
+
   @override
   State<DrugGuidePage> createState() => _DrugGuidePageState();
 }
@@ -19,63 +20,91 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   final _searchController = TextEditingController();
   List<Medication> _medications = [];
   List<Medication> _filteredMedications = [];
-  String? _selectedCategory;
-  String? _selectedSpecies;
-  
+  String _selectedFilter = 'Todos';
+
+  final List<String> _filters = [
+    'Todos',
+    'Anestésicos',
+    'Analgésicos',
+    'Sedativos',
+    'Bloqueadores',
+  ];
+
   @override
   void initState() {
     super.initState();
     _medications = MedicationService.getAllMedications();
     _filteredMedications = _medications;
+    _searchController.addListener(_filterMedications);
   }
-  
+
   @override
   void dispose() {
+    _searchController.removeListener(_filterMedications);
     _searchController.dispose();
     super.dispose();
   }
-  
-  /// Filtra medicamentos baseado na busca e filtros
+
+  /// Filtra medicamentos baseado na busca e filtro selecionado
   void _filterMedications() {
     setState(() {
-      _filteredMedications = _medications;
-      
-      // Filtro por busca de texto
       final query = _searchController.text.toLowerCase();
-      if (query.isNotEmpty) {
-        _filteredMedications = _filteredMedications
-            .where((med) =>
-                med.name.toLowerCase().contains(query) ||
-                med.category.toLowerCase().contains(query))
+      var filtered = _medications.where((med) {
+        final nameMatch = med.name.toLowerCase().contains(query);
+        final categoryMatch = med.category.toLowerCase().contains(query);
+        return nameMatch || categoryMatch;
+      }).toList();
+
+      if (_selectedFilter != 'Todos') {
+        filtered = filtered
+            .where((med) => med.category.contains(_selectedFilter))
             .toList();
       }
-      
-      // Filtro por categoria
-      if (_selectedCategory != null) {
-        _filteredMedications = _filteredMedications
-            .where((med) => med.category == _selectedCategory)
-            .toList();
-      }
-      
-      // Filtro por espécie
-      if (_selectedSpecies != null) {
-        _filteredMedications = _filteredMedications
-            .where((med) => med.isCompatibleWithSpecies(_selectedSpecies!))
-            .toList();
-      }
+      _filteredMedications = filtered;
     });
   }
-  
+
   /// Limpa todos os filtros
   void _clearFilters() {
     setState(() {
       _searchController.clear();
-      _selectedCategory = null;
-      _selectedSpecies = null;
-      _filteredMedications = _medications;
+      _selectedFilter = 'Todos';
+      // A chamada a _filterMedications() é desnecessária aqui porque
+      // o listener do _searchController já fará isso.
     });
   }
-  
+
+  /// Retorna a cor do ícone baseado na categoria
+  Color _getIconColor(String category) {
+    if (category.contains('Anestésico')) return AppColors.primaryTeal;
+    if (category.contains('Analgésico')) return AppColors.categoryOrange;
+    if (category.contains('Sedativo')) return AppColors.categoryPurple;
+    if (category.contains('Bloqueador')) return AppColors.categoryBlue;
+    return AppColors.categoryGreen;
+  }
+
+  /// Retorna a tag do medicamento
+  String _getTag(Medication med) {
+    if (med.category.contains('Controlado')) return 'CTRL';
+    if (med.isCompatibleWithSpecies('Canino') &&
+        med.isCompatibleWithSpecies('Felino')) return 'VET';
+    return 'PA';
+  }
+
+  /// Retorna a cor da tag
+  Color _getTagColor(String tag) {
+    switch (tag) {
+      case 'VET':
+        return AppColors.tagVet;
+      case 'CTRL':
+        return AppColors.tagControlled;
+      case 'PA':
+        return AppColors.tagPA;
+      default:
+        return AppColors.primaryTeal;
+    }
+  }
+
   /// Exibe detalhes completos do medicamento
   void _showMedicationDetails(Medication medication) {
     Navigator.push(
@@ -85,21 +114,17 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
       ),
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    final categories = MedicationService.getAllCategories();
-    final species = MedicationService.getAllSpecies();
-    
     return Scaffold(
+      backgroundColor: AppColors.backgroundPrimary,
       appBar: AppBar(
-        title: const Text(AppStrings.drugGuideTitle),
+        title: const Text('Bulário'),
         actions: [
-          if (_searchController.text.isNotEmpty ||
-              _selectedCategory != null ||
-              _selectedSpecies != null)
+          if (_searchController.text.isNotEmpty || _selectedFilter != 'Todos')
             IconButton(
-              icon: const Icon(Icons.clear_all),
+              icon: const Icon(Icons.clear_all_outlined),
               onPressed: _clearFilters,
               tooltip: 'Limpar filtros',
             ),
@@ -107,231 +132,73 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
       ),
       body: Column(
         children: [
-          // Barra de Busca
+          // Barra de Busca Moderna
           Padding(
-            padding: const EdgeInsets.all(AppConstants.defaultPadding),
-            child: TextField(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+            child: ModernSearchBar(
               controller: _searchController,
-              decoration: InputDecoration(
-                hintText: AppStrings.searchDrug,
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          _filterMedications();
-                        },
-                      )
-                    : null,
-              ),
-              onChanged: (_) => _filterMedications(),
+              hintText: AppStrings.searchDrug,
+              onChanged: (value) {}, // Listener já faz o trabalho
+              onClear: _clearFilters,
             ),
           ),
-          
-          // Filtros por Categoria e Espécie
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.defaultPadding,
-            ),
-            child: Row(
-              children: [
-                // Filtro de Categoria
-                PopupMenuButton<String>(
-                  child: Chip(
-                    avatar: const Icon(Icons.category, size: 16),
-                    label: Text(_selectedCategory ?? 'Categoria'),
-                    deleteIcon: _selectedCategory != null
-                        ? const Icon(Icons.close, size: 16)
-                        : null,
-                    onDeleted: _selectedCategory != null
-                        ? () {
-                            setState(() {
-                              _selectedCategory = null;
-                            });
-                            _filterMedications();
-                          }
-                        : null,
-                  ),
-                  itemBuilder: (context) {
-                    return categories.map((category) {
-                      return PopupMenuItem<String>(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList();
-                  },
-                  onSelected: (category) {
+
+          // Filtros de Categoria (Chips horizontais)
+          SizedBox(
+            height: 50,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _filters.length,
+              padding: const EdgeInsets.only(left: 20, bottom: 12),
+              itemBuilder: (context, index) {
+                final filter = _filters[index];
+                return ModernFilterChip(
+                  label: filter,
+                  isSelected: _selectedFilter == filter,
+                  onTap: () {
                     setState(() {
-                      _selectedCategory = category;
+                      _selectedFilter = filter;
                     });
                     _filterMedications();
                   },
-                ),
-                
-                const SizedBox(width: AppConstants.smallPadding),
-                
-                // Filtro de Espécie
-                PopupMenuButton<String>(
-                  child: Chip(
-                    avatar: const Icon(Icons.pets, size: 16),
-                    label: Text(_selectedSpecies ?? 'Espécie'),
-                    deleteIcon: _selectedSpecies != null
-                        ? const Icon(Icons.close, size: 16)
-                        : null,
-                    onDeleted: _selectedSpecies != null
-                        ? () {
-                            setState(() {
-                              _selectedSpecies = null;
-                            });
-                            _filterMedications();
-                          }
-                        : null,
-                  ),
-                  itemBuilder: (context) {
-                    return species.map((sp) {
-                      return PopupMenuItem<String>(
-                        value: sp,
-                        child: Text(sp),
-                      );
-                    }).toList();
-                  },
-                  onSelected: (sp) {
-                    setState(() {
-                      _selectedSpecies = sp;
-                    });
-                    _filterMedications();
-                  },
-                ),
-              ],
+                );
+              },
             ),
           ),
-          
-          const SizedBox(height: AppConstants.smallPadding),
-          
-          // Contador de Resultados
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppConstants.defaultPadding,
-            ),
-            child: Row(
-              children: [
-                Text(
-                  '${_filteredMedications.length} medicamento${_filteredMedications.length != 1 ? 's' : ''} encontrado${_filteredMedications.length != 1 ? 's' : ''}',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: AppConstants.smallPadding),
-          
+
           // Lista de Medicamentos
           Expanded(
             child: _filteredMedications.isEmpty
                 ? EmptyState(
                     icon: Icons.search_off,
                     title: 'Nenhum medicamento encontrado',
-                    message: 'Tente ajustar os filtros ou buscar por outro termo',
-                    action: _searchController.text.isNotEmpty ||
-                            _selectedCategory != null ||
-                            _selectedSpecies != null
-                        ? ElevatedButton.icon(
-                            onPressed: _clearFilters,
-                            icon: const Icon(Icons.clear_all),
-                            label: const Text('Limpar Filtros'),
-                          )
-                        : null,
+                    message:
+                        'Tente ajustar os filtros ou buscar por outro termo.',
+                    action:
+                        _searchController.text.isNotEmpty || _selectedFilter != 'Todos'
+                            ? ElevatedButton.icon(
+                                onPressed: _clearFilters,
+                                icon: const Icon(Icons.clear_all),
+                                label: const Text('Limpar Filtros'),
+                              )
+                            : null,
                   )
                 : ListView.builder(
-                    padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                    padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
                     itemCount: _filteredMedications.length,
                     itemBuilder: (context, index) {
                       final medication = _filteredMedications[index];
-                      return _buildMedicationCard(medication);
+                      return MedicationListItem(
+                        icon: Icons.medication_outlined,
+                        iconColor: _getIconColor(medication.category),
+                        title: medication.name,
+                        subtitle: medication.category,
+                        tag: _getTag(medication),
+                        tagColor: _getTagColor(_getTag(medication)),
+                        onTap: () => _showMedicationDetails(medication),
+                      );
                     },
                   ),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  /// Card de medicamento na lista
-  Widget _buildMedicationCard(Medication medication) {
-    return CustomCard(
-      onTap: () => _showMedicationDetails(medication),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                decoration: BoxDecoration(
-                  color: AppColors.primaryBlue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(
-                  Icons.medication,
-                  color: AppColors.primaryBlue,
-                  size: 32,
-                ),
-              ),
-              const SizedBox(width: AppConstants.defaultPadding),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      medication.name,
-                      style: Theme.of(context).textTheme.headlineMedium,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      medication.category,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.primaryBlue,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right),
-            ],
-          ),
-          
-          const SizedBox(height: AppConstants.defaultPadding),
-          
-          // Dose e Espécies
-          Row(
-            children: [
-              Expanded(
-                child: InfoRow(
-                  label: 'Dose:',
-                  value: '${medication.minDose}-${medication.maxDose} ${medication.unit}',
-                  icon: Icons.science,
-                ),
-              ),
-            ],
-          ),
-          
-          const SizedBox(height: AppConstants.smallPadding),
-          
-          // Chips de Espécies
-          Wrap(
-            spacing: AppConstants.smallPadding,
-            children: medication.species.map((species) {
-              return Chip(
-                label: Text(
-                  species,
-                  style: const TextStyle(fontSize: 12),
-                ),
-                avatar: const Icon(Icons.pets, size: 16),
-                visualDensity: VisualDensity.compact,
-              );
-            }).toList(),
           ),
         ],
       ),
@@ -342,12 +209,12 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
 /// Página de Detalhes do Medicamento
 class MedicationDetailPage extends StatelessWidget {
   final Medication medication;
-  
+
   const MedicationDetailPage({
     Key? key,
     required this.medication,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -361,22 +228,23 @@ class MedicationDetailPage extends StatelessWidget {
           children: [
             // Cabeçalho
             CustomCard(
-              color: AppColors.primaryBlue.withOpacity(0.1),
+              color: AppColors.primaryTeal.withOpacity(0.1),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
                         padding: const EdgeInsets.all(AppConstants.defaultPadding),
                         decoration: BoxDecoration(
-                          color: AppColors.primaryBlue,
-                          borderRadius: BorderRadius.circular(8),
+                          color: AppColors.primaryTeal,
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: const Icon(
-                          Icons.medication,
+                          Icons.medication_outlined,
                           color: Colors.white,
-                          size: 40,
+                          size: 32,
                         ),
                       ),
                       const SizedBox(width: AppConstants.defaultPadding),
@@ -386,64 +254,61 @@ class MedicationDetailPage extends StatelessWidget {
                           children: [
                             Text(
                               medication.name,
-                              style: Theme.of(context).textTheme.headlineLarge,
+                              style: Theme.of(context).textTheme.headlineSmall,
                             ),
                             const SizedBox(height: 4),
                             Text(
                               medication.category,
                               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                color: AppColors.primaryBlue,
-                                fontWeight: FontWeight.bold,
-                              ),
+                                    color: AppColors.primaryTeal,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                             ),
                           ],
                         ),
                       ),
                     ],
                   ),
-                  
                   const SizedBox(height: AppConstants.defaultPadding),
-                  
-                  // Informações de Dosagem
                   InfoRow(
                     label: 'Dose Mínima:',
                     value: '${medication.minDose} ${medication.unit}',
-                    icon: Icons.arrow_downward,
+                    icon: Icons.arrow_downward_rounded,
                   ),
+                  const SizedBox(height: AppConstants.smallPadding),
                   InfoRow(
                     label: 'Dose Máxima:',
                     value: '${medication.maxDose} ${medication.unit}',
-                    icon: Icons.arrow_upward,
+                    icon: Icons.arrow_upward_rounded,
                   ),
-                  
-                  const SizedBox(height: AppConstants.smallPadding),
-                  
-                  // Espécies Compatíveis
+                  const SizedBox(height: AppConstants.defaultPadding),
                   const Text(
                     'Espécies Compatíveis:',
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: AppConstants.bodyFontSize,
+                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: AppConstants.smallPadding),
                   Wrap(
                     spacing: AppConstants.smallPadding,
+                    runSpacing: AppConstants.smallPadding,
                     children: medication.species.map((species) {
                       return Chip(
                         label: Text(species),
                         avatar: const Icon(Icons.pets, size: 16),
+                        visualDensity: VisualDensity.compact,
                       );
                     }).toList(),
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: AppConstants.defaultPadding),
-            
+
             // Descrição
-            if (medication.description != null)
+            if (medication.description != null && medication.description!.isNotEmpty)
               _buildSection(
                 context,
                 'Descrição',
@@ -451,9 +316,9 @@ class MedicationDetailPage extends StatelessWidget {
                 Icons.info_outline,
                 AppColors.info,
               ),
-            
+
             // Indicações
-            if (medication.indications != null)
+            if (medication.indications != null && medication.indications!.isNotEmpty)
               _buildSection(
                 context,
                 'Indicações',
@@ -461,9 +326,9 @@ class MedicationDetailPage extends StatelessWidget {
                 Icons.check_circle_outline,
                 AppColors.success,
               ),
-            
+
             // Contraindicações
-            if (medication.contraindications != null)
+            if (medication.contraindications != null && medication.contraindications!.isNotEmpty)
               _buildSection(
                 context,
                 'Contraindicações',
@@ -471,9 +336,9 @@ class MedicationDetailPage extends StatelessWidget {
                 Icons.cancel_outlined,
                 AppColors.error,
               ),
-            
+
             // Precauções
-            if (medication.precautions != null)
+            if (medication.precautions != null && medication.precautions!.isNotEmpty)
               _buildSection(
                 context,
                 'Precauções',
@@ -486,7 +351,7 @@ class MedicationDetailPage extends StatelessWidget {
       ),
     );
   }
-  
+
   Widget _buildSection(
     BuildContext context,
     String title,
@@ -507,9 +372,9 @@ class MedicationDetailPage extends StatelessWidget {
                 const SizedBox(width: AppConstants.smallPadding),
                 Text(
                   title,
-                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: color,
-                  ),
+                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        color: color,
+                      ),
                 ),
               ],
             ),
