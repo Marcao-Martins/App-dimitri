@@ -5,21 +5,29 @@ import 'features/explorer/explorer_page.dart';
 import 'features/dose_calculator/dose_calculator_page.dart';
 import 'features/pre_op_checklist/pre_op_checklist_page.dart';
 import 'features/drug_guide/drug_guide_page.dart';
+import 'features/ficha_anestesica/ficha_anestesica_page.dart';
+import 'features/ficha_anestesica/ficha_provider.dart';
+import 'features/ficha_anestesica/services/storage_service.dart';
+import 'package:provider/provider.dart';
 
-/// Ponto de entrada do aplicativo VetAnesthesia Helper
+/// Ponto de entrada do aplicativo GDAV
 /// Aplicativo desenvolvido para auxiliar anestesiologistas veterinários
-void main() {
-  runApp(const VetAnesthesiaApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await StorageService.init();
+  runApp(const GdavApp());
 }
 
 /// Widget raiz do aplicativo
-class VetAnesthesiaApp extends StatelessWidget {
-  const VetAnesthesiaApp({Key? key}) : super(key: key);
+class GdavApp extends StatelessWidget {
+  const GdavApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: AppStrings.appName,
+    return MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => FichaProvider())],
+  child: MaterialApp(
+      title: '${AppStrings.appName} - ${AppStrings.appSubtitle}',
       debugShowCheckedModeBanner: false,
       
       // Temas modernos
@@ -29,7 +37,10 @@ class VetAnesthesiaApp extends StatelessWidget {
       
       // Tela inicial
       home: const MainNavigationScreen(),
+      ),
     );
+    // MultiProvider closes in the returned widget
+    // (Note: the MaterialApp above is wrapped by MultiProvider)
   }
 }
 
@@ -51,7 +62,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     DoseCalculatorPage(),
     PreOpChecklistPage(),
     DrugGuidePage(),
-    PlaceholderPage(title: 'Comunidade'), // Placeholder para futuro desenvolvimento
+    FichaAnestesicaPage(),
   ];
 
   @override
@@ -96,8 +107,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.groups_outlined),
             activeIcon: Icon(Icons.groups),
-            label: 'Comunidade',
-            tooltip: 'Comunidade de profissionais',
+            label: 'Ficha',
+            tooltip: 'Ficha Anestésica',
           ),
         ],
       ),

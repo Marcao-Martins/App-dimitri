@@ -1,4 +1,4 @@
-# 📋 Sumário do Projeto - VetAnesthesia Helper
+# 📋 Sumário do Projeto - GDAV
 
 ## ✅ Status do Projeto: COMPLETO E FUNCIONAL
 
@@ -338,7 +338,7 @@ Sempre verifique doses e protocolos antes de administrar medicamentos.
 
 ## 📞 Informações do Projeto
 
-- **Nome:** VetAnesthesia Helper
+- **Nome:** GDAV
 - **Versão:** 1.0.0+1
 - **Linguagem:** Dart
 - **Framework:** Flutter 3.19+
@@ -370,7 +370,7 @@ Sempre verifique doses e protocolos antes de administrar medicamentos.
 
 ## 🎉 Conclusão
 
-O **VetAnesthesia Helper** é um aplicativo Flutter **completo, funcional e profissional** pronto para uso. 
+O **GDAV** é um aplicativo Flutter **completo, funcional e profissional** pronto para uso. 
 
 Todos os requisitos do prompt original foram atendidos:
 - ✅ Tech stack correto

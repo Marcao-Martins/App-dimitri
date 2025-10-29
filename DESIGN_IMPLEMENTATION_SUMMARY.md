@@ -1,9 +1,9 @@
-# 🎨 Redesign do VetAnesthesia Helper - Resumo da Implementação
+# 🎨 Redesign do GDAV - Resumo da Implementação
 
 ## ✅ Trabalho Concluído
 
 ### 📊 Visão Geral
-Transformação completa do design do aplicativo VetAnesthesia Helper seguindo princípios modernos, limpos e minimalistas, baseados em design profissional para aplicativos médicos/veterinários.
+Transformação completa do design do aplicativo GDAV (antes: VetAnesthesia Helper) seguindo princípios modernos, limpos e minimalistas, baseados em design profissional para aplicativos médicos/veterinários.
 
 ---
 
@@ -104,7 +104,7 @@ Cabeçalho de seção com título e ação opcional
 ### ✨ Implementado em: `lib/features/explorer/explorer_page.dart`
 
 **Estrutura completa:**
-- ✅ **Header personalizado**: Título "VetAnesthesia" + subtítulo
+  - ✅ **Header personalizado**: Título "GDAV" + subtítulo
 - ✅ **Barra de busca moderna**: Totalmente arredondada
 - ✅ **Seção "Bibliotecas"**: 
   - 6 ícones circulares coloridos em scroll horizontal
@@ -409,6 +409,6 @@ Um aplicativo **completamente transformado** com:
 ---
 
 **Design Implementation v1.0**  
-*VetAnesthesia Helper*  
+*GDAV*  
 *Outubro 2025*  
 *Desenvolvido com ❤️ para profissionais veterinários*

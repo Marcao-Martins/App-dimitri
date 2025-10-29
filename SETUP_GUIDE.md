@@ -1,4 +1,4 @@
-# 🚀 Guia de Setup - VetAnesthesia Helper
+# 🚀 Guia de Setup - GDAV
 
 ## Requisitos do Sistema
 

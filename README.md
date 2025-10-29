@@ -1,6 +1,6 @@
-# VetAnesthesia Helper
+# GDAV
 
-Aplicativo móvel desenvolvido para auxiliar anestesiologistas veterinários em sua rotina clínica. O app oferece ferramentas essenciais para cálculo de doses, organização do processo pré-operatório e consulta rápida de informações farmacológicas.
+Grupo de Desenvolvimento em Anestesiologia Veterinária — aplicativo auxiliar para anestesiologistas veterinários em sua rotina clínica. O app oferece ferramentas essenciais para cálculo de doses, organização do processo pré-operatório e consulta rápida de informações farmacológicas.
 
 ## 🎯 Funcionalidades Principais
 

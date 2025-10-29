@@ -1,8 +1,8 @@
-# 🎨 Design System - VetAnesthesia Helper
+# 🎨 Design System - GDAV
 
 ## 📋 Visão Geral
 
-Este documento descreve o Design System moderno e minimalista implementado no aplicativo VetAnesthesia Helper, seguindo princípios de design limpo, funcional e altamente profissional para anestesiologistas veterinários.
+Este documento descreve o Design System moderno e minimalista implementado no aplicativo GDAV (antes: VetAnesthesia Helper), seguindo princípios de design limpo, funcional e altamente profissional para anestesiologistas veterinários.
 
 ---
 
@@ -247,7 +247,7 @@ SectionHeader(
 
 ### Tela Home (Explorar)
 1. **Header**
-   - Título: "VetAnesthesia" (28px, Bold)
+   - Título: "GDAV" (28px, Bold)
    - Subtítulo descritivo (14px)
    - Padding: 20px
 
@@ -392,5 +392,5 @@ SectionHeader(
 ---
 
 **Design System v1.0**  
-*Desenvolvido para VetAnesthesia Helper*  
+*Desenvolvido para GDAV*  
 *Última atualização: Outubro 2025*

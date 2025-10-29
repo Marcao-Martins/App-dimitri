@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/constants/app_strings.dart';
 import '../../core/widgets/modern_widgets.dart';
 import '../dose_calculator/dose_calculator_page.dart';
 import '../pre_op_checklist/pre_op_checklist_page.dart';
@@ -44,9 +45,9 @@ class _ExplorerPageState extends State<ExplorerPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'VetAnesthesia',
-                      style: TextStyle(
+                    Text(
+                      AppStrings.appName,
+                      style: const TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
                         color: AppColors.textPrimary,
@@ -55,8 +56,8 @@ class _ExplorerPageState extends State<ExplorerPage> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      'Ferramentas para anestesiologia veterinária',
-                      style: TextStyle(
+                      AppStrings.appSubtitle,
+                      style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: AppColors.textSecondary,

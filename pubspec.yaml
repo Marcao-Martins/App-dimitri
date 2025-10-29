@@ -1,5 +1,5 @@
-name: vet_anesthesia_helper
-description: Aplicativo auxiliar para anestesiologistas veterinários com calculadora de doses, checklist pré-operatório e guia de fármacos.
+name: gdav
+description: Grupo de Desenvolvimento em Anestesiologia Veterinária - Aplicativo auxiliar para anestesiologistas veterinários com calculadora de doses, checklist pré-operatório e guia de fármacos.
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -13,17 +13,21 @@ dependencies:
   # UI
   cupertino_icons: ^1.0.6
   
-  # Estado (futuro)
-  # provider: ^6.1.1
+  # Estado
+  provider: ^6.1.5
   
-  # Persistência (futuro)
-  # shared_preferences: ^2.2.2
-  # hive: ^2.2.3
-  # hive_flutter: ^1.1.0
+  # Persistência
+  shared_preferences: ^2.2.2
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  path_provider: ^2.1.1
   
-  # PDF (futuro)
-  # pdf: ^3.10.7
-  # printing: ^5.11.1
+  # PDF
+  pdf: ^3.10.8
+  printing: ^5.11.1
+
+  # Charts
+  fl_chart: ^0.68.0
 
 dev_dependencies:
   flutter_test:

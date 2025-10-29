@@ -2,7 +2,8 @@
 /// Preparado para internacionalização futura (i18n)
 class AppStrings {
   // App Info
-  static const String appName = 'VetAnesthesia Helper';
+  static const String appName = 'GDAV';
+  static const String appSubtitle = 'Grupo de Desenvolvimento em Anestesiologia Veterinária';
   static const String appVersion = '1.0.0';
   
   // Navegação

@@ -1,6 +1,6 @@
 {
-    "name": "vet_anesthesia_helper",
-    "short_name": "vet_anesthesia_helper",
+    "name": "gdav",
+    "short_name": "gdav",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

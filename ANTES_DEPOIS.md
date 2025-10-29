@@ -52,8 +52,8 @@ Navegação: 5 abas com ícones outline
 ### ✅ DEPOIS
 ```
 ┌─────────────────────────────────┐
-│  VetAnesthesia                  │ ← Header branco
-│  Ferramentas para anestesiologia│
+│  GDAV                           │ ← Header branco
+│  Grupo de Desenvolvimento em Anestesiologia Veterinária │
 ├─────────────────────────────────┤
 │  🔍 Buscar medicamentos...      │ ← Busca arredondada
 ├─────────────────────────────────┤
@@ -328,5 +328,5 @@ Depois: 10 arquivos MD (74 KB)
 
 ---
 
-*VetAnesthesia Helper v2.0*  
+*GDAV v2.0*  
 *Outubro 2025*
