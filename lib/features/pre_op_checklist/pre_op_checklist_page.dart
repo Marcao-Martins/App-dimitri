@@ -11,9 +11,7 @@ import '../../services/checklist_service.dart';
 /// Tela do Checklist Pré-Operatório
 /// Interface interativa para verificação sistemática antes da anestesia
 class PreOpChecklistPage extends StatefulWidget {
-  final bool showAppBar;
-
-  const PreOpChecklistPage({super.key, this.showAppBar = true});
+  const PreOpChecklistPage({super.key});
   
   @override
   State<PreOpChecklistPage> createState() => _PreOpChecklistPageState();
@@ -189,26 +187,24 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
     
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: widget.showAppBar
-          ? AppBar(
-              title: const Text(AppStrings.checklistTitle),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.restart_alt),
-                  onPressed: _resetChecklist,
-                  tooltip: AppStrings.resetChecklist,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.picture_as_pdf),
-                  onPressed: () {
-                    // TODO: Implementar exportação para PDF
-                    _showSuccess('Funcionalidade de exportação em desenvolvimento');
-                  },
-                  tooltip: AppStrings.exportPdf,
-                ),
-              ],
-            )
-      : null,
+      appBar: AppBar(
+        title: const Text(AppStrings.checklistTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.restart_alt),
+            onPressed: _resetChecklist,
+            tooltip: AppStrings.resetChecklist,
+          ),
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: () {
+              // TODO: Implementar exportação para PDF
+              _showSuccess('Funcionalidade de exportação em desenvolvimento');
+            },
+            tooltip: AppStrings.exportPdf,
+          ),
+        ],
+      ),
       body: Column(
         children: [
           // Cabeçalho com progresso e ASA

@@ -8,9 +8,7 @@ import 'widgets/charts_widget.dart';
 import 'pdf/pdf_service.dart';
 
 class FichaAnestesicaPage extends StatefulWidget {
-  final bool showAppBar;
-
-  const FichaAnestesicaPage({super.key, this.showAppBar = true});
+  const FichaAnestesicaPage({super.key});
 
   @override
   State<FichaAnestesicaPage> createState() => _FichaAnestesicaPageState();
@@ -37,67 +35,65 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
 
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: widget.showAppBar
-          ? AppBar(
-              title: const Text('Ficha Anestésica'),
-              actions: [
-                if (provider.current != null) ...[
-                  IconButton(
-                    icon: const Icon(Icons.save),
-                    onPressed: () async {
-                      try {
-                        await provider.saveCurrent();
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Ficha salva com sucesso!')),
-                          );
-                        }
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro ao salvar: $e')),
-                          );
-                        }
-                      }
-                    },
-                    tooltip: 'Salvar Ficha',
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.picture_as_pdf),
-                    onPressed: () async {
-                      try {
-                        await PdfService.printFicha(provider.current!);
-                      } catch (e) {
-                        if (mounted) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Erro ao gerar PDF: $e')),
-                          );
-                        }
-                      }
-                    },
-                    tooltip: 'Exportar PDF',
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      provider.clearCurrent();
-                    },
-                    tooltip: 'Fechar Ficha',
-                  ),
+      appBar: AppBar(
+        title: const Text('Ficha Anestésica'),
+        actions: [
+          if (provider.current != null) ...[
+            IconButton(
+              icon: const Icon(Icons.save),
+              onPressed: () async {
+                try {
+                  await provider.saveCurrent();
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Ficha salva com sucesso!')),
+                    );
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erro ao salvar: $e')),
+                    );
+                  }
+                }
+              },
+              tooltip: 'Salvar Ficha',
+            ),
+            IconButton(
+              icon: const Icon(Icons.picture_as_pdf),
+              onPressed: () async {
+                try {
+                  await PdfService.printFicha(provider.current!);
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Erro ao gerar PDF: $e')),
+                    );
+                  }
+                }
+              },
+              tooltip: 'Exportar PDF',
+            ),
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                provider.clearCurrent();
+              },
+              tooltip: 'Fechar Ficha',
+            ),
+          ],
+        ],
+        bottom: provider.current != null
+            ? TabBar(
+                controller: _tabController,
+                tabs: const [
+                  Tab(text: 'Paciente & Medicações'),
+                  Tab(text: 'Monitorização'),
+                  Tab(text: 'Gráficos'),
                 ],
-              ],
-              bottom: provider.current != null
-                  ? TabBar(
-                      controller: _tabController,
-                      tabs: const [
-                        Tab(text: 'Paciente & Medicações'),
-                        Tab(text: 'Monitorização'),
-                        Tab(text: 'Gráficos'),
-                      ],
-                    )
-                  : null,
-            )
-          : null,
+              )
+            : null,
+      ),
       body: provider.current == null
           ? _buildWelcomeScreen(context, provider)
           : TabBarView(

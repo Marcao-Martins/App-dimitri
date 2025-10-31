@@ -70,10 +70,10 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   final List<Widget> _pages = [
     const ExplorerPage(), // Tela Home
     const RcpPage(), // RCP Coach
-    const DoseCalculatorPage(showAppBar: false),
-    const PreOpChecklistPage(showAppBar: false),
-    const DrugGuidePage(showAppBar: false),
-    const FichaAnestesicaPage(showAppBar: false),
+    const DoseCalculatorPage(),
+    const PreOpChecklistPage(),
+    const DrugGuidePage(),
+    const FichaAnestesicaPage(),
   ];
 
   // Lista de títulos para a AppBar

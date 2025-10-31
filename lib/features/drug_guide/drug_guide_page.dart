@@ -10,9 +10,7 @@ import '../../services/medication_service.dart';
 /// Tela do Guia de Fármacos - Design Moderno
 /// Banco de dados local com busca e informações detalhadas de medicamentos
 class DrugGuidePage extends StatefulWidget {
-  final bool showAppBar;
-
-  const DrugGuidePage({super.key, this.showAppBar = true});
+  const DrugGuidePage({super.key});
 
   @override
   State<DrugGuidePage> createState() => _DrugGuidePageState();
@@ -125,11 +123,9 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      appBar: widget.showAppBar
-          ? AppBar(
-              title: const Text('Guia de Fármacos'),
-            )
-          : null,
+      appBar: AppBar(
+        title: const Text('Guia de Fármacos'),
+      ),
       body: Column(
         children: [
           // Barra de Busca e Filtro

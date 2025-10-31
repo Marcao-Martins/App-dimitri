@@ -14,9 +14,7 @@ import '../unit_converter/unit_converter_page.dart';
 /// Tela da Calculadora de Doses
 /// Permite calcular doses de medicamentos baseado no peso e espécie do animal
 class DoseCalculatorPage extends StatefulWidget {
-  final bool showAppBar;
-
-  const DoseCalculatorPage({super.key, this.showAppBar = true});
+  const DoseCalculatorPage({super.key});
   
   @override
   State<DoseCalculatorPage> createState() => _DoseCalculatorPageState();
@@ -305,47 +303,45 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
     
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    appBar: widget.showAppBar
-          ? AppBar(
-              title: const Text(AppStrings.calculatorTitle),
-              actions: [
-                // Botão para o conversor de unidades
-                IconButton(
-                  icon: const Icon(Icons.swap_vert_circle_outlined),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const UnitConverterPage(),
-                      ),
-                    );
-                  },
-                  tooltip: 'Conversor de Unidades',
+      appBar: AppBar(
+        title: const Text(AppStrings.calculatorTitle),
+        actions: [
+          // Botão para o conversor de unidades
+          IconButton(
+            icon: const Icon(Icons.swap_vert_circle_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const UnitConverterPage(),
                 ),
-                // Botão para a calculadora de O2
-                IconButton(
-                  icon: const Icon(Icons.propane_tank_outlined),
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const OxygenAutonomyCalculatorPage(),
-                      ),
-                    );
-                  },
-                  tooltip: 'Autonomia do Cilindro de O₂',
+              );
+            },
+            tooltip: 'Conversor de Unidades',
+          ),
+          // Botão para a calculadora de O2
+          IconButton(
+            icon: const Icon(Icons.propane_tank_outlined),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const OxygenAutonomyCalculatorPage(),
                 ),
-                if (_weightController.text.isNotEmpty ||
-                    _selectedSpecies != null ||
-                    _selectedMedication != null)
-                  IconButton(
-                    icon: const Icon(Icons.clear_all),
-                    onPressed: _clearForm,
-                    tooltip: AppStrings.clear,
-                  ),
-              ],
-            )
-          : null,
+              );
+            },
+            tooltip: 'Autonomia do Cilindro de O₂',
+          ),
+          if (_weightController.text.isNotEmpty ||
+              _selectedSpecies != null ||
+              _selectedMedication != null)
+            IconButton(
+              icon: const Icon(Icons.clear_all),
+              onPressed: _clearForm,
+              tooltip: AppStrings.clear,
+            ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
         child: Form(
