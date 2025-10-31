@@ -1,201 +1,127 @@
-# GDAV
 
-Grupo de Desenvolvimento em Anestesiologia Veterinária — aplicativo auxiliar para anestesiologistas veterinários em sua rotina clínica. O app oferece ferramentas essenciais para cálculo de doses, organização do processo pré-operatório e consulta rápida de informações farmacológicas.
+# Vet Anesthesia Helper
 
-## 🎯 Funcionalidades Principais
+O Vet Anesthesia Helper é um aplicativo móvel completo, desenvolvido em Flutter, para auxiliar médicos veterinários e estudantes de veterinária em diversas tarefas relacionadas à anestesiologia. O aplicativo oferece um conjunto de ferramentas para cálculos de doses, guias de medicamentos, checklists pré-operatórios, e módulos especializados para RCP, fluidoterapia e transfusão.
 
-### 1. 💉 Calculadora de Doses
-- Cálculo automático de doses baseado em peso e espécie
-- Validação de faixas seguras de dosagem
-- Histórico de cálculos realizados
-- Banco de dados com 20+ medicamentos comuns
-- Alertas para doses fora do padrão recomendado
+## 🌟 Funcionalidades Principais
 
-### 2. ✅ Checklist Pré-Operatório
-- 30+ itens organizados por categorias:
-  - Paciente
-  - Equipamento
-  - Medicação
-  - Procedimento
-  - Segurança
-- Marcação de itens críticos obrigatórios
-- Timer de jejum integrado
-- Seleção de classificação ASA (I-V)
-- Indicador visual de progresso
-- Exportação para PDF (em desenvolvimento)
-
-### 3. 📖 Guia de Fármacos
-- Banco de dados local com informações detalhadas
-- Busca por nome ou categoria
-- Filtros por espécie compatível
-- Informações incluídas:
-  - Doses (mínima e máxima)
-  - Indicações e contraindicações
-  - Precauções especiais
-  - Categoria farmacológica
-
-## 🛠️ Tecnologias Utilizadas
-
-- **Framework:** Flutter 3.19+
-- **Linguagem:** Dart (com null safety)
-- **Arquitetura:** MVC/Clean Architecture
-- **Gerenciamento de Estado:** setState (preparado para Provider/Riverpod)
-- **Design:** Material Design 3
-
-## 📁 Estrutura do Projeto
-
-```
-lib/
-├── core/
-│   ├── constants/      # Cores, strings, constantes
-│   ├── themes/         # Temas claro e escuro
-│   ├── utils/          # Utilitários e formatação
-│   └── widgets/        # Widgets reutilizáveis
-├── features/
-│   ├── dose_calculator/    # Calculadora de doses
-│   ├── pre_op_checklist/   # Checklist pré-operatório
-│   └── drug_guide/         # Guia de fármacos
-├── models/             # Modelos de dados
-├── services/           # Lógica de negócio e dados
-└── main.dart           # Ponto de entrada
-```
-
-## 🚀 Como Executar
-
-### Pré-requisitos
-- Flutter SDK 3.19 ou superior
-- Android Studio ou VS Code
-- Emulador Android ou dispositivo físico
-
-### Instalação
-
-1. **Clone o repositório:**
-```bash
-git clone https://github.com/Marcao-Martins/App-dimitri.git
-cd App-dimitri-1
-```
-
-2. **Instale as dependências:**
-```bash
-flutter pub get
-```
-
-3. **Execute o aplicativo:**
-```bash
-flutter run
-```
-
-### Comandos Úteis
-
-```bash
-# Verificar instalação do Flutter
-flutter doctor
-
-# Limpar cache
-flutter clean
-
-# Analisar código
-flutter analyze
-
-# Executar testes
-flutter test
-
-# Gerar APK de release
-flutter build apk --release
-
-# Gerar app bundle
-flutter build appbundle
-```
-
-## 📱 Plataformas Suportadas
-
-- ✅ Android (testado)
-- 🔄 iOS (compatível, necessita testes)
-- 🔄 Web (compatível, necessita ajustes de UI)
-
-## 🎨 Design
-
-### Tema Claro
-Otimizado para ambientes bem iluminados de clínicas e hospitais veterinários.
-
-### Tema Escuro
-Reduz fadiga ocular em ambientes com pouca luz ou durante procedimentos noturnos.
-
-## 🔐 Segurança e Responsabilidade
-
-⚠️ **AVISO IMPORTANTE:**
-- Este aplicativo é uma ferramenta **auxiliar** e não substitui o julgamento clínico profissional
-- Sempre verifique doses e protocolos com literatura atualizada
-- Em caso de dúvida, consulte referências oficiais e colegas especializados
-- Mantenha-se atualizado com as melhores práticas de anestesia veterinária
-
-## 🧪 Medicamentos Incluídos
-
-O banco de dados inclui:
-- **Anestésicos Injetáveis:** Ketamina, Propofol, Tiletamina+Zolazepam
-- **Sedativos:** Acepromazina, Midazolam, Dexmedetomidina, Xilazina
-- **Opioides:** Morfina, Fentanil, Tramadol, Metadona
-- **Anestésicos Locais:** Lidocaína, Bupivacaína
-- **Anticolinérgicos:** Atropina
-- **Anestésicos Inalatórios:** Isoflurano, Sevoflurano
-- **Outros:** Maropitanto, Meloxicam
-
-## 📋 Roadmap de Desenvolvimento
-
-### ✅ Versão 1.0 (Atual)
-- [x] Calculadora de doses
-- [x] Checklist pré-operatório
-- [x] Guia de fármacos
-- [x] Interface intuitiva
-- [x] Temas claro/escuro
-
-### 🔄 Versão 1.1 (Planejado)
-- [ ] Persistência de dados com Hive
-- [ ] Histórico completo de cálculos
-- [ ] Exportação de checklist para PDF
-- [ ] Adicionar mais medicamentos
-- [ ] Calculadora de fluidoterapia
-
-### 🔮 Versão 2.0 (Futuro)
-- [ ] Sincronização na nuvem
-- [ ] Perfis de pacientes
-- [ ] Protocolos anestésicos salvos
-- [ ] Integração com prontuários
-- [ ] Modo offline completo
-- [ ] Internacionalização (EN/ES)
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Por favor:
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona MinhaFeature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👨‍⚕️ Autor
-
-Desenvolvido com ❤️ para a comunidade veterinária.
-
-**Contato:** [Seu Nome/Email]
-
-## 🙏 Agradecimentos
-
-- Comunidade Flutter/Dart
-- Anestesiologistas veterinários que forneceram feedback
-- Referências farmacológicas veterinárias
-
-## 📚 Referências
-
-- Grimm KA, et al. Veterinary Anesthesia and Analgesia (5th Edition)
-- Tranquilli WJ, et al. Lumb & Jones' Veterinary Anesthesia
-- AAHA Anesthesia and Monitoring Guidelines
+- **Calculadora de Doses:** Calcule rapidamente as doses de medicamentos com base no peso do animal.
+- **Guia de Medicamentos (Bulário):** Um guia de referência rápida para diversos fármacos utilizados na anestesia veterinária.
+- **Checklist Pré-Operatório:** Um checklist para garantir que todos os passos pré-operatórios foram seguidos.
+- **Ficha Anestésica:** Gere e salve fichas anestésicas em formato PDF.
+- **RCP Coach:** Um assistente para manobras de ressuscitação cardiopulmonar.
+- **Calculadora de Fluidoterapia:** Calcule taxas de fluidoterapia de manutenção e reidratação.
+- **Calculadora de Transfusão:** Calcule o volume de sangue necessário para transfusões.
 
 ---
 
-**Nota:** Este aplicativo foi desenvolvido seguindo as melhores práticas de engenharia de software e design de UI/UX para garantir usabilidade em ambiente clínico.
+## 🚀 Módulos em Destaque
+
+### 🫀 RCP Coach
+
+Módulo de auxílio para Ressuscitação Cardiopulmonar (RCP) com timer de 2 minutos, metrônomo de compressões e alertas sonoros.
+
+- **Timer de Ciclos (2 minutos):** Contagem regressiva de 120 segundos com reinício automático.
+- **Metrônomo de Compressões:** Beep a cada 500ms (120 BPM) para guiar o ritmo das compressões.
+- **Sistema de Áudio:** Sons distintos para o metrônomo e para o final de cada ciclo.
+- **Controles Interativos:** Botões para iniciar, pausar, reiniciar, mutar o som e manter a tela ativa (wake lock).
+- **Contador de Ciclos:** Acompanhe o número de ciclos de 2 minutos completados.
+- **Mensagens de Status:** Orientações em tempo real sobre o que fazer.
+
+### 💧 Calculadora de Fluidoterapia
+
+Módulo para cálculo de fluidoterapia para cães e gatos, incluindo volumes de manutenção e reidratação.
+
+- **Cálculo de Manutenção:**
+  - **Cães:** 60 mL/kg/dia
+  - **Gatos:** 40 mL/kg/dia
+- **Cálculo de Reidratação:** Calcula o volume necessário para corrigir a desidratação em 12 ou 24 horas.
+- **Taxas de Infusão:** Fornece a taxa em mL/hora, gotas/minuto e o intervalo em segundos entre as gotas.
+
+### 🩸 Calculadora de Transfusão Sanguínea
+
+Módulo para cálculo do volume de sangue necessário para transfusão em cães e gatos, baseado em valores de hematócrito.
+
+- **Fórmula:** `Volume (mL) = (Peso × Fator × (Ht_desejado - Ht_receptor)) / Ht_bolsa`
+- **Fatores por Espécie:**
+  - **Cães:** 80 ou 90
+  - **Gatos:** 40 ou 60
+- **Recomendações de Taxa de Infusão:** Fornece taxas seguras para a infusão do sangue.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+- **Framework:** Flutter
+- **Linguagem:** Dart
+- **Gerenciamento de Estado:** Provider
+- **Armazenamento Local:** Hive
+- **Geração de PDF:** pdf, printing
+- **Gráficos:** fl_chart
+- **Áudio:** audioplayers
+- **Manter Tela Ativa:** wakelock_plus
+- **Preferências:** shared_preferences
+- **Paths de Arquivos:** path_provider
+
+---
+
+## ⚙️ Instalação
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://github.com/seu-usuario/vet_anesthesia_helper.git
+    ```
+2.  **Entre no diretório do projeto:**
+    ```bash
+    cd vet_anesthesia_helper
+    ```
+3.  **Instale as dependências:**
+    ```bash
+    flutter pub get
+    ```
+4.  **Execute o aplicativo:**
+    ```bash
+    flutter run
+    ```
+
+---
+
+## 📜 Licença
+
+Este projeto é licenciado sob a **Licença MIT**.
+
+```
+MIT License
+
+Copyright (c) 2025 GDAV
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
+
+---
+
+## ⚠️ Medical Disclaimer
+
+Este aplicativo é uma ferramenta auxiliar para profissionais de anestesia veterinária e não deve substituir o julgamento clínico profissional, a consulta à literatura atualizada ou os protocolos institucionais.
+
+Os desenvolvedores e contribuidores deste software não se responsabilizam por quaisquer decisões clínicas tomadas com base nas informações fornecidas por este aplicativo.
+
+Sempre verifique as dosagens e protocolos de medicamentos com a literatura veterinária atual e consulte especialistas veterinários qualificados em caso de dúvida.
+
+Este software é fornecido apenas para fins educacionais e auxiliares. Use por sua conta e risco profissional.
