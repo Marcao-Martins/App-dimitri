@@ -11,6 +11,7 @@ import 'all_features_page.dart';
 import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
 import '../fluidotherapy/fluidotherapy_page.dart';
 import '../transfusion/transfusion_page.dart';
+import '../apgar/apgar_page.dart';
 
 /// Tela Home - Início
 /// Design moderno e minimalista com acesso rápido a todas as funcionalidades
@@ -146,6 +147,12 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       label: 'Transfusão',
                       color: AppColors.error,
                       onTap: () => _navigateTo(const TransfusionPage()),
+                    ),
+                    LibraryIconButton(
+                      icon: Icons.baby_changing_station,
+                      label: 'Escore Apgar',
+                      color: AppColors.categoryPink,
+                      onTap: () => _navigateTo(const ApgarPage()),
                     ),
                     LibraryIconButton(
                       icon: Icons.article_outlined, // Ícone de prancheta/documento
