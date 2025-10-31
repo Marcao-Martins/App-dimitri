@@ -1,0 +1,24 @@
+include: package:dart_frog_gen/analysis_options.yaml
+
+analyzer:
+  exclude:
+    - build/**
+    - .dart_tool/**
+  
+  errors:
+    missing_required_param: error
+    missing_return: error
+    todo: ignore
+
+linter:
+  rules:
+    - always_declare_return_types
+    - avoid_empty_else
+    - avoid_print
+    - avoid_types_as_parameter_names
+    - cancel_subscriptions
+    - prefer_const_constructors
+    - prefer_final_fields
+    - prefer_single_quotes
+    - unawaited_futures
+    - use_key_in_widget_constructors

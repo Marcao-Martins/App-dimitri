@@ -1,0 +1,32 @@
+# .gitignore - Backend
+
+# Dart
+.dart_tool/
+.packages
+build/
+pubspec.lock
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Dados sensíveis (IMPORTANTE!)
+data/users.json
+*.env
+.env*
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+
+# Dart Frog
+.dart_frog/

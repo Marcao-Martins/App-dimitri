@@ -3,6 +3,65 @@
 
 O Vet Anesthesia Helper é um aplicativo móvel completo, desenvolvido em Flutter, para auxiliar médicos veterinários e estudantes de veterinária em diversas tarefas relacionadas à anestesiologia. O aplicativo oferece um conjunto de ferramentas para cálculos de doses, guias de medicamentos, checklists pré-operatórios, e módulos especializados para RCP, fluidoterapia e transfusão.
 
+Este projeto agora inclui um **backend API completo** desenvolvido em Dart Frog para gerenciamento centralizado de dados e autenticação de usuários.
+
+---
+
+## 📚 Arquitetura do Projeto
+
+### Frontend (Flutter)
+
+Aplicativo móvel multiplataforma com interface intuitiva para médicos veterinários.
+
+### Backend (Dart Frog API)
+
+API RESTful completa para gerenciamento de dados e autenticação:
+
+#### 🔐 Segurança
+- **Autenticação JWT:** Tokens com expiração de 24 horas
+- **Hash de Senhas:** bcrypt com 12 rounds de salt
+- **Autorização por Roles:** Dois níveis de acesso (consumer e administrator)
+- **Validação Rigorosa de Senhas:**
+  - Mínimo 8 caracteres (máximo 128)
+  - Pelo menos uma letra maiúscula
+  - Pelo menos uma letra minúscula
+  - Pelo menos um número
+  - Pelo menos um caractere especial
+  - Proteção contra senhas comuns
+
+#### 📡 Endpoints da API
+
+**Rotas Públicas:**
+- `GET /` - Informações da API
+- `GET /api/v1/farmacos` - Lista completa de fármacos
+- `GET /api/v1/farmacos?search=nome` - Busca por nome
+- `GET /api/v1/farmacos?classe=classe` - Filtro por classe farmacológica
+- `POST /api/v1/auth/register` - Registro de novo usuário
+- `POST /api/v1/auth/login` - Login e obtenção de token JWT
+
+**Rotas Protegidas (requer autenticação):**
+- `GET /api/v1/profile` - Perfil do usuário logado
+
+**Rotas Administrativas (requer role de administrator):**
+- `POST /api/v1/farmacos` - Adicionar novo fármaco
+
+#### 🗄️ Armazenamento (Desenvolvimento)
+
+⚠️ **Nota:** A versão atual usa armazenamento em arquivos para facilitar o desenvolvimento:
+- **Fármacos:** CSV carregado em memória
+- **Usuários:** JSON com persistência
+
+Para produção, é necessário migrar para um banco de dados real (PostgreSQL recomendado).
+
+#### 🛠️ Tecnologias do Backend
+
+- **Framework:** Dart Frog 2.0
+- **JWT:** dart_jsonwebtoken 2.14.0
+- **Hash de Senhas:** bcrypt 1.1.3
+- **Parse CSV:** csv 6.0.0
+
+---
+
 ## 🌟 Funcionalidades Principais
 
 - **Calculadora de Doses:** Calcule rapidamente as doses de medicamentos com base no peso do animal.
@@ -52,6 +111,7 @@ Módulo para cálculo do volume de sangue necessário para transfusão em cães 
 
 ## 🛠️ Tecnologias Utilizadas
 
+### Frontend (Flutter)
 - **Framework:** Flutter
 - **Linguagem:** Dart
 - **Gerenciamento de Estado:** Provider
@@ -63,26 +123,153 @@ Módulo para cálculo do volume de sangue necessário para transfusão em cães 
 - **Preferências:** shared_preferences
 - **Paths de Arquivos:** path_provider
 
+### Backend (Dart Frog)
+- **Framework:** Dart Frog 2.0
+- **Autenticação:** JWT (dart_jsonwebtoken)
+- **Segurança:** bcrypt para hash de senhas
+- **Parse de Dados:** csv
+- **Testes:** test, mocktail
+
 ---
 
-## ⚙️ Instalação
+## ⚙️ Instalação e Configuração
+
+### Instalação do Frontend (Flutter App)
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/seu-usuario/vet_anesthesia_helper.git
+    git clone https://github.com/Marcao-Martins/App-dimitri.git
+    cd App-dimitri
     ```
-2.  **Entre no diretório do projeto:**
-    ```bash
-    cd vet_anesthesia_helper
-    ```
-3.  **Instale as dependências:**
+
+2.  **Instale as dependências:**
     ```bash
     flutter pub get
     ```
-4.  **Execute o aplicativo:**
+
+3.  **Execute o aplicativo:**
     ```bash
     flutter run
     ```
+
+### Instalação do Backend (API)
+
+1.  **Instale o Dart Frog CLI:**
+    ```bash
+    dart pub global activate dart_frog_cli
+    ```
+
+2.  **Entre no diretório do backend:**
+    ```bash
+    cd backend
+    ```
+
+3.  **Instale as dependências:**
+    ```bash
+    dart pub get
+    ```
+
+4.  **Inicie o servidor:**
+    ```bash
+    dart_frog dev
+    ```
+    
+    O servidor estará disponível em `http://localhost:8080`
+
+#### Testando a API
+
+**Registro de usuário:**
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/register ^
+  -H "Content-Type: application/json" ^
+  -d "{\"name\":\"Dr. João Silva\",\"email\":\"joao@example.com\",\"password\":\"Senha@123Forte\"}"
+```
+
+**Login:**
+```bash
+curl -X POST http://localhost:8080/api/v1/auth/login ^
+  -H "Content-Type: application/json" ^
+  -d "{\"email\":\"joao@example.com\",\"password\":\"Senha@123Forte\"}"
+```
+
+**Listar fármacos:**
+```bash
+curl http://localhost:8080/api/v1/farmacos
+```
+
+#### Criar Usuário Administrador
+
+Para criar um usuário com permissões administrativas:
+
+```bash
+cd backend
+dart run tool/create_admin.dart
+```
+
+Siga as instruções interativas para criar o admin.
+
+### Integração Flutter + Backend
+
+Para conectar o app Flutter com o backend, veja o guia completo de integração na seção de desenvolvimento do SETUPGUIDE.md.
+
+---
+
+## 🏗️ Estrutura do Projeto
+
+### Frontend (Flutter)
+```
+lib/
+├── main.dart               # Ponto de entrada da aplicação
+├── core/                   # Widgets, constantes, temas compartilhados
+│   ├── constants/
+│   ├── providers/
+│   ├── themes/
+│   ├── utils/
+│   └── widgets/
+├── features/               # Módulos de funcionalidades
+│   ├── dose_calculator/
+│   ├── drug_guide/
+│   ├── explorer/
+│   ├── ficha_anestesica/
+│   ├── fluidotherapy/
+│   ├── pre_op_checklist/
+│   ├── rcp/
+│   ├── transfusion/
+│   └── unit_converter/
+├── models/                 # Modelos de dados
+└── services/               # Serviços (PDF, armazenamento)
+```
+
+### Backend (Dart Frog)
+```
+backend/
+├── lib/
+│   ├── models/
+│   │   ├── farmaco.dart          # Modelo de fármacos
+│   │   └── user.dart              # Modelo de usuários + roles
+│   ├── services/
+│   │   ├── jwt_service.dart       # Geração/validação JWT
+│   │   └── password_service.dart  # Hash e validação de senhas
+│   └── providers/
+│       ├── database_provider.dart # Gerenciamento de fármacos
+│       └── user_provider.dart     # Gerenciamento de usuários
+├── routes/
+│   ├── _middleware.dart           # Middleware global
+│   ├── index.dart                 # Rota raiz
+│   └── api/v1/
+│       ├── _middleware.dart       # Middleware de autenticação
+│       ├── farmacos.dart          # Endpoints de fármacos
+│       ├── profile.dart           # Perfil do usuário
+│       └── auth/
+│           ├── register.dart      # Registro
+│           └── login.dart         # Login
+├── data/
+│   ├── farmacos_veterinarios.csv  # Dados dos fármacos
+│   └── users.json                 # Dados dos usuários
+├── test/                           # Testes unitários
+└── tool/
+    └── create_admin.dart          # Script para criar admin
+```
 
 ---
 
