@@ -10,18 +10,19 @@ class DynamicTable extends StatelessWidget {
   final void Function(int index, Medicacao updated)? onUpdate;
 
   const DynamicTable({
-    Key? key,
+    super.key,
     required this.title,
     required this.items,
     required this.onAdd,
     required this.onRemove,
     this.onUpdate,
-  }) : super(key: key);
+  });
 
   void _showAddDialog(BuildContext context) {
     final nomeController = TextEditingController();
     final doseController = TextEditingController();
     final viaController = TextEditingController();
+    final tecnicaController = TextEditingController(); // Controller for the new field
     TimeOfDay selectedTime = TimeOfDay.now();
 
     showDialog(
@@ -33,6 +34,15 @@ class DynamicTable extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // New "Técnica" field
+                TextField(
+                  controller: tecnicaController,
+                  decoration: const InputDecoration(
+                    labelText: 'Técnica',
+                    hintText: 'Ex: Bloqueio epidural, etc.',
+                  ),
+                ),
+                const SizedBox(height: 8),
                 TextField(
                   controller: nomeController,
                   decoration: const InputDecoration(labelText: 'Fármaco *'),
@@ -50,7 +60,8 @@ class DynamicTable extends StatelessWidget {
                 const SizedBox(height: 8),
                 ListTile(
                   title: const Text('Hora'),
-                  subtitle: Text('${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}'),
+                  subtitle: Text(
+                      '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}'),
                   trailing: const Icon(Icons.access_time),
                   onTap: () async {
                     final picked = await showTimePicker(
@@ -93,6 +104,7 @@ class DynamicTable extends StatelessWidget {
                   dose: doseController.text.trim(),
                   via: viaController.text.trim(),
                   hora: hora,
+                  tecnica: tecnicaController.text.trim(), // Pass the new field
                 );
 
                 onAdd(med);
@@ -150,9 +162,14 @@ class DynamicTable extends StatelessWidget {
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Display the new "Técnica" field if it exists
+                          if (m.tecnica != null && m.tecnica!.isNotEmpty)
+                            Text('Técnica: ${m.tecnica}'),
                           if (m.dose != null && m.dose!.isNotEmpty) Text('Dose: ${m.dose}'),
                           if (m.via != null && m.via!.isNotEmpty) Text('Via: ${m.via}'),
-                          if (m.hora != null) Text('Hora: ${m.hora!.hour.toString().padLeft(2, '0')}:${m.hora!.minute.toString().padLeft(2, '0')}'),
+                          if (m.hora != null)
+                            Text(
+                                'Hora: ${m.hora!.hour.toString().padLeft(2, '0')}:${m.hora!.minute.toString().padLeft(2, '0')}'),
                         ],
                       ),
                       trailing: IconButton(

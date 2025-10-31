@@ -5,11 +5,17 @@ import '../../core/widgets/modern_widgets.dart';
 import '../dose_calculator/dose_calculator_page.dart';
 import '../pre_op_checklist/pre_op_checklist_page.dart';
 import '../drug_guide/drug_guide_page.dart';
+import '../ficha_anestesica/ficha_anestesica_page.dart';
+import '../rcp/rcp_page.dart';
+import 'all_features_page.dart';
+import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
+import '../fluidotherapy/fluidotherapy_page.dart';
+import '../transfusion/transfusion_page.dart';
 
-/// Tela Home - Explorar
+/// Tela Home - Início
 /// Design moderno e minimalista com acesso rápido a todas as funcionalidades
 class ExplorerPage extends StatefulWidget {
-  const ExplorerPage({Key? key}) : super(key: key);
+  const ExplorerPage({super.key});
   
   @override
   State<ExplorerPage> createState() => _ExplorerPageState();
@@ -33,8 +39,10 @@ class _ExplorerPageState extends State<ExplorerPage> {
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
+      backgroundColor: theme.scaffoldBackgroundColor,
       body: SafeArea(
         child: CustomScrollView(
           slivers: [
@@ -47,20 +55,20 @@ class _ExplorerPageState extends State<ExplorerPage> {
                   children: [
                     Text(
                       AppStrings.appName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 28,
                         fontWeight: FontWeight.w700,
-                        color: AppColors.textPrimary,
+                        color: theme.colorScheme.onSurface,
                         letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 4),
                     Text(
                       AppStrings.appSubtitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: AppColors.textSecondary,
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -89,18 +97,18 @@ class _ExplorerPageState extends State<ExplorerPage> {
             
             const SliverToBoxAdapter(child: SizedBox(height: 24)),
             
-            // Seção: Bibliotecas (Acesso Rápido)
+            // Seção: Ferramentas (Acesso Rápido)
             SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'Bibliotecas',
+                title: 'Ferramentas',
                 actionText: 'Ver todas',
                 onActionTap: () {
-                  // TODO: Navegar para tela de todas as bibliotecas
+                  _navigateTo(const AllFeaturesPage());
                 },
               ),
             ),
             
-            // Lista horizontal de ícones de bibliotecas
+            // Lista horizontal de ícones de ferramentas
             SliverToBoxAdapter(
               child: Container(
                 height: 110,
@@ -109,26 +117,41 @@ class _ExplorerPageState extends State<ExplorerPage> {
                   scrollDirection: Axis.horizontal,
                   children: [
                     LibraryIconButton(
+                      icon: Icons.monitor_heart, // Ícone de RCP
+                      label: 'RCP Coach',
+                      color: AppColors.error, // Cor de emergência
+                      onTap: () => _navigateTo(const RcpPage()),
+                    ),
+                    LibraryIconButton(
                       icon: Icons.calculate_outlined,
                       label: 'Calculadoras',
                       color: AppColors.categoryOrange,
                       onTap: () => _navigateTo(const DoseCalculatorPage()),
                     ),
+                    // Novo ícone para a Calculadora de Autonomia de O2
                     LibraryIconButton(
-                      icon: Icons.science_outlined,
-                      label: 'Protocolos',
-                      color: AppColors.categoryBlue,
-                      onTap: () {
-                        // TODO: Implementar tela de protocolos
-                      },
+                      icon: Icons.air,
+                      label: 'Autonomia O₂',
+                      color: AppColors.categoryIndigo,
+                      onTap: () => _navigateTo(const OxygenAutonomyCalculatorPage()),
                     ),
                     LibraryIconButton(
-                      icon: Icons.auto_stories_outlined,
-                      label: 'Estudos',
-                      color: AppColors.categoryPurple,
-                      onTap: () {
-                        // TODO: Implementar tela de estudos
-                      },
+                      icon: Icons.water_drop_outlined,
+                      label: 'Fluidoterapia',
+                      color: AppColors.categoryBlue,
+                      onTap: () => _navigateTo(const FluidotherapyPage()),
+                    ),
+                    LibraryIconButton(
+                      icon: Icons.bloodtype_outlined,
+                      label: 'Transfusão',
+                      color: AppColors.error,
+                      onTap: () => _navigateTo(const TransfusionPage()),
+                    ),
+                    LibraryIconButton(
+                      icon: Icons.article_outlined, // Ícone de prancheta/documento
+                      label: 'Ficha Anestésica',
+                      color: AppColors.primaryTeal, // Cor principal para destaque
+                      onTap: () => _navigateTo(const FichaAnestesicaPage()),
                     ),
                     LibraryIconButton(
                       icon: Icons.checklist_outlined,
@@ -136,22 +159,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       color: AppColors.categoryGreen,
                       onTap: () => _navigateTo(const PreOpChecklistPage()),
                     ),
-                    LibraryIconButton(
-                      icon: Icons.folder_outlined,
-                      label: 'Prontuários',
-                      color: AppColors.categoryPink,
-                      onTap: () {
-                        // TODO: Implementar tela de prontuários
-                      },
-                    ),
-                    LibraryIconButton(
-                      icon: Icons.groups_outlined,
-                      label: 'Comunidade',
-                      color: AppColors.categoryIndigo,
-                      onTap: () {
-                        // TODO: Implementar tela de comunidade
-                      },
-                    ),
+                    // Ícones não funcionais (Protocolos, Estudos, Prontuários) foram removidos.
                   ],
                 ),
               ),
@@ -232,10 +240,10 @@ class _ExplorerPageState extends State<ExplorerPage> {
             
             // Lista de itens recentes
             SliverToBoxAdapter(
-              child: Container(
+                child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceWhite,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
@@ -286,6 +294,25 @@ class _ExplorerPageState extends State<ExplorerPage> {
             ),
             
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
+
+            // Disclaimer Section
+            SliverToBoxAdapter(
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+                margin: const EdgeInsets.only(top: 16, bottom: 24),
+                child: Text(
+                  'Disclaimer / Aviso importante\n\n'
+                  'Este aplicativo destina-se exclusivamente a médicos-veterinários habilitados, com CRMV ativo, e capazes de interpretar resultados e identificar inconsistências decorrentes de entradas incorretas, limitações do algoritmo ou mau funcionamento da tecnologia.\n\n'
+                  'Ao continuar, você declara compreender estas limitações e concorda em verificar e validar todos os valores antes de aplicá-los no paciente.',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        fontSize: 12,
+                        height: 1.5, // Melhora a legibilidade
+                      ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ),
           ],
         ),
       ),

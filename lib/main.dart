@@ -1,53 +1,63 @@
 import 'package:flutter/material.dart';
-import 'core/themes/app_theme.dart';
+import 'package:provider/provider.dart';
+
 import 'core/constants/app_strings.dart';
-import 'features/explorer/explorer_page.dart';
+import 'core/providers/theme_provider.dart';
+import 'core/themes/app_theme.dart';
 import 'features/dose_calculator/dose_calculator_page.dart';
-import 'features/pre_op_checklist/pre_op_checklist_page.dart';
 import 'features/drug_guide/drug_guide_page.dart';
+import 'features/explorer/explorer_page.dart';
+import 'features/rcp/rcp_page.dart';
 import 'features/ficha_anestesica/ficha_anestesica_page.dart';
 import 'features/ficha_anestesica/ficha_provider.dart';
 import 'features/ficha_anestesica/services/storage_service.dart';
-import 'package:provider/provider.dart';
+import 'features/pre_op_checklist/pre_op_checklist_page.dart';
 
 /// Ponto de entrada do aplicativo GDAV
 /// Aplicativo desenvolvido para auxiliar anestesiologistas veterinários
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await StorageService.init();
-  runApp(const GdavApp());
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => FichaProvider()),
+      ],
+      child: const GdavApp(),
+    ),
+  );
 }
 
 /// Widget raiz do aplicativo
 class GdavApp extends StatelessWidget {
-  const GdavApp({Key? key}) : super(key: key);
+  const GdavApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => FichaProvider())],
-  child: MaterialApp(
-      title: '${AppStrings.appName} - ${AppStrings.appSubtitle}',
-      debugShowCheckedModeBanner: false,
-      
-      // Temas modernos
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
-      
-      // Tela inicial
-      home: const MainNavigationScreen(),
-      ),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          title: '${AppStrings.appName} - ${AppStrings.appSubtitle}',
+          debugShowCheckedModeBanner: false,
+          
+          // Temas modernos
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: themeProvider.themeMode,
+          
+          // Tela inicial
+          home: const MainNavigationScreen(),
+        );
+      },
     );
-    // MultiProvider closes in the returned widget
-    // (Note: the MaterialApp above is wrapped by MultiProvider)
   }
 }
 
 /// Tela principal com navegação entre as funcionalidades
 /// Novo design com 5 abas e ícones outline
 class MainNavigationScreen extends StatefulWidget {
-  const MainNavigationScreen({Key? key}) : super(key: key);
+  const MainNavigationScreen({super.key});
 
   @override
   State<MainNavigationScreen> createState() => _MainNavigationScreenState();
@@ -56,18 +66,45 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> {
   int _currentIndex = 0;
   
-  // Lista de páginas/telas do aplicativo (5 abas)
-  final List<Widget> _pages = const [
-    ExplorerPage(), // Nova tela Home
-    DoseCalculatorPage(),
-    PreOpChecklistPage(),
-    DrugGuidePage(),
-    FichaAnestesicaPage(),
+  // Lista de páginas/telas do aplicativo (6 abas)
+  final List<Widget> _pages = [
+    const ExplorerPage(), // Tela Home
+    const RcpPage(), // RCP Coach
+    const DoseCalculatorPage(showAppBar: false),
+    const PreOpChecklistPage(showAppBar: false),
+    const DrugGuidePage(showAppBar: false),
+    const FichaAnestesicaPage(showAppBar: false),
+  ];
+
+  // Lista de títulos para a AppBar
+  final List<String> _titles = const [
+    'Início',
+    'RCP',
+    'Calculadora de Doses',
+    'Checklist Pré-Operatório',
+    'Guia de Fármacos',
+    'Ficha Anestésica',
   ];
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+
     return Scaffold(
+      appBar: AppBar(
+        title: Text(_titles[_currentIndex]),
+        actions: [
+          IconButton(
+            icon: Icon(
+              themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+            ),
+            tooltip: themeProvider.isDarkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro',
+            onPressed: () {
+              themeProvider.toggleTheme(!themeProvider.isDarkMode);
+            },
+          ),
+        ],
+      ),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
@@ -81,10 +118,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         },
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.explore_outlined),
-            activeIcon: Icon(Icons.explore),
-            label: 'Explorar',
-            tooltip: 'Explorar ferramentas e recursos',
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Início',
+            tooltip: 'Início - Ferramentas e recursos',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.favorite_border),
+            activeIcon: Icon(Icons.favorite),
+            label: 'RCP',
+            tooltip: 'RCP Coach - Ressuscitação Cardiopulmonar',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.calculate_outlined),
@@ -105,8 +148,8 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             tooltip: 'Guia de Fármacos Anestésicos',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.groups_outlined),
-            activeIcon: Icon(Icons.groups),
+            icon: Icon(Icons.assignment_outlined),
+            activeIcon: Icon(Icons.assignment),
             label: 'Ficha',
             tooltip: 'Ficha Anestésica',
           ),
@@ -121,9 +164,9 @@ class PlaceholderPage extends StatelessWidget {
   final String title;
   
   const PlaceholderPage({
-    Key? key,
+    super.key,
     required this.title,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {

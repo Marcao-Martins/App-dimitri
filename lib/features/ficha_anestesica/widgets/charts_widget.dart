@@ -5,7 +5,7 @@ import '../models/parametro_monitorizacao.dart';
 class ChartsWidget extends StatelessWidget {
   final List<ParametroMonitorizacao> data;
 
-  const ChartsWidget({Key? key, required this.data}) : super(key: key);
+  const ChartsWidget({super.key, required this.data});
 
   List<FlSpot> _toSpots(List<int?> values) {
     final spots = <FlSpot>[];

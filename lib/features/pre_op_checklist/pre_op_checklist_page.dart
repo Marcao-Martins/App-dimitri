@@ -11,7 +11,9 @@ import '../../services/checklist_service.dart';
 /// Tela do Checklist Pré-Operatório
 /// Interface interativa para verificação sistemática antes da anestesia
 class PreOpChecklistPage extends StatefulWidget {
-  const PreOpChecklistPage({Key? key}) : super(key: key);
+  final bool showAppBar;
+
+  const PreOpChecklistPage({super.key, this.showAppBar = true});
   
   @override
   State<PreOpChecklistPage> createState() => _PreOpChecklistPageState();
@@ -186,24 +188,27 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
     final categories = ChecklistService.getCategories();
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.checklistTitle),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.restart_alt),
-            onPressed: _resetChecklist,
-            tooltip: AppStrings.resetChecklist,
-          ),
-          IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
-            onPressed: () {
-              // TODO: Implementar exportação para PDF
-              _showSuccess('Funcionalidade de exportação em desenvolvimento');
-            },
-            tooltip: AppStrings.exportPdf,
-          ),
-        ],
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text(AppStrings.checklistTitle),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.restart_alt),
+                  onPressed: _resetChecklist,
+                  tooltip: AppStrings.resetChecklist,
+                ),
+                IconButton(
+                  icon: const Icon(Icons.picture_as_pdf),
+                  onPressed: () {
+                    // TODO: Implementar exportação para PDF
+                    _showSuccess('Funcionalidade de exportação em desenvolvimento');
+                  },
+                  tooltip: AppStrings.exportPdf,
+                ),
+              ],
+            )
+      : null,
       body: Column(
         children: [
           // Cabeçalho com progresso e ASA
@@ -213,7 +218,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
               color: Theme.of(context).cardColor,
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.shadow,
+                  color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -241,7 +246,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
                                 FormatUtils.formatPercentage(_progress),
                                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                                   fontWeight: FontWeight.bold,
-                                  color: AppColors.primaryBlue,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                               ),
                             ],
@@ -249,7 +254,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
                           const SizedBox(height: AppConstants.smallPadding),
                           LinearProgressIndicator(
                             value: _progress,
-                            backgroundColor: AppColors.divider,
+                            backgroundColor: Theme.of(context).dividerColor,
                             minHeight: 8,
                           ),
                         ],
@@ -407,8 +412,8 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
             _selectedCategory = category;
           });
         },
-        selectedColor: AppColors.primaryBlue.withOpacity(0.3),
-        checkmarkColor: AppColors.primaryBlue,
+        selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3),
+        checkmarkColor: Theme.of(context).colorScheme.primary,
       ),
     );
   }
@@ -440,7 +445,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
                   vertical: 2,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.2),
+                  color: AppColors.error.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
@@ -468,7 +473,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
         secondary: Container(
           padding: const EdgeInsets.all(AppConstants.smallPadding),
           decoration: BoxDecoration(
-            color: _getCategoryColor(item.category).withOpacity(0.2),
+            color: _getCategoryColor(item.category).withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Icon(
@@ -485,7 +490,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
   Color _getCategoryColor(String category) {
     switch (category) {
       case 'Paciente':
-        return AppColors.primaryBlue;
+        return AppColors.primaryTeal;
       case 'Equipamento':
         return AppColors.accentTeal;
       case 'Medicação':

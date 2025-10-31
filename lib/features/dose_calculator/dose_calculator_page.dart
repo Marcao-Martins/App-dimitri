@@ -8,11 +8,15 @@ import '../../core/utils/validation_utils.dart';
 import '../../models/medication.dart';
 import '../../models/dose_calculation.dart';
 import '../../services/medication_service.dart';
+import 'oxygen_autonomy_calculator_page.dart';
+import '../unit_converter/unit_converter_page.dart';
 
 /// Tela da Calculadora de Doses
 /// Permite calcular doses de medicamentos baseado no peso e espécie do animal
 class DoseCalculatorPage extends StatefulWidget {
-  const DoseCalculatorPage({Key? key}) : super(key: key);
+  final bool showAppBar;
+
+  const DoseCalculatorPage({super.key, this.showAppBar = true});
   
   @override
   State<DoseCalculatorPage> createState() => _DoseCalculatorPageState();
@@ -149,7 +153,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
               Container(
                 padding: const EdgeInsets.all(AppConstants.defaultPadding),
                 decoration: BoxDecoration(
-                  color: AppColors.warning.withOpacity(0.2),
+                  color: AppColors.warning.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(AppConstants.borderRadius),
                   border: Border.all(color: AppColors.warning),
                 ),
@@ -300,19 +304,48 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
     final species = MedicationService.getAllSpecies();
     
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(AppStrings.calculatorTitle),
-        actions: [
-          if (_weightController.text.isNotEmpty ||
-              _selectedSpecies != null ||
-              _selectedMedication != null)
-            IconButton(
-              icon: const Icon(Icons.clear_all),
-              onPressed: _clearForm,
-              tooltip: AppStrings.clear,
-            ),
-        ],
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text(AppStrings.calculatorTitle),
+              actions: [
+                // Botão para o conversor de unidades
+                IconButton(
+                  icon: const Icon(Icons.swap_vert_circle_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const UnitConverterPage(),
+                      ),
+                    );
+                  },
+                  tooltip: 'Conversor de Unidades',
+                ),
+                // Botão para a calculadora de O2
+                IconButton(
+                  icon: const Icon(Icons.propane_tank_outlined),
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const OxygenAutonomyCalculatorPage(),
+                      ),
+                    );
+                  },
+                  tooltip: 'Autonomia do Cilindro de O₂',
+                ),
+                if (_weightController.text.isNotEmpty ||
+                    _selectedSpecies != null ||
+                    _selectedMedication != null)
+                  IconButton(
+                    icon: const Icon(Icons.clear_all),
+                    onPressed: _clearForm,
+                    tooltip: AppStrings.clear,
+                  ),
+              ],
+            )
+          : null,
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
         child: Form(
@@ -373,7 +406,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
               if (_selectedMedication != null) ...[
                 const SizedBox(height: AppConstants.defaultPadding),
                 CustomCard(
-                  color: AppColors.info.withOpacity(0.1),
+                  color: AppColors.info.withValues(alpha: 0.1),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -429,8 +462,8 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                 ),
                 CustomCard(
                   color: _lastCalculation!.wasSafe
-                      ? AppColors.success.withOpacity(0.1)
-                      : AppColors.warning.withOpacity(0.1),
+                      ? AppColors.success.withValues(alpha: 0.1)
+                      : AppColors.warning.withValues(alpha: 0.1),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [

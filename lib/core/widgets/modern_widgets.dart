@@ -15,15 +15,17 @@ class LibraryIconButton extends StatelessWidget {
   final VoidCallback onTap;
   
   const LibraryIconButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.label,
     required this.color,
     required this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -41,7 +43,7 @@ class LibraryIconButton extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: color.withOpacity(0.3),
+                    color: color.withValues(alpha: 0.3),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
@@ -60,11 +62,11 @@ class LibraryIconButton extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
+              style: theme.textTheme.bodySmall?.copyWith(
                 fontSize: 12,
                 fontWeight: FontWeight.w500,
-                color: AppColors.textPrimary,
                 height: 1.2,
+                color: theme.colorScheme.onSurface,
               ),
             ),
           ],
@@ -87,26 +89,28 @@ class CategoryCard extends StatelessWidget {
   final VoidCallback onTap;
   
   const CategoryCard({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.subtitle,
     this.backgroundColor,
     this.iconColor,
     required this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          color: backgroundColor ?? AppColors.surfaceWhite,
+          color: backgroundColor ?? theme.colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadow,
+              color: theme.shadowColor.withValues(alpha: 0.06),
               blurRadius: 8,
               offset: const Offset(0, 2),
             ),
@@ -121,7 +125,7 @@ class CategoryCard extends StatelessWidget {
               width: 56,
               height: 56,
               decoration: BoxDecoration(
-                color: (iconColor ?? AppColors.primaryTeal).withOpacity(0.1),
+                color: (iconColor ?? AppColors.primaryTeal).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Icon(
@@ -137,11 +141,10 @@ class CategoryCard extends StatelessWidget {
               textAlign: TextAlign.center,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                fontSize: 16,
+              style: theme.textTheme.titleMedium?.copyWith(
                 fontWeight: FontWeight.w600,
-                color: AppColors.textPrimary,
                 height: 1.3,
+                color: theme.colorScheme.onSurface,
               ),
             ),
             // Subtítulo (opcional)
@@ -152,10 +155,10 @@ class CategoryCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
+                style: theme.textTheme.bodySmall?.copyWith(
                   fontSize: 12,
                   fontWeight: FontWeight.w400,
-                  color: AppColors.textSecondary,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
               ),
             ],
@@ -177,22 +180,24 @@ class ModernSearchBar extends StatelessWidget {
   final VoidCallback? onClear;
   
   const ModernSearchBar({
-    Key? key,
+    super.key,
     required this.controller,
     this.hintText = 'Buscar...',
     this.onChanged,
     this.onClear,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surfaceGrey,
+        color: theme.inputDecorationTheme.fillColor ?? theme.colorScheme.surfaceVariant,
         borderRadius: BorderRadius.circular(30),
         boxShadow: [
           BoxShadow(
-            color: AppColors.shadow,
+            color: theme.shadowColor.withValues(alpha: 0.04),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -201,26 +206,20 @@ class ModernSearchBar extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: const TextStyle(
-          fontSize: 16,
-          color: AppColors.textPrimary,
-        ),
+        style: theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurface),
         decoration: InputDecoration(
           hintText: hintText,
-          hintStyle: const TextStyle(
-            color: AppColors.textTertiary,
-            fontSize: 16,
-          ),
-          prefixIcon: const Icon(
+          hintStyle: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+          prefixIcon: Icon(
             Icons.search,
-            color: AppColors.textSecondary,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             size: 24,
           ),
           suffixIcon: controller.text.isNotEmpty
               ? IconButton(
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.clear,
-                    color: AppColors.textSecondary,
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     size: 20,
                   ),
                   onPressed: onClear,
@@ -247,26 +246,27 @@ class ModernFilterChip extends StatelessWidget {
   final VoidCallback onTap;
   
   const ModernFilterChip({
-    Key? key,
+    super.key,
     required this.label,
     required this.isSelected,
     required this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
         margin: const EdgeInsets.only(right: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.chipActive : AppColors.chipInactive,
+          color: isSelected ? theme.chipTheme.selectedColor : theme.chipTheme.backgroundColor,
           borderRadius: BorderRadius.circular(20),
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: AppColors.chipActive.withOpacity(0.3),
+                    color: theme.chipTheme.selectedColor!.withValues(alpha: 0.18),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
@@ -275,12 +275,12 @@ class ModernFilterChip extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: TextStyle(
+          style: theme.textTheme.bodyMedium?.copyWith(
             fontSize: 14,
             fontWeight: FontWeight.w500,
             color: isSelected
-                ? AppColors.chipActiveText
-                : AppColors.chipInactiveText,
+                ? theme.chipTheme.secondaryLabelStyle?.color ?? theme.colorScheme.onPrimary
+                : theme.chipTheme.labelStyle?.color ?? theme.colorScheme.onSurface,
           ),
         ),
       ),
@@ -302,7 +302,7 @@ class MedicationListItem extends StatelessWidget {
   final VoidCallback onTap;
   
   const MedicationListItem({
-    Key? key,
+    super.key,
     required this.icon,
     required this.iconColor,
     required this.title,
@@ -310,19 +310,21 @@ class MedicationListItem extends StatelessWidget {
     required this.tag,
     required this.tagColor,
     required this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: const BoxDecoration(
-          color: AppColors.surfaceWhite,
+        decoration: BoxDecoration(
+          color: theme.colorScheme.surface,
           border: Border(
             bottom: BorderSide(
-              color: AppColors.divider,
+              color: Theme.of(context).dividerColor,
               width: 1,
             ),
           ),
@@ -351,19 +353,16 @@ class MedicationListItem extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
+                      color: theme.colorScheme.onSurface,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     subtitle,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondary,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -373,7 +372,7 @@ class MedicationListItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
-                color: tagColor.withOpacity(0.1),
+                color: tagColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: tagColor,
@@ -406,14 +405,16 @@ class SectionHeader extends StatelessWidget {
   final VoidCallback? onActionTap;
   
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.actionText,
     this.onActionTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
       child: Row(
@@ -421,10 +422,10 @@ class SectionHeader extends StatelessWidget {
         children: [
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.w700,
-              color: AppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
               letterSpacing: -0.3,
             ),
           ),
@@ -433,10 +434,10 @@ class SectionHeader extends StatelessWidget {
               onTap: onActionTap,
               child: Text(
                 actionText!,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.primaryTeal,
+                  color: theme.colorScheme.primary,
                 ),
               ),
             ),

@@ -9,12 +9,12 @@ class MonitoringTable extends StatelessWidget {
   final void Function(int index, ParametroMonitorizacao updated)? onUpdate;
 
   const MonitoringTable({
-    Key? key,
+    super.key,
     required this.items,
     required this.onAddTime,
     required this.onRemoveTime,
     this.onUpdate,
-  }) : super(key: key);
+  });
 
   void _showAddEditDialog(BuildContext context, {int? editIndex, ParametroMonitorizacao? param}) {
     final fcController = TextEditingController(text: param?.fc?.toString() ?? '');

@@ -8,7 +8,9 @@ import 'widgets/charts_widget.dart';
 import 'pdf/pdf_service.dart';
 
 class FichaAnestesicaPage extends StatefulWidget {
-  const FichaAnestesicaPage({Key? key}) : super(key: key);
+  final bool showAppBar;
+
+  const FichaAnestesicaPage({super.key, this.showAppBar = true});
 
   @override
   State<FichaAnestesicaPage> createState() => _FichaAnestesicaPageState();
@@ -34,65 +36,68 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
     final provider = Provider.of<FichaProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ficha Anestésica'),
-        actions: [
-          if (provider.current != null) ...[
-            IconButton(
-              icon: const Icon(Icons.save),
-              onPressed: () async {
-                try {
-                  await provider.saveCurrent();
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Ficha salva com sucesso!')),
-                    );
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Erro ao salvar: $e')),
-                    );
-                  }
-                }
-              },
-              tooltip: 'Salvar Ficha',
-            ),
-            IconButton(
-              icon: const Icon(Icons.picture_as_pdf),
-              onPressed: () async {
-                try {
-                  await PdfService.printFicha(provider.current!);
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Erro ao gerar PDF: $e')),
-                    );
-                  }
-                }
-              },
-              tooltip: 'Exportar PDF',
-            ),
-            IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                provider.clearCurrent();
-              },
-              tooltip: 'Fechar Ficha',
-            ),
-          ],
-        ],
-        bottom: provider.current != null
-            ? TabBar(
-                controller: _tabController,
-                tabs: const [
-                  Tab(text: 'Paciente & Medicações'),
-                  Tab(text: 'Monitorização'),
-                  Tab(text: 'Gráficos'),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text('Ficha Anestésica'),
+              actions: [
+                if (provider.current != null) ...[
+                  IconButton(
+                    icon: const Icon(Icons.save),
+                    onPressed: () async {
+                      try {
+                        await provider.saveCurrent();
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Ficha salva com sucesso!')),
+                          );
+                        }
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Erro ao salvar: $e')),
+                          );
+                        }
+                      }
+                    },
+                    tooltip: 'Salvar Ficha',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.picture_as_pdf),
+                    onPressed: () async {
+                      try {
+                        await PdfService.printFicha(provider.current!);
+                      } catch (e) {
+                        if (mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Erro ao gerar PDF: $e')),
+                          );
+                        }
+                      }
+                    },
+                    tooltip: 'Exportar PDF',
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close),
+                    onPressed: () {
+                      provider.clearCurrent();
+                    },
+                    tooltip: 'Fechar Ficha',
+                  ),
                 ],
-              )
-            : null,
-      ),
+              ],
+              bottom: provider.current != null
+                  ? TabBar(
+                      controller: _tabController,
+                      tabs: const [
+                        Tab(text: 'Paciente & Medicações'),
+                        Tab(text: 'Monitorização'),
+                        Tab(text: 'Gráficos'),
+                      ],
+                    )
+                  : null,
+            )
+          : null,
       body: provider.current == null
           ? _buildWelcomeScreen(context, provider)
           : TabBarView(
@@ -127,7 +132,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             ),
             const SizedBox(height: 24),
             Text(
-              'Bem-vindo à Ficha Anestésica',
+              'Bem-vindo',
               style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),

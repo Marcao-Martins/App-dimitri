@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
+// Theme-based colors are preferred; avoid AppColors here to keep widgets theme-aware.
 import '../constants/app_constants.dart';
 
 /// Widget de card personalizado para o aplicativo
@@ -10,17 +10,19 @@ class CustomCard extends StatelessWidget {
   final VoidCallback? onTap;
   
   const CustomCard({
-    Key? key,
+    super.key,
     required this.child,
     this.padding,
     this.color,
     this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Card(
-      color: color,
+      color: color ?? theme.cardColor,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(AppConstants.borderRadius),
@@ -41,33 +43,36 @@ class PrimaryButton extends StatelessWidget {
   final IconData? icon;
   
   const PrimaryButton({
-    Key? key,
+    super.key,
     required this.text,
     this.onPressed,
     this.isLoading = false,
     this.icon,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
         onPressed: isLoading ? null : onPressed,
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 height: 20,
                 width: 20,
                 child: CircularProgressIndicator(
                   strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                      theme.colorScheme.onPrimary),
                 ),
               )
             : icon != null
                 ? Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(icon),
+                          Icon(icon, color: theme.colorScheme.onPrimary),
                       const SizedBox(width: AppConstants.smallPadding),
                       Text(text),
                     ],
@@ -91,7 +96,7 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onTap;
   
   const CustomTextField({
-    Key? key,
+    super.key,
     required this.label,
     this.controller,
     this.validator,
@@ -101,10 +106,11 @@ class CustomTextField extends StatelessWidget {
     this.suffix,
     this.readOnly = false,
     this.onTap,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    // Uses default InputDecorationTheme from the app theme
     return TextFormField(
       controller: controller,
       validator: validator,
@@ -132,7 +138,7 @@ class CustomDropdown<T> extends StatelessWidget {
   final IconData? prefixIcon;
   
   const CustomDropdown({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.items,
@@ -140,10 +146,11 @@ class CustomDropdown<T> extends StatelessWidget {
     this.onChanged,
     this.validator,
     this.prefixIcon,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    // Uses default theme for dropdowns
     return DropdownButtonFormField<T>(
       value: value,
       decoration: InputDecoration(
@@ -169,14 +176,15 @@ class SectionHeader extends StatelessWidget {
   final Widget? trailing;
   
   const SectionHeader({
-    Key? key,
+    super.key,
     required this.title,
     this.icon,
     this.trailing,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
         vertical: AppConstants.smallPadding,
@@ -184,7 +192,7 @@ class SectionHeader extends StatelessWidget {
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, color: AppColors.primaryBlue),
+            Icon(icon, color: theme.colorScheme.primary),
             const SizedBox(width: AppConstants.smallPadding),
           ],
           Expanded(
@@ -221,7 +229,7 @@ class StatusBadge extends StatelessWidget {
         vertical: AppConstants.smallPadding,
       ),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(AppConstants.borderRadius),
         border: Border.all(color: color),
       ),
@@ -253,20 +261,22 @@ class InfoRow extends StatelessWidget {
   final IconData? icon;
   
   const InfoRow({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     this.icon,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppConstants.smallPadding),
       child: Row(
         children: [
           if (icon != null) ...[
-            Icon(icon, size: 20, color: AppColors.textSecondary),
+            Icon(icon, size: 20, color: theme.colorScheme.onSurface.withValues(alpha: 0.65)),
             const SizedBox(width: AppConstants.smallPadding),
           ],
           Expanded(
@@ -295,15 +305,17 @@ class EmptyState extends StatelessWidget {
   final Widget? action;
   
   const EmptyState({
-    Key? key,
+    super.key,
     required this.icon,
     required this.title,
     this.message,
     this.action,
-  }) : super(key: key);
+  });
   
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppConstants.largePadding),
@@ -313,7 +325,7 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 80,
-              color: AppColors.textSecondary,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             const SizedBox(height: AppConstants.defaultPadding),
             Text(

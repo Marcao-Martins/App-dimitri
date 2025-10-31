@@ -10,7 +10,9 @@ import '../../services/medication_service.dart';
 /// Tela do Guia de Fármacos - Design Moderno
 /// Banco de dados local com busca e informações detalhadas de medicamentos
 class DrugGuidePage extends StatefulWidget {
-  const DrugGuidePage({Key? key}) : super(key: key);
+  final bool showAppBar;
+
+  const DrugGuidePage({super.key, this.showAppBar = true});
 
   @override
   State<DrugGuidePage> createState() => _DrugGuidePageState();
@@ -22,18 +24,15 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   List<Medication> _filteredMedications = [];
   String _selectedFilter = 'Todos';
 
-  final List<String> _filters = [
-    'Todos',
-    'Anestésicos',
-    'Analgésicos',
-    'Sedativos',
-    'Bloqueadores',
-  ];
+  // Lista de filtros agora é dinâmica
+  List<String> _filters = ['Todos'];
 
   @override
   void initState() {
     super.initState();
     _medications = MedicationService.getAllMedications();
+    // Popula os filtros com as classes únicas dos medicamentos
+    _filters.addAll(_getUniqueClasses());
     _filteredMedications = _medications;
     _searchController.addListener(_filterMedications);
   }
@@ -43,6 +42,13 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
     _searchController.removeListener(_filterMedications);
     _searchController.dispose();
     super.dispose();
+  }
+
+  /// Extrai classes únicas da lista de medicamentos
+  List<String> _getUniqueClasses() {
+    final classes = _medications.map((med) => med.category).toSet().toList();
+    classes.sort();
+    return classes;
   }
 
   /// Filtra medicamentos baseado na busca e filtro selecionado
@@ -118,51 +124,49 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundPrimary,
-      appBar: AppBar(
-        title: const Text('Bulário'),
-        actions: [
-          if (_searchController.text.isNotEmpty || _selectedFilter != 'Todos')
-            IconButton(
-              icon: const Icon(Icons.clear_all_outlined),
-              onPressed: _clearFilters,
-              tooltip: 'Limpar filtros',
-            ),
-        ],
-      ),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: widget.showAppBar
+          ? AppBar(
+              title: const Text('Guia de Fármacos'),
+            )
+          : null,
       body: Column(
         children: [
-          // Barra de Busca Moderna
+          // Barra de Busca e Filtro
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-            child: ModernSearchBar(
-              controller: _searchController,
-              hintText: AppStrings.searchDrug,
-              onChanged: (value) {}, // Listener já faz o trabalho
-              onClear: _clearFilters,
-            ),
-          ),
-
-          // Filtros de Categoria (Chips horizontais)
-          SizedBox(
-            height: 50,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: _filters.length,
-              padding: const EdgeInsets.only(left: 20, bottom: 12),
-              itemBuilder: (context, index) {
-                final filter = _filters[index];
-                return ModernFilterChip(
-                  label: filter,
-                  isSelected: _selectedFilter == filter,
-                  onTap: () {
+            child: Column(
+              children: [
+                ModernSearchBar(
+                  controller: _searchController,
+                  hintText: AppStrings.searchDrug,
+                  onChanged: (value) {}, // Listener já faz o trabalho
+                ),
+                const SizedBox(height: 12),
+                // Dropdown de Filtro por Classe - SEM LABEL e com opções dinâmicas
+                DropdownButtonFormField<String>(
+                  value: _selectedFilter,
+                  items: _filters.map((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (newValue) {
                     setState(() {
-                      _selectedFilter = filter;
+                      _selectedFilter = newValue!;
                     });
                     _filterMedications();
                   },
-                );
-              },
+                  decoration: InputDecoration(
+                    // labelText removido para um design mais limpo
+                    prefixIcon: const Icon(Icons.filter_list),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
 
@@ -211,13 +215,14 @@ class MedicationDetailPage extends StatelessWidget {
   final Medication medication;
 
   const MedicationDetailPage({
-    Key? key,
+    super.key,
     required this.medication,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(medication.name),
       ),
@@ -228,7 +233,7 @@ class MedicationDetailPage extends StatelessWidget {
           children: [
             // Cabeçalho
             CustomCard(
-              color: AppColors.primaryTeal.withOpacity(0.1),
+              color: AppColors.primaryTeal.withValues(alpha: 0.1),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -254,7 +259,9 @@ class MedicationDetailPage extends StatelessWidget {
                           children: [
                             Text(
                               medication.name,
-                              style: Theme.of(context).textTheme.headlineSmall,
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                color: Theme.of(context).colorScheme.onSurface
+                              ),
                             ),
                             const SizedBox(height: 4),
                             Text(
@@ -282,12 +289,9 @@ class MedicationDetailPage extends StatelessWidget {
                     icon: Icons.arrow_upward_rounded,
                   ),
                   const SizedBox(height: AppConstants.defaultPadding),
-                  const Text(
+                  Text(
                     'Espécies Compatíveis:',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                    ),
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
                   const SizedBox(height: AppConstants.smallPadding),
                   Wrap(
@@ -362,7 +366,7 @@ class MedicationDetailPage extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
       child: CustomCard(
-        color: color.withOpacity(0.05),
+        color: color.withValues(alpha: 0.05),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -381,7 +385,9 @@ class MedicationDetailPage extends StatelessWidget {
             const SizedBox(height: AppConstants.defaultPadding),
             Text(
               content,
-              style: Theme.of(context).textTheme.bodyLarge,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)
+              ),
             ),
           ],
         ),

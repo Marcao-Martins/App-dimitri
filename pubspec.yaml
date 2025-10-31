@@ -17,7 +17,7 @@ dependencies:
   provider: ^6.1.5
   
   # Persistência
-  shared_preferences: ^2.2.2
+  shared_preferences: ^2.5.3
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.1
@@ -27,20 +27,23 @@ dependencies:
   printing: ^5.11.1
 
   # Charts
-  fl_chart: ^0.68.0
+  fl_chart: ^1.1.1
+  audioplayers: ^6.5.1
+  
+  # Wakelock (manter tela sempre ligada)
+  wakelock_plus: ^1.2.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^6.0.0
 
 flutter:
   uses-material-design: true
   
   # Ícones e assets (adicionar conforme necessário)
-  # assets:
-  #   - assets/images/
-  #   - assets/icons/
+  assets:
+    - assets/sounds/
 
   # Fontes customizadas (opcional)
   # fonts:

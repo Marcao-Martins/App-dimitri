@@ -3,12 +3,14 @@ class Medicacao {
   String? dose;
   String? via;
   DateTime? hora;
+  String? tecnica; // NOVO CAMPO (opcional)
 
   Medicacao({
     required this.nome,
     this.dose,
     this.via,
     this.hora,
+    this.tecnica,
   });
 
   Map<String, dynamic> toJson() => {
@@ -16,6 +18,7 @@ class Medicacao {
         'dose': dose,
         'via': via,
         'hora': hora?.toIso8601String(),
+        'tecnica': tecnica,
       };
 
   factory Medicacao.fromJson(Map<String, dynamic> json) => Medicacao(
@@ -23,5 +26,6 @@ class Medicacao {
         dose: json['dose'],
         via: json['via'],
         hora: json['hora'] != null ? DateTime.parse(json['hora']) : null,
+        tecnica: json['tecnica'],
       );
 }

@@ -7,10 +7,10 @@ class PacienteFormWidget extends StatefulWidget {
   final Function(Paciente) onSave;
 
   const PacienteFormWidget({
-    Key? key,
+    super.key,
     this.paciente,
     required this.onSave,
-  }) : super(key: key);
+  });
 
   @override
   State<PacienteFormWidget> createState() => _PacienteFormWidgetState();
