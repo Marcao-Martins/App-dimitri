@@ -2,6 +2,7 @@ import 'paciente.dart';
 import 'medicacao.dart';
 import 'parametro_monitorizacao.dart';
 import 'intercorrencia.dart';
+import 'farmaco_intraoperatorio.dart';
 
 class FichaAnestesica {
   Paciente paciente;
@@ -12,7 +13,14 @@ class FichaAnestesica {
   List<Medicacao> locorregional;
   List<ParametroMonitorizacao> parametros;
   List<Intercorrencia> intercorrencias;
+  List<FarmacoIntraoperatorio> farmacosIntraoperatorios;
   List<Medicacao> analgesiaPosOperatoria;
+  
+  /// Tempo decorrido do procedimento em segundos
+  int procedureTimeSeconds;
+  
+  /// Se o cronômetro estava rodando quando a ficha foi salva
+  bool timerWasRunning;
 
   FichaAnestesica({
     required this.paciente,
@@ -23,7 +31,10 @@ class FichaAnestesica {
     List<Medicacao>? locorregional,
     List<ParametroMonitorizacao>? parametros,
     List<Intercorrencia>? intercorrencias,
+    List<FarmacoIntraoperatorio>? farmacosIntraoperatorios,
     List<Medicacao>? analgesiaPosOperatoria,
+    this.procedureTimeSeconds = 0,
+    this.timerWasRunning = false,
   })  : preAnestesica = preAnestesica ?? [],
         antimicrobianos = antimicrobianos ?? [],
         inducao = inducao ?? [],
@@ -31,6 +42,7 @@ class FichaAnestesica {
         locorregional = locorregional ?? [],
         parametros = parametros ?? [],
         intercorrencias = intercorrencias ?? [],
+        farmacosIntraoperatorios = farmacosIntraoperatorios ?? [],
         analgesiaPosOperatoria = analgesiaPosOperatoria ?? [];
 
   Map<String, dynamic> toJson() => {
@@ -42,7 +54,10 @@ class FichaAnestesica {
         'locorregional': locorregional.map((e) => e.toJson()).toList(),
         'parametros': parametros.map((e) => e.toJson()).toList(),
         'intercorrencias': intercorrencias.map((e) => e.toJson()).toList(),
+        'farmacosIntraoperatorios': farmacosIntraoperatorios.map((e) => e.toJson()).toList(),
         'analgesiaPosOperatoria': analgesiaPosOperatoria.map((e) => e.toJson()).toList(),
+        'procedureTimeSeconds': procedureTimeSeconds,
+        'timerWasRunning': timerWasRunning,
       };
 
   factory FichaAnestesica.fromJson(Map<String, dynamic> json) => FichaAnestesica(
@@ -54,6 +69,9 @@ class FichaAnestesica {
         locorregional: (json['locorregional'] as List?)?.map((e) => Medicacao.fromJson(e as Map<String, dynamic>)).toList(),
         parametros: (json['parametros'] as List?)?.map((e) => ParametroMonitorizacao.fromJson(e as Map<String, dynamic>)).toList(),
         intercorrencias: (json['intercorrencias'] as List?)?.map((e) => Intercorrencia.fromJson(e as Map<String, dynamic>)).toList(),
+        farmacosIntraoperatorios: (json['farmacosIntraoperatorios'] as List?)?.map((e) => FarmacoIntraoperatorio.fromJson(e as Map<String, dynamic>)).toList(),
         analgesiaPosOperatoria: (json['analgesiaPosOperatoria'] as List?)?.map((e) => Medicacao.fromJson(e as Map<String, dynamic>)).toList(),
+        procedureTimeSeconds: json['procedureTimeSeconds'] as int? ?? 0,
+        timerWasRunning: json['timerWasRunning'] as bool? ?? false,
       );
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/constants/app_strings.dart';
@@ -7,6 +8,7 @@ import '../../core/widgets/common_widgets.dart';
 import '../../core/utils/format_utils.dart';
 import '../../models/checklist.dart';
 import '../../services/checklist_service.dart';
+import 'pdf/checklist_pdf_service.dart';
 
 /// Tela do Checklist Pré-Operatório
 /// Interface interativa para verificação sistemática antes da anestesia
@@ -180,6 +182,158 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
       ),
     );
   }
+
+  /// Exporta checklist para PDF
+  Future<void> _exportToPdf() async {
+    // Controladores para o formulário
+    final patientNameController = TextEditingController();
+    final speciesController = TextEditingController();
+    final weightController = TextEditingController();
+
+    final formKey = GlobalKey<FormState>();
+
+    final result = await showDialog<Map<String, dynamic>>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Informações do Paciente'),
+        content: Form(
+          key: formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  controller: patientNameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do Paciente *',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.pets),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Campo obrigatório';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: speciesController,
+                  decoration: const InputDecoration(
+                    labelText: 'Espécie *',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.category),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Campo obrigatório';
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 16),
+                TextFormField(
+                  controller: weightController,
+                  decoration: const InputDecoration(
+                    labelText: 'Peso (kg) *',
+                    border: OutlineInputBorder(),
+                    prefixIcon: Icon(Icons.monitor_weight),
+                  ),
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                  ],
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Campo obrigatório';
+                    }
+                    final weight = double.tryParse(value);
+                    if (weight == null || weight <= 0) {
+                      return 'Peso inválido';
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton.icon(
+            onPressed: () {
+              if (formKey.currentState!.validate()) {
+                Navigator.pop(context, {
+                  'patientName': patientNameController.text,
+                  'species': speciesController.text,
+                  'weight': double.parse(weightController.text),
+                });
+              }
+            },
+            icon: const Icon(Icons.picture_as_pdf),
+            label: const Text('Gerar PDF'),
+          ),
+        ],
+      ),
+    );
+
+    if (result != null) {
+      try {
+        // Mostrar loading
+        if (mounted) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(),
+                      SizedBox(height: 16),
+                      Text('Gerando PDF...'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        }
+
+        // Gerar PDF
+        await ChecklistPdfService.exportPdf(
+          patientName: result['patientName'],
+          species: result['species'],
+          weightKg: result['weight'],
+          asaClassification: _selectedAsaClassification,
+          items: _items,
+          fastingStartTime: _fastingStartTime,
+        );
+
+        // Fechar loading
+        if (mounted) {
+          Navigator.pop(context);
+          _showSuccess('PDF gerado com sucesso!');
+        }
+      } catch (e) {
+        // Fechar loading
+        if (mounted) {
+          Navigator.pop(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao gerar PDF: $e'),
+              backgroundColor: AppColors.error,
+            ),
+          );
+        }
+      }
+    }
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -197,10 +351,7 @@ class _PreOpChecklistPageState extends State<PreOpChecklistPage> {
           ),
           IconButton(
             icon: const Icon(Icons.picture_as_pdf),
-            onPressed: () {
-              // TODO: Implementar exportação para PDF
-              _showSuccess('Funcionalidade de exportação em desenvolvimento');
-            },
+            onPressed: _exportToPdf,
             tooltip: AppStrings.exportPdf,
           ),
         ],

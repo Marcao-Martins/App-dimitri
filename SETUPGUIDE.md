@@ -268,10 +268,57 @@ backend/
 dart pub global activate dart_frog_cli
 ```
 
-Verifique a instalação:
-```bash
+**⚠️ IMPORTANTE (Windows):** Após a instalação, você precisa adicionar o diretório do Pub Cache ao PATH:
+
+**Opção 1: Script Automático (Recomendado)**
+```powershell
+# Execute o script de configuração incluído no projeto
+.\setup_dart_frog_path.ps1
+```
+
+**Opção 2: Configuração Manual**
+
+1. **Copie o caminho do Pub Cache** que aparece no aviso:
+   ```
+   C:\Users\Usuario\AppData\Local\Pub\Cache\bin
+   ```
+   (Substitua `Usuario` pelo seu nome de usuário do Windows)
+
+2. **Adicione ao PATH do Windows:**
+   - Pressione `Win + R`, digite `sysdm.cpl` e pressione Enter
+   - Vá para a aba **Avançado** → clique em **Variáveis de Ambiente**
+   - Na seção **Variáveis do usuário**, selecione `Path` e clique em **Editar**
+   - Clique em **Novo** e cole o caminho: `C:\Users\SEU_USUARIO\AppData\Local\Pub\Cache\bin`
+   - Clique em **OK** em todas as janelas
+
+3. **Reinicie o PowerShell** (feche e abra novamente) para aplicar as mudanças
+
+4. **Verifique a instalação:**
+   ```bash
+   dart_frog --version
+   ```
+
+**Opção 3: Temporária para Sessão Atual (Rápido)**
+```powershell
+# No PowerShell, adiciona o PATH apenas para a sessão atual
+$env:Path += ";C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin"
+
+# Verificar se funcionou
 dart_frog --version
 ```
+⚠️ **Nota**: Esta configuração será perdida ao fechar o PowerShell.
+
+**Alternativa rápida (sem modificar PATH):**
+Você pode executar o Dart Frog usando o caminho completo:
+```powershell
+# Verificar versão
+C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin\dart_frog.bat --version
+
+# Iniciar servidor (do diretório backend)
+cd backend
+C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin\dart_frog.bat dev
+```
+✅ **Recomendado para quem não quer modificar configurações do sistema**.
 
 #### Passo 2: Navegar para o diretório do backend
 
@@ -286,15 +333,25 @@ dart pub get
 ```
 
 As dependências principais são:
-- `dart_frog: ^2.0.0` - Framework web
+- `dart_frog: ^1.2.0` - Framework web (compatível com CLI atual)
 - `dart_jsonwebtoken: ^2.14.0` - Geração/validação JWT
 - `bcrypt: ^1.1.3` - Hash de senhas
 - `csv: ^6.0.0` - Parse do CSV de fármacos
 
 #### Passo 4: Iniciar o servidor de desenvolvimento
 
+**Se você configurou o PATH (Opção 1 ou 2):**
 ```bash
 dart_frog dev
+```
+
+**Se você não configurou o PATH (usa caminho completo):**
+```powershell
+# Windows PowerShell
+C:\Users\Usuario\AppData\Local\Pub\Cache\bin\dart_frog.bat dev
+
+# Ou use a variável de ambiente (substitui Usuario automaticamente)
+C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin\dart_frog.bat dev
 ```
 
 O servidor iniciará em `http://localhost:8080` com **hot reload** ativo.
@@ -1033,6 +1090,48 @@ jobs:
 ## 3. Troubleshooting
 
 ### 3.1. Problemas Comuns do Backend
+
+#### Erro: "dart_frog não é reconhecido como comando" (Windows)
+**Causa**: O diretório do Pub Cache não está no PATH do Windows.
+
+**Solução Permanente**:
+1. Abra as Variáveis de Ambiente do Windows:
+   - Pressione `Win + R`
+   - Digite `sysdm.cpl` e pressione Enter
+   - Aba **Avançado** → **Variáveis de Ambiente**
+
+2. Edite a variável `Path`:
+   - Em **Variáveis do usuário**, selecione `Path`
+   - Clique em **Editar** → **Novo**
+   - Adicione: `C:\Users\SEU_USUARIO\AppData\Local\Pub\Cache\bin`
+   - Clique em **OK** em todas as janelas
+
+3. **Reinicie o PowerShell** completamente
+
+4. Teste:
+   ```powershell
+   dart_frog --version
+   ```
+
+**Solução Temporária (Sessão Atual)**:
+```powershell
+# Adicionar ao PATH apenas para a sessão atual do PowerShell
+$env:Path += ";C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin"
+
+# Verificar
+dart_frog --version
+```
+
+**Alternativa (Sem modificar PATH)**:
+Use o caminho completo do executável:
+```powershell
+# Verificar versão
+C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin\dart_frog.bat --version
+
+# Iniciar servidor
+cd backend
+C:\Users\$env:USERNAME\AppData\Local\Pub\Cache\bin\dart_frog.bat dev
+```
 
 #### Erro: "Cannot find file: farmacos_veterinarios.csv"
 **Causa**: O arquivo CSV de dados não está no local esperado.

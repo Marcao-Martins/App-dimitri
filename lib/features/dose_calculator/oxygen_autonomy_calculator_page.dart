@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+class FlowResult {
+  final double flowRate;
+  final String duration;
+
+  FlowResult(this.flowRate, this.duration);
+}
 
 class OxygenAutonomyCalculatorPage extends StatefulWidget {
   const OxygenAutonomyCalculatorPage({super.key});
@@ -8,67 +16,81 @@ class OxygenAutonomyCalculatorPage extends StatefulWidget {
       _OxygenAutonomyCalculatorPageState();
 }
 
-class _Cylinder {
-  final String type;
-  final double conversionFactor;
-
-  _Cylinder(this.type, this.conversionFactor);
-}
-
 class _OxygenAutonomyCalculatorPageState
     extends State<OxygenAutonomyCalculatorPage> {
   final _formKey = GlobalKey<FormState>();
+  final _cylinderSizeController = TextEditingController();
   final _pressureController = TextEditingController();
-  final _flowController = TextEditingController();
 
-  final List<_Cylinder> _cylinders = [
-    _Cylinder('E', 0.28),
-    _Cylinder('D', 0.16),
-    _Cylinder('C', 0.08),
-    _Cylinder('M', 1.56),
-    _Cylinder('G', 2.41),
-  ];
+  String _pressureUnit = 'bar';
+  double? _totalContent;
+  List<FlowResult> _results = [];
 
-  _Cylinder? _selectedCylinder;
-  String? _result;
+  final List<double> _flowRates = [0.5, 1, 2, 3, 4, 5, 10];
 
-  @override
-  void initState() {
-    super.initState();
-    _selectedCylinder = _cylinders.first;
+  // Conversão de diferentes unidades para bar
+  double _convertToBar(int pressure, String unit) {
+    switch (unit) {
+      case 'bar':
+        return pressure.toDouble();
+      case 'psi':
+        return pressure * 0.0689476; // 1 psi = 0.0689476 bar
+      case 'kgf/cm²':
+        return pressure * 0.980665; // 1 kgf/cm² = 0.980665 bar
+      case 'kPa':
+        return pressure * 0.01; // 1 kPa = 0.01 bar
+      default:
+        return pressure.toDouble();
+    }
+  }
+
+  String _formatDuration(double minutes) {
+    if (minutes.isInfinite || minutes.isNaN) return '-';
+    
+    final totalMinutes = minutes.round();
+    final days = totalMinutes ~/ 1440; // 1440 min = 1 dia
+    final hours = (totalMinutes % 1440) ~/ 60;
+    final mins = totalMinutes % 60;
+
+    final parts = <String>[];
+    if (days > 0) parts.add('$days d');
+    if (hours > 0) parts.add('$hours h');
+    if (mins > 0 || parts.isEmpty) parts.add('$mins min');
+
+    return parts.join(' ');
   }
 
   void _calculate() {
     if (_formKey.currentState!.validate()) {
-      final pressure = double.tryParse(_pressureController.text);
-      final flow = double.tryParse(_flowController.text);
+      final cylinderSize = int.tryParse(_cylinderSizeController.text);
+      final pressure = int.tryParse(_pressureController.text);
 
-      if (pressure != null && flow != null && flow > 0 && _selectedCylinder != null) {
-        final timeInMinutes =
-            (pressure * _selectedCylinder!.conversionFactor) / flow;
+      if (cylinderSize != null && pressure != null) {
+        // Converter pressão para bar
+        final pressureInBar = _convertToBar(pressure, _pressureUnit);
+        
+        // Fórmula: Conteúdo total = Tamanho × Pressão (em bar)
+        final content = cylinderSize * pressureInBar;
 
-        if (timeInMinutes.isFinite && !timeInMinutes.isNegative) {
-          final hours = timeInMinutes ~/ 60;
-          final minutes = (timeInMinutes % 60).round();
-          setState(() {
-            _result = '${hours} horas e ${minutes} minutos';
-          });
-        } else {
-           setState(() {
-            _result = 'Cálculo inválido. Verifique os valores.';
-          });
-        }
+        setState(() {
+          _totalContent = content;
+          _results = _flowRates.map((flowRate) {
+            final durationMinutes = content / flowRate;
+            return FlowResult(flowRate, _formatDuration(durationMinutes));
+          }).toList();
+        });
       }
     }
   }
 
   void _reset() {
     _formKey.currentState!.reset();
+    _cylinderSizeController.clear();
     _pressureController.clear();
-    _flowController.clear();
     setState(() {
-      _selectedCylinder = _cylinders.first;
-      _result = null;
+      _pressureUnit = 'bar';
+      _totalContent = null;
+      _results = [];
     });
   }
 
@@ -77,117 +99,226 @@ class _OxygenAutonomyCalculatorPageState
     return Scaffold(
       appBar: AppBar(
         title: const Text('Autonomia do Cilindro de O₂'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _reset,
-            tooltip: 'Limpar campos',
-          )
-        ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+          child: ListView(
             children: [
-              // Dropdown para Tipo de Cilindro
-              DropdownButtonFormField<_Cylinder>(
-                value: _selectedCylinder,
-                items: _cylinders.map((cylinder) {
-                  return DropdownMenuItem(
-                    value: cylinder,
-                    child: Text('Cilindro Tipo ${cylinder.type}'),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCylinder = value;
-                  });
-                },
-                decoration: const InputDecoration(
-                  labelText: 'Tipo de Cilindro',
-                  prefixIcon: Icon(Icons.propane_tank_outlined),
+              // Informações gerais
+              Card(
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'INSTRUÇÕES:',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        '• Volume interno em litros. Digite apenas números inteiros. Não use ponto nem vírgula.',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '• Leitura do manômetro. Digite apenas números inteiros. Não use ponto nem vírgula.',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '• A conta converte automaticamente para bar.',
+                        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-
-              // Campo para Pressão
+              const SizedBox(height: 16),
+              
+              // Campo tamanho do cilindro
+              TextFormField(
+                controller: _cylinderSizeController,
+                decoration: const InputDecoration(
+                  labelText: 'Tamanho do cilindro (L)',
+                  helperText: 'Volume interno em litros (apenas números inteiros)',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Digite o tamanho do cilindro';
+                  }
+                  final size = int.tryParse(value);
+                  if (size == null || size <= 0) {
+                    return 'Digite um valor válido';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16),
+              
+              // Campo pressão
               TextFormField(
                 controller: _pressureController,
-                keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
-                  labelText: 'Pressão Atual (psi)',
-                  prefixIcon: Icon(Icons.compress),
+                  labelText: 'Pressão no cilindro',
+                  helperText: 'Leitura do manômetro (apenas números inteiros)',
+                  border: OutlineInputBorder(),
                 ),
+                keyboardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
+                    return 'Digite a pressão';
                   }
-                  if (double.tryParse(value) == null) {
-                    return 'Valor numérico inválido';
+                  final pressure = int.tryParse(value);
+                  if (pressure == null || pressure <= 0) {
+                    return 'Digite um valor válido';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 20),
-
-              // Campo para Fluxo
-              TextFormField(
-                controller: _flowController,
-                keyboardType: TextInputType.number,
+              const SizedBox(height: 16),
+              
+              // Dropdown unidade de pressão
+              DropdownButtonFormField<String>(
+                value: _pressureUnit,
                 decoration: const InputDecoration(
-                  labelText: 'Fluxo de Oxigênio (L/min)',
-                  prefixIcon: Icon(Icons.air),
+                  labelText: 'Unidade da pressão',
+                  border: OutlineInputBorder(),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Campo obrigatório';
-                  }
-                  final flow = double.tryParse(value);
-                   if (flow == null) {
-                    return 'Valor numérico inválido';
-                  }
-                  if (flow <= 0) {
-                    return 'O fluxo deve ser maior que zero';
-                  }
-                  return null;
+                items: const [
+                  DropdownMenuItem(value: 'bar', child: Text('bar')),
+                  DropdownMenuItem(value: 'psi', child: Text('psi')),
+                  DropdownMenuItem(value: 'kgf/cm²', child: Text('kgf/cm²')),
+                  DropdownMenuItem(value: 'kPa', child: Text('kPa')),
+                ],
+                onChanged: (value) {
+                  setState(() {
+                    _pressureUnit = value ?? 'bar';
+                  });
                 },
               ),
-              const SizedBox(height: 32),
-
-              // Botão Calcular
-              ElevatedButton.icon(
-                onPressed: _calculate,
-                icon: const Icon(Icons.calculate),
-                label: const Text('Calcular'),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                ),
+              const SizedBox(height: 24),
+              
+              // Botões
+              Row(
+                children: [
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: _calculate,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Calcular'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: _reset,
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                      child: const Text('Limpar'),
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 32),
-
+              const SizedBox(height: 24),
+              
               // Resultado
-              if (_result != null)
+              if (_totalContent != null)
                 Card(
-                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.1),
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Tempo Restante Estimado:',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          'Resultado',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         const SizedBox(height: 12),
                         Text(
-                          _result!,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.primary,
+                          'Conteúdo estimado: ${_totalContent!.toStringAsFixed(0)} L',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        
+                        // Tabela de vazões
+                        Text(
+                          'Autonomia estimada por vazão:',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 12),
+                        Table(
+                          border: TableBorder.all(
+                            color: Theme.of(context).colorScheme.outline,
+                            width: 1,
+                          ),
+                          columnWidths: const {
+                            0: FlexColumnWidth(1),
+                            1: FlexColumnWidth(2),
+                          },
+                          children: [
+                            // Header
+                            TableRow(
+                              decoration: BoxDecoration(
+                                color: Theme.of(context).colorScheme.primaryContainer,
                               ),
-                          textAlign: TextAlign.center,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    'Vazão (L/min)',
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    'Duração',
+                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            // Data rows
+                            ..._results.map((result) => TableRow(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    result.flowRate.toString(),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Text(
+                                    result.duration,
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            )),
+                          ],
                         ),
                       ],
                     ),

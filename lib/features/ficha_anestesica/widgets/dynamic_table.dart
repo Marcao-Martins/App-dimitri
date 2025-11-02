@@ -8,6 +8,7 @@ class DynamicTable extends StatelessWidget {
   final Function(Medicacao) onAdd;
   final void Function(int index) onRemove;
   final void Function(int index, Medicacao updated)? onUpdate;
+  final bool showTecnicaField;
 
   const DynamicTable({
     super.key,
@@ -16,6 +17,7 @@ class DynamicTable extends StatelessWidget {
     required this.onAdd,
     required this.onRemove,
     this.onUpdate,
+    this.showTecnicaField = false,
   });
 
   void _showAddDialog(BuildContext context) {
@@ -34,15 +36,17 @@ class DynamicTable extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // New "Técnica" field
-                TextField(
-                  controller: tecnicaController,
-                  decoration: const InputDecoration(
-                    labelText: 'Técnica',
-                    hintText: 'Ex: Bloqueio epidural, etc.',
+                // Técnica field only for locorregional
+                if (showTecnicaField) ...[
+                  TextField(
+                    controller: tecnicaController,
+                    decoration: const InputDecoration(
+                      labelText: 'Técnica',
+                      hintText: 'Ex: Bloqueio epidural, etc.',
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
+                  const SizedBox(height: 8),
+                ],
                 TextField(
                   controller: nomeController,
                   decoration: const InputDecoration(labelText: 'Fármaco *'),
@@ -104,7 +108,7 @@ class DynamicTable extends StatelessWidget {
                   dose: doseController.text.trim(),
                   via: viaController.text.trim(),
                   hora: hora,
-                  tecnica: tecnicaController.text.trim(), // Pass the new field
+                  tecnica: showTecnicaField ? tecnicaController.text.trim() : null,
                 );
 
                 onAdd(med);

@@ -5,6 +5,7 @@ import 'widgets/paciente_form_widget.dart';
 import 'widgets/dynamic_table.dart';
 import 'widgets/monitoring_table.dart';
 import 'widgets/charts_widget.dart';
+import 'widgets/procedure_timer_widget.dart';
 import 'pdf/pdf_service.dart';
 
 class FichaAnestesicaPage extends StatefulWidget {
@@ -20,7 +21,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
   }
 
   @override
@@ -89,6 +90,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 tabs: const [
                   Tab(text: 'Paciente & Medicações'),
                   Tab(text: 'Monitorização'),
+                  Tab(text: 'Intercorrências'),
                   Tab(text: 'Gráficos'),
                 ],
               )
@@ -101,6 +103,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
               children: [
                 _buildMedicationsTab(context, provider),
                 _buildMonitoringTab(context, provider),
+                _buildIntercorrenciasTab(context, provider),
                 _buildChartsTab(context, provider),
               ],
             ),
@@ -186,6 +189,10 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Cronômetro de Procedimento
+          const ProcedureTimerWidget(),
+          const SizedBox(height: 12),
+          
           // Informações do Paciente (resumo)
           Card(
             color: Theme.of(context).colorScheme.primaryContainer,
@@ -253,6 +260,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.locorregional,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.locorregional, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.locorregional, i),
+            showTecnicaField: true,
           ),
           const SizedBox(height: 12),
 
@@ -273,6 +281,40 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
       padding: const EdgeInsets.all(12),
       child: Column(
         children: [
+          // Referência rápida ao tempo de procedimento
+          Card(
+            color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.3),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.timer_outlined,
+                    size: 20,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Tempo de Procedimento: ${_formatTimerDuration(provider.current!.procedureTimeSeconds)}',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '(Veja na aba Paciente & Medicações para controlar)',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.7),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
           MonitoringTable(
             items: provider.current!.parametros,
             onAddTime: (param) => provider.addParametro(param),
@@ -280,6 +322,387 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             onUpdate: (i, param) => provider.updateParametro(i, param),
           ),
         ],
+      ),
+    );
+  }
+
+  String _formatTimerDuration(int seconds) {
+    final duration = Duration(seconds: seconds);
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final secs = twoDigits(duration.inSeconds.remainder(60));
+    return '$hours:$minutes:$secs';
+  }
+
+  Widget _buildIntercorrenciasTab(BuildContext context, FichaProvider provider) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Seção de Intercorrências
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Intercorrências',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () => _showAddIntercorrenciaDialog(context, provider),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Adicionar'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (provider.current!.intercorrencias.isEmpty)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text('Nenhuma intercorrência registrada'),
+                      ),
+                    )
+                  else
+                    ...provider.current!.intercorrencias.asMap().entries.map((entry) {
+                      final index = entry.key;
+                      final inter = entry.value;
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 8),
+                        color: inter.gravidade == 'grave'
+                            ? Colors.red.shade50
+                            : inter.gravidade == 'moderada'
+                                ? Colors.orange.shade50
+                                : Colors.yellow.shade50,
+                        child: ListTile(
+                          leading: Icon(
+                            Icons.warning_amber,
+                            color: inter.gravidade == 'grave'
+                                ? Colors.red
+                                : inter.gravidade == 'moderada'
+                                    ? Colors.orange
+                                    : Colors.amber,
+                          ),
+                          title: Text(inter.descricao),
+                          subtitle: Text(
+                            '${_formatDateTime(inter.momento)} - Gravidade: ${inter.gravidade}',
+                            style: const TextStyle(fontSize: 12),
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => provider.removeIntercorrencia(index),
+                          ),
+                        ),
+                      );
+                    }),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          // Seção de Fármacos Intraoperatórios
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Fármacos Intraoperatórios',
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      ElevatedButton.icon(
+                        onPressed: () => _showAddFarmacoIntraDialog(context, provider),
+                        icon: const Icon(Icons.add),
+                        label: const Text('Adicionar'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  if (provider.current!.farmacosIntraoperatorios.isEmpty)
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20),
+                        child: Text('Nenhum fármaco intraoperatório registrado'),
+                      ),
+                    )
+                  else
+                    SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: DataTable(
+                        columns: const [
+                          DataColumn(label: Text('Hora')),
+                          DataColumn(label: Text('Fármaco')),
+                          DataColumn(label: Text('Dose')),
+                          DataColumn(label: Text('Via')),
+                          DataColumn(label: Text('Ações')),
+                        ],
+                        rows: provider.current!.farmacosIntraoperatorios
+                            .asMap()
+                            .entries
+                            .map((entry) {
+                          final index = entry.key;
+                          final farmaco = entry.value;
+                          return DataRow(cells: [
+                            DataCell(Text(_formatTime(farmaco.hora))),
+                            DataCell(Text(farmaco.nome)),
+                            DataCell(Text('${farmaco.dose} ${farmaco.unidade}')),
+                            DataCell(Text(farmaco.via)),
+                            DataCell(
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                onPressed: () => provider.removeFarmacoIntraoperatorio(index),
+                              ),
+                            ),
+                          ]);
+                        }).toList(),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatDateTime(DateTime dt) {
+    return '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')} '
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  String _formatTime(DateTime dt) {
+    return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _showAddIntercorrenciaDialog(BuildContext context, FichaProvider provider) async {
+    final descricaoController = TextEditingController();
+    String gravidade = 'leve';
+    DateTime selectedTime = DateTime.now();
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Adicionar Intercorrência'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  controller: descricaoController,
+                  decoration: const InputDecoration(
+                    labelText: 'Descrição *',
+                    border: OutlineInputBorder(),
+                  ),
+                  maxLines: 3,
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: gravidade,
+                  decoration: const InputDecoration(
+                    labelText: 'Gravidade',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'leve', child: Text('Leve')),
+                    DropdownMenuItem(value: 'moderada', child: Text('Moderada')),
+                    DropdownMenuItem(value: 'grave', child: Text('Grave')),
+                  ],
+                  onChanged: (value) {
+                    setState(() => gravidade = value ?? 'leve');
+                  },
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  title: const Text('Hora'),
+                  subtitle: Text(_formatDateTime(selectedTime)),
+                  trailing: const Icon(Icons.access_time),
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.fromDateTime(selectedTime),
+                    );
+                    if (time != null) {
+                      setState(() {
+                        selectedTime = DateTime(
+                          selectedTime.year,
+                          selectedTime.month,
+                          selectedTime.day,
+                          time.hour,
+                          time.minute,
+                        );
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (descricaoController.text.isNotEmpty) {
+                  provider.addIntercorrencia(
+                    descricaoController.text,
+                    selectedTime,
+                    gravidade,
+                  );
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text('Adicionar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showAddFarmacoIntraDialog(BuildContext context, FichaProvider provider) async {
+    final nomeController = TextEditingController();
+    final doseController = TextEditingController();
+    String unidade = 'mg';
+    String via = 'IV';
+    DateTime selectedTime = DateTime.now();
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Adicionar Fármaco Intraoperatório'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextField(
+                  controller: nomeController,
+                  decoration: const InputDecoration(
+                    labelText: 'Nome do Fármaco *',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: TextField(
+                        controller: doseController,
+                        decoration: const InputDecoration(
+                          labelText: 'Dose *',
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: DropdownButtonFormField<String>(
+                        value: unidade,
+                        decoration: const InputDecoration(
+                          labelText: 'Unidade',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'mg', child: Text('mg')),
+                          DropdownMenuItem(value: 'ml', child: Text('ml')),
+                          DropdownMenuItem(value: 'mcg', child: Text('mcg')),
+                          DropdownMenuItem(value: 'UI', child: Text('UI')),
+                        ],
+                        onChanged: (value) {
+                          setState(() => unidade = value ?? 'mg');
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                DropdownButtonFormField<String>(
+                  value: via,
+                  decoration: const InputDecoration(
+                    labelText: 'Via de Administração',
+                    border: OutlineInputBorder(),
+                  ),
+                  items: const [
+                    DropdownMenuItem(value: 'IV', child: Text('Intravenosa (IV)')),
+                    DropdownMenuItem(value: 'IM', child: Text('Intramuscular (IM)')),
+                    DropdownMenuItem(value: 'SC', child: Text('Subcutânea (SC)')),
+                    DropdownMenuItem(value: 'VO', child: Text('Via Oral (VO)')),
+                    DropdownMenuItem(value: 'Inalatória', child: Text('Inalatória')),
+                  ],
+                  onChanged: (value) {
+                    setState(() => via = value ?? 'IV');
+                  },
+                ),
+                const SizedBox(height: 16),
+                ListTile(
+                  title: const Text('Hora'),
+                  subtitle: Text(_formatDateTime(selectedTime)),
+                  trailing: const Icon(Icons.access_time),
+                  onTap: () async {
+                    final time = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.fromDateTime(selectedTime),
+                    );
+                    if (time != null) {
+                      setState(() {
+                        selectedTime = DateTime(
+                          selectedTime.year,
+                          selectedTime.month,
+                          selectedTime.day,
+                          time.hour,
+                          time.minute,
+                        );
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancelar'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (nomeController.text.isNotEmpty && doseController.text.isNotEmpty) {
+                  final dose = double.tryParse(doseController.text.replaceAll(',', '.'));
+                  if (dose != null && dose > 0) {
+                    provider.addFarmacoIntraoperatorio(
+                      nomeController.text,
+                      dose,
+                      unidade,
+                      via,
+                      selectedTime,
+                    );
+                    Navigator.pop(context);
+                  }
+                }
+              },
+              child: const Text('Adicionar'),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -24,6 +24,10 @@ class ChartsWidget extends StatelessWidget {
     }
     return spots;
   }
+  
+  String _formatTime(DateTime dateTime) {
+    return '${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+  }
 
   Widget _buildChart(BuildContext context, String title, List<LineChartBarData> lineBars, {double? minY, double? maxY}) {
     if (lineBars.every((bar) => bar.spots.isEmpty)) {
@@ -69,10 +73,16 @@ class ChartsWidget extends StatelessWidget {
                       sideTitles: SideTitles(
                         showTitles: true,
                         reservedSize: 22,
-                        getTitlesWidget: (value, meta) => Text(
-                          'T${value.toInt()}',
-                          style: const TextStyle(fontSize: 10),
-                        ),
+                        getTitlesWidget: (value, meta) {
+                          final index = value.toInt();
+                          if (index >= 0 && index < data.length) {
+                            return Text(
+                              _formatTime(data[index].momento),
+                              style: const TextStyle(fontSize: 10),
+                            );
+                          }
+                          return const Text('');
+                        },
                       ),
                     ),
                     rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -94,8 +104,12 @@ class ChartsWidget extends StatelessWidget {
                     touchTooltipData: LineTouchTooltipData(
                       getTooltipItems: (touchedSpots) {
                         return touchedSpots.map((spot) {
+                          final index = spot.x.toInt();
+                          final timeStr = (index >= 0 && index < data.length) 
+                              ? _formatTime(data[index].momento) 
+                              : 'T${spot.x.toInt()}';
                           return LineTooltipItem(
-                            'T${spot.x.toInt()}\n${spot.y.toStringAsFixed(1)}',
+                            '$timeStr\n${spot.y.toStringAsFixed(1)}',
                             const TextStyle(color: Colors.white, fontSize: 12),
                           );
                         }).toList();

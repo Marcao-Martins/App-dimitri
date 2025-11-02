@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'models/ficha_anestesica.dart';
 import 'models/paciente.dart';
 import 'models/medicacao.dart';
 import 'models/parametro_monitorizacao.dart';
 import 'models/intercorrencia.dart';
+import 'models/farmaco_intraoperatorio.dart';
 import 'services/storage_service.dart';
 
 /// Provider para gerenciar o estado da Ficha Anestésica com persistência Hive.
@@ -11,12 +13,24 @@ class FichaProvider extends ChangeNotifier {
   List<FichaAnestesica> _fichas = [];
   FichaAnestesica? _current;
   String? _currentId;
+  
+  // Gerenciamento do cronômetro
+  Timer? _procedureTimer;
+  bool _isTimerRunning = false;
 
   List<FichaAnestesica> get fichas => List.unmodifiable(_fichas);
   FichaAnestesica? get current => _current;
+  bool get isTimerRunning => _isTimerRunning;
+  int get procedureTimeSeconds => _current?.procedureTimeSeconds ?? 0;
 
   FichaProvider() {
     _loadAllFichas();
+  }
+  
+  @override
+  void dispose() {
+    _procedureTimer?.cancel();
+    super.dispose();
   }
 
   void _loadAllFichas() {
@@ -31,12 +45,20 @@ class FichaProvider extends ChangeNotifier {
   void createNew(Paciente paciente) {
     _current = FichaAnestesica(paciente: paciente);
     _currentId = DateTime.now().millisecondsSinceEpoch.toString();
+    _stopTimer(); // Para o timer anterior se houver
     notifyListeners();
   }
 
   void load(FichaAnestesica ficha, String id) {
     _current = ficha;
     _currentId = id;
+    _stopTimer(); // Para o timer anterior
+    
+    // Se a ficha tinha o timer rodando, reinicia
+    if (ficha.timerWasRunning) {
+      startTimer();
+    }
+    
     notifyListeners();
   }
 
@@ -100,12 +122,124 @@ class FichaProvider extends ChangeNotifier {
     }
   }
 
-  void addIntercorrencia(Intercorrencia ic) {
-    _current?.intercorrencias.add(ic);
+  void addIntercorrencia(String descricao, DateTime momento, String gravidade) {
+    if (_current == null) return;
+    
+    final intercorrencia = Intercorrencia(
+      momento: momento,
+      descricao: descricao,
+      gravidade: gravidade,
+    );
+    
+    _current!.intercorrencias.add(intercorrencia);
     notifyListeners();
   }
 
+  void removeIntercorrencia(int index) {
+    if (_current != null && index < _current!.intercorrencias.length) {
+      _current!.intercorrencias.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void addFarmacoIntraoperatorio(
+    String nome,
+    double dose,
+    String unidade,
+    String via,
+    DateTime hora,
+  ) {
+    if (_current == null) return;
+    
+    final farmaco = FarmacoIntraoperatorio(
+      nome: nome,
+      dose: dose,
+      unidade: unidade,
+      via: via,
+      hora: hora,
+    );
+    
+    _current!.farmacosIntraoperatorios.add(farmaco);
+    notifyListeners();
+  }
+
+  void removeFarmacoIntraoperatorio(int index) {
+    if (_current != null && index < _current!.farmacosIntraoperatorios.length) {
+      _current!.farmacosIntraoperatorios.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  // ============ MÉTODOS DO CRONÔMETRO ============
+  
+  void startTimer() {
+    if (_isTimerRunning || _current == null) return;
+    
+    _isTimerRunning = true;
+    _current!.timerWasRunning = true;
+    
+    _procedureTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_current != null) {
+        _current!.procedureTimeSeconds++;
+        notifyListeners();
+      }
+    });
+    
+    notifyListeners();
+  }
+  
+  void pauseTimer() {
+    if (!_isTimerRunning) return;
+    
+    _procedureTimer?.cancel();
+    _isTimerRunning = false;
+    
+    if (_current != null) {
+      _current!.timerWasRunning = false;
+    }
+    
+    notifyListeners();
+  }
+  
+  void stopTimer() {
+    _procedureTimer?.cancel();
+    _isTimerRunning = false;
+    
+    if (_current != null) {
+      _current!.timerWasRunning = false;
+    }
+    
+    notifyListeners();
+  }
+  
+  void resetTimer() {
+    _stopTimer();
+    
+    if (_current != null) {
+      _current!.procedureTimeSeconds = 0;
+      _current!.timerWasRunning = false;
+    }
+    
+    notifyListeners();
+  }
+  
+  void _stopTimer() {
+    _procedureTimer?.cancel();
+    _isTimerRunning = false;
+  }
+  
+  bool get hasTimerStarted => _current != null && _current!.procedureTimeSeconds > 0;
+
+  void updateTimerState(int seconds, bool isRunning) {
+    if (_current != null) {
+      _current!.procedureTimeSeconds = seconds;
+      _current!.timerWasRunning = isRunning;
+      notifyListeners();
+    }
+  }
+
   void clearCurrent() {
+    _stopTimer(); // Para o timer antes de limpar
     _current = null;
     _currentId = null;
     notifyListeners();

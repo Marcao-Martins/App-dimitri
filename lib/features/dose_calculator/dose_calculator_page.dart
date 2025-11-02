@@ -1,18 +1,10 @@
 import 'package:flutter/material.dart';
-import '../../core/constants/app_colors.dart';
-import '../../core/constants/app_constants.dart';
-import '../../core/constants/app_strings.dart';
-import '../../core/widgets/common_widgets.dart';
-import '../../core/utils/format_utils.dart';
-import '../../core/utils/validation_utils.dart';
-import '../../models/medication.dart';
-import '../../models/dose_calculation.dart';
-import '../../services/medication_service.dart';
+import 'package:flutter/services.dart';
 import 'oxygen_autonomy_calculator_page.dart';
 import '../unit_converter/unit_converter_page.dart';
 
-/// Tela da Calculadora de Doses
-/// Permite calcular doses de medicamentos baseado no peso e espécie do animal
+/// Tela da Calculadora de Doses Simplificada
+/// Calcula o volume necessário baseado em peso, dose e concentração
 class DoseCalculatorPage extends StatefulWidget {
   const DoseCalculatorPage({super.key});
   
@@ -23,288 +15,85 @@ class DoseCalculatorPage extends StatefulWidget {
 class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
   final _formKey = GlobalKey<FormState>();
   final _weightController = TextEditingController();
+  final _doseController = TextEditingController();
+  final _concentrationController = TextEditingController();
   
-  String? _selectedSpecies;
-  Medication? _selectedMedication;
-  List<Medication> _availableMedications = [];
-  DoseCalculation? _lastCalculation;
+  String _doseUnit = 'mcg/kg';
+  String _concentrationUnit = 'mcg/ml';
+  double? _calculatedVolume;
   
   @override
   void initState() {
     super.initState();
-    _availableMedications = MedicationService.getAllMedications();
+    // Calcular em tempo real
+    _weightController.addListener(_calculateVolume);
+    _doseController.addListener(_calculateVolume);
+    _concentrationController.addListener(_calculateVolume);
   }
   
   @override
   void dispose() {
     _weightController.dispose();
+    _doseController.dispose();
+    _concentrationController.dispose();
     super.dispose();
   }
   
-  /// Filtra medicamentos quando a espécie é selecionada
-  void _onSpeciesChanged(String? species) {
-    setState(() {
-      _selectedSpecies = species;
-      _selectedMedication = null;
+  /// Converte dose para mcg/kg
+  double _convertDoseToMcg(double dose) {
+    if (_doseUnit == 'mg/kg') {
+      return dose * 1000; // mg para mcg
+    }
+    return dose; // já está em mcg/kg
+  }
+  
+  /// Converte concentração para mcg/ml
+  double _convertConcentrationToMcg(double concentration) {
+    if (_concentrationUnit == 'mg/ml') {
+      return concentration * 1000; // mg para mcg
+    }
+    return concentration; // já está em mcg/ml
+  }
+  
+  /// Calcula o volume necessário
+  void _calculateVolume() {
+    final weight = double.tryParse(_weightController.text.replaceAll(',', '.'));
+    final dose = double.tryParse(_doseController.text.replaceAll(',', '.'));
+    final concentration = double.tryParse(_concentrationController.text.replaceAll(',', '.'));
+    
+    if (weight != null && weight > 0 &&
+        dose != null && dose > 0 &&
+        concentration != null && concentration > 0) {
+      // Converter tudo para mcg
+      final doseInMcg = _convertDoseToMcg(dose);
+      final concentrationInMcg = _convertConcentrationToMcg(concentration);
       
-      if (species != null) {
-        _availableMedications = MedicationService.filterBySpecies(species);
-      } else {
-        _availableMedications = MedicationService.getAllMedications();
-      }
-    });
+      setState(() {
+        // Fórmula: Volume (ml) = (Peso × Dose) / Concentração
+        _calculatedVolume = (weight * doseInMcg) / concentrationInMcg;
+      });
+    } else {
+      setState(() {
+        _calculatedVolume = null;
+      });
+    }
   }
   
-  /// Calcula a dose do medicamento
-  void _calculateDose() {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-    
-    if (_selectedSpecies == null) {
-      _showError(AppStrings.errorSelectSpecies);
-      return;
-    }
-    
-    if (_selectedMedication == null) {
-      _showError(AppStrings.errorSelectMedication);
-      return;
-    }
-    
-    final weight = double.parse(_weightController.text.replaceAll(',', '.'));
-    final calculatedDose = _selectedMedication!.calculateDose(weight);
-    final isSafe = _selectedMedication!.isDoseSafe(calculatedDose, weight);
-    final doseRange = _selectedMedication!.getSafeDoseRange(weight);
-    
+  /// Limpa todos os campos
+  void _clearFields() {
+    _weightController.clear();
+    _doseController.clear();
+    _concentrationController.clear();
     setState(() {
-      _lastCalculation = DoseCalculation(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        timestamp: DateTime.now(),
-        medicationName: _selectedMedication!.name,
-        weightKg: weight,
-        species: _selectedSpecies!,
-        calculatedDose: calculatedDose,
-        unit: _selectedMedication!.unit,
-        wasSafe: isSafe,
-      );
+      _calculatedVolume = null;
     });
-    
-    // Exibe diálogo com resultado
-    _showResultDialog(calculatedDose, doseRange, isSafe);
-  }
-  
-  /// Exibe diálogo com o resultado do cálculo
-  void _showResultDialog(
-    double dose,
-    Map<String, double> doseRange,
-    bool isSafe,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Row(
-          children: [
-            Icon(
-              isSafe ? Icons.check_circle : Icons.warning,
-              color: isSafe ? AppColors.success : AppColors.warning,
-            ),
-            const SizedBox(width: AppConstants.smallPadding),
-            const Text('Resultado do Cálculo'),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            InfoRow(
-              label: 'Medicamento:',
-              value: _selectedMedication!.name,
-              icon: Icons.medication,
-            ),
-            InfoRow(
-              label: 'Espécie:',
-              value: _selectedSpecies!,
-              icon: Icons.pets,
-            ),
-            InfoRow(
-              label: 'Peso:',
-              value: FormatUtils.formatWeight(
-                double.parse(_weightController.text.replaceAll(',', '.')),
-              ),
-              icon: Icons.monitor_weight,
-            ),
-            const Divider(height: AppConstants.defaultPadding * 2),
-            InfoRow(
-              label: 'Dose Calculada:',
-              value: FormatUtils.formatDose(dose, _selectedMedication!.unit),
-              icon: Icons.calculate,
-            ),
-            InfoRow(
-              label: 'Faixa Segura:',
-              value: '${FormatUtils.formatDouble(doseRange['min']!)} - '
-                     '${FormatUtils.formatDouble(doseRange['max']!)} '
-                     '${_selectedMedication!.unit}',
-              icon: Icons.safety_check,
-            ),
-            if (!isSafe) ...[
-              const SizedBox(height: AppConstants.defaultPadding),
-              Container(
-                padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                decoration: BoxDecoration(
-                  color: AppColors.warning.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(AppConstants.borderRadius),
-                  border: Border.all(color: AppColors.warning),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.warning, color: AppColors.warning),
-                    const SizedBox(width: AppConstants.smallPadding),
-                    Expanded(
-                      child: Text(
-                        'Atenção: Dose fora da faixa recomendada!',
-                        style: TextStyle(
-                          color: AppColors.warning,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(AppStrings.close),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _showMedicationInfo();
-            },
-            child: const Text('Ver Informações'),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  /// Exibe informações detalhadas do medicamento
-  void _showMedicationInfo() {
-    if (_selectedMedication == null) return;
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(_selectedMedication!.name),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildInfoSection(
-                'Categoria',
-                _selectedMedication!.category,
-                Icons.category,
-              ),
-              if (_selectedMedication!.description != null)
-                _buildInfoSection(
-                  'Descrição',
-                  _selectedMedication!.description!,
-                  Icons.info,
-                ),
-              if (_selectedMedication!.indications != null)
-                _buildInfoSection(
-                  'Indicações',
-                  _selectedMedication!.indications!,
-                  Icons.check_circle,
-                ),
-              if (_selectedMedication!.contraindications != null)
-                _buildInfoSection(
-                  'Contraindicações',
-                  _selectedMedication!.contraindications!,
-                  Icons.cancel,
-                ),
-              if (_selectedMedication!.precautions != null)
-                _buildInfoSection(
-                  'Precauções',
-                  _selectedMedication!.precautions!,
-                  Icons.warning_amber,
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(AppStrings.close),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  Widget _buildInfoSection(String title, String content, IconData icon) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 20, color: AppColors.primaryBlue),
-              const SizedBox(width: AppConstants.smallPadding),
-              Text(
-                title,
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: AppConstants.bodyFontSize,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppConstants.smallPadding),
-          Text(
-            content,
-            style: const TextStyle(fontSize: AppConstants.captionFontSize),
-          ),
-        ],
-      ),
-    );
-  }
-  
-  /// Limpa o formulário
-  void _clearForm() {
-    setState(() {
-      _weightController.clear();
-      _selectedSpecies = null;
-      _selectedMedication = null;
-      _lastCalculation = null;
-      _availableMedications = MedicationService.getAllMedications();
-    });
-  }
-  
-  /// Exibe mensagem de erro
-  void _showError(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColors.error,
-        duration: AppConstants.snackBarDuration,
-      ),
-    );
   }
   
   @override
   Widget build(BuildContext context) {
-    final species = MedicationService.getAllSpecies();
-    
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        title: const Text(AppStrings.calculatorTitle),
+        title: const Text('Calculadora de Doses'),
         actions: [
           // Botão para o conversor de unidades
           IconButton(
@@ -332,180 +121,271 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
             },
             tooltip: 'Autonomia do Cilindro de O₂',
           ),
-          if (_weightController.text.isNotEmpty ||
-              _selectedSpecies != null ||
-              _selectedMedication != null)
-            IconButton(
-              icon: const Icon(Icons.clear_all),
-              onPressed: _clearForm,
-              tooltip: AppStrings.clear,
-            ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(AppConstants.defaultPadding),
+        padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Informações do Animal
-              SectionHeader(
-                title: 'Informações do Animal',
-                icon: Icons.pets,
-              ),
-              
-              CustomCard(
-                child: Column(
-                  children: [
-                    CustomTextField(
-                      label: AppStrings.weightLabel,
-                      controller: _weightController,
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      validator: ValidationUtils.validateWeight,
-                      prefixIcon: Icons.monitor_weight,
-                      hint: 'Ex: 15.5',
-                    ),
-                    const SizedBox(height: AppConstants.defaultPadding),
-                    CustomDropdown<String>(
-                      label: AppStrings.speciesLabel,
-                      value: _selectedSpecies,
-                      items: species,
-                      itemLabel: (s) => s,
-                      onChanged: _onSpeciesChanged,
-                      prefixIcon: Icons.pets,
-                    ),
-                  ],
-                ),
-              ),
-              
-              const SizedBox(height: AppConstants.defaultPadding),
-              
-              // Seleção de Medicamento
-              SectionHeader(
-                title: 'Medicamento',
-                icon: Icons.medication,
-              ),
-              
-              CustomCard(
-                child: CustomDropdown<Medication>(
-                  label: AppStrings.medicationLabel,
-                  value: _selectedMedication,
-                  items: _availableMedications,
-                  itemLabel: (med) => '${med.name} (${med.category})',
-                  onChanged: (med) => setState(() => _selectedMedication = med),
-                  prefixIcon: Icons.medication,
-                ),
-              ),
-              
-              // Informação do medicamento selecionado
-              if (_selectedMedication != null) ...[
-                const SizedBox(height: AppConstants.defaultPadding),
-                CustomCard(
-                  color: AppColors.info.withValues(alpha: 0.1),
+              // Aviso importante
+              Card(
+                color: Colors.orange.shade50,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.info_outline, color: AppColors.info),
-                          const SizedBox(width: AppConstants.smallPadding),
+                          Icon(Icons.warning_amber, color: Colors.orange.shade800),
+                          const SizedBox(width: 8),
                           Text(
-                            'Informações do Medicamento',
-                            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            'AVISO IMPORTANTE',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.orange.shade800,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Esta calculadora é uma ferramenta auxiliar. Sempre consulte bulas, '
+                        'protocolos institucionais e utilize seu julgamento clínico. '
+                        'O uso responsável e a verificação das doses são essenciais para '
+                        'a segurança do paciente.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // Campo Peso
+              TextFormField(
+                controller: _weightController,
+                decoration: const InputDecoration(
+                  labelText: 'Peso (kg) *',
+                  hintText: 'digite o peso em kg',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.monitor_weight),
+                ),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                ],
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Campo obrigatório';
+                  }
+                  final weight = double.tryParse(value.replaceAll(',', '.'));
+                  if (weight == null || weight <= 0) {
+                    return 'Digite um peso válido';
+                  }
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Campo Dose com seletor de unidade
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
+                      controller: _doseController,
+                      decoration: const InputDecoration(
+                        labelText: 'Dose *',
+                        hintText: 'digite a dose',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.medication),
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Campo obrigatório';
+                        }
+                        final dose = double.tryParse(value.replaceAll(',', '.'));
+                        if (dose == null || dose <= 0) {
+                          return 'Digite uma dose válida';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
+                    child: DropdownButtonFormField<String>(
+                      value: _doseUnit,
+                      decoration: const InputDecoration(
+                        labelText: 'Unidade',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
+                        DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _doseUnit = value ?? 'mcg/kg';
+                          _calculateVolume();
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Campo Concentração com seletor de unidade
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: TextFormField(
+                      controller: _concentrationController,
+                      decoration: const InputDecoration(
+                        labelText: 'Concentração *',
+                        hintText: 'digite a concentração',
+                        border: OutlineInputBorder(),
+                        prefixIcon: Icon(Icons.science),
+                      ),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
+                      ],
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Campo obrigatório';
+                        }
+                        final concentration = double.tryParse(value.replaceAll(',', '.'));
+                        if (concentration == null || concentration <= 0) {
+                          return 'Digite uma concentração válida';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    flex: 2,
+                    child: DropdownButtonFormField<String>(
+                      value: _concentrationUnit,
+                      decoration: const InputDecoration(
+                        labelText: 'Unidade',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: const [
+                        DropdownMenuItem(value: 'mcg/ml', child: Text('mcg/ml')),
+                        DropdownMenuItem(value: 'mg/ml', child: Text('mg/ml')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _concentrationUnit = value ?? 'mcg/ml';
+                          _calculateVolume();
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // Botão Limpar
+              OutlinedButton.icon(
+                onPressed: _clearFields,
+                icon: const Icon(Icons.clear_all),
+                label: const Text('Limpar'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
+              // Resultado
+              Card(
+                elevation: 4,
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.calculate,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Volume total (ml)',
+                            style: Theme.of(context).textTheme.titleMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: AppConstants.defaultPadding),
-                      InfoRow(
-                        label: 'Categoria:',
-                        value: _selectedMedication!.category,
-                      ),
-                      InfoRow(
-                        label: 'Dose:',
-                        value: '${_selectedMedication!.minDose}-'
-                               '${_selectedMedication!.maxDose} '
-                               '${_selectedMedication!.unit}',
-                      ),
-                      const SizedBox(height: AppConstants.smallPadding),
-                      TextButton.icon(
-                        onPressed: _showMedicationInfo,
-                        icon: const Icon(Icons.read_more),
-                        label: const Text('Ver Detalhes Completos'),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              
-              const SizedBox(height: AppConstants.largePadding),
-              
-              // Botão de Calcular
-              PrimaryButton(
-                text: AppStrings.calculateButton,
-                icon: Icons.calculate,
-                onPressed: _calculateDose,
-              ),
-              
-              // Último Cálculo
-              if (_lastCalculation != null) ...[
-                const SizedBox(height: AppConstants.largePadding),
-                SectionHeader(
-                  title: 'Último Cálculo',
-                  icon: Icons.history,
-                ),
-                CustomCard(
-                  color: _lastCalculation!.wasSafe
-                      ? AppColors.success.withValues(alpha: 0.1)
-                      : AppColors.warning.withValues(alpha: 0.1),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              _lastCalculation!.medicationName,
-                              style: Theme.of(context).textTheme.headlineMedium,
-                            ),
+                      const SizedBox(height: 16),
+                      Center(
+                        child: Text(
+                          _calculatedVolume != null
+                              ? 'Volume final: ${_calculatedVolume!.toStringAsFixed(2)} ml'
+                              : 'Preencha todos os campos para calcular',
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: _calculatedVolume != null
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                            fontWeight: FontWeight.bold,
                           ),
-                          StatusBadge(
-                            text: _lastCalculation!.wasSafe ? 'Seguro' : 'Atenção',
-                            color: _lastCalculation!.wasSafe
-                                ? AppColors.success
-                                : AppColors.warning,
-                            icon: _lastCalculation!.wasSafe
-                                ? Icons.check_circle
-                                : Icons.warning,
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: AppConstants.defaultPadding),
-                      InfoRow(
-                        label: 'Dose Calculada:',
-                        value: FormatUtils.formatDose(
-                          _lastCalculation!.calculatedDose,
-                          _lastCalculation!.unit,
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                      InfoRow(
-                        label: 'Peso:',
-                        value: FormatUtils.formatWeight(_lastCalculation!.weightKg),
-                      ),
-                      InfoRow(
-                        label: 'Espécie:',
-                        value: _lastCalculation!.species,
-                      ),
-                      InfoRow(
-                        label: 'Data/Hora:',
-                        value: _lastCalculation!.getFormattedDate(),
-                      ),
+                      if (_calculatedVolume != null) ...[
+                        const SizedBox(height: 16),
+                        const Divider(),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Fórmula: (Peso × Dose) / Concentração',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                            fontStyle: FontStyle.italic,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ],
                   ),
                 ),
-              ],
+              ),
+              
+              const SizedBox(height: 16),
+              
+              // Nota de rodapé
+              Text(
+                '* Campos obrigatórios',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
             ],
           ),
         ),

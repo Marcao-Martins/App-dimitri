@@ -12,6 +12,7 @@ import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
 import '../fluidotherapy/fluidotherapy_page.dart';
 import '../transfusion/transfusion_page.dart';
 import '../apgar/apgar_page.dart';
+import '../consent_form/consent_form_page.dart';
 
 /// Tela Home - Início
 /// Design moderno e minimalista com acesso rápido a todas as funcionalidades
@@ -159,6 +160,12 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       label: 'Ficha Anestésica',
                       color: AppColors.primaryTeal, // Cor principal para destaque
                       onTap: () => _navigateTo(const FichaAnestesicaPage()),
+                    ),
+                    LibraryIconButton(
+                      icon: Icons.assignment_outlined, // Ícone de documento/formulário
+                      label: 'Termo Consentimento',
+                      color: AppColors.categoryPurple, // Cor roxa para destaque
+                      onTap: () => _navigateTo(const ConsentFormPage()),
                     ),
                     LibraryIconButton(
                       icon: Icons.checklist_outlined,
