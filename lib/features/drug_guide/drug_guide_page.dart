@@ -21,6 +21,8 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   List<Medication> _medications = [];
   List<Medication> _filteredMedications = [];
   String _selectedFilter = 'Todos';
+  bool _isLoading = false;
+  String? _errorMessage;
 
   // Lista de filtros agora é dinâmica
   List<String> _filters = ['Todos'];
@@ -28,11 +30,63 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   @override
   void initState() {
     super.initState();
-    _medications = MedicationService.getAllMedications();
-    // Popula os filtros com as classes únicas dos medicamentos
-    _filters.addAll(_getUniqueClasses());
-    _filteredMedications = _medications;
+    _loadMedications();
     _searchController.addListener(_filterMedications);
+  }
+  
+  /// Carrega medicamentos do backend
+  Future<void> _loadMedications() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = null;
+    });
+    
+    try {
+      // Tenta carregar do backend
+      await MedicationService.loadMedicationsFromBackend();
+      setState(() {
+        _medications = MedicationService.getAllMedications();
+        _filters = ['Todos', ..._getUniqueClasses()];
+        _filteredMedications = _medications;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Erro ao carregar medicamentos: $e';
+        _isLoading = false;
+      });
+    }
+  }
+  
+  /// Força refresh dos dados
+  Future<void> _refreshMedications() async {
+    try {
+      await MedicationService.loadMedicationsFromBackend(forceRefresh: true);
+      setState(() {
+        _medications = MedicationService.getAllMedications();
+        _filters = ['Todos', ..._getUniqueClasses()];
+        _filterMedications();
+      });
+      
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Medicamentos atualizados!'),
+            backgroundColor: AppColors.success,
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao atualizar: $e'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+      }
+    }
   }
 
   @override
@@ -125,83 +179,130 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Guia de Fármacos'),
-      ),
-      body: Column(
-        children: [
-          // Barra de Busca e Filtro
-          Padding(
-            padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-            child: Column(
-              children: [
-                ModernSearchBar(
-                  controller: _searchController,
-                  hintText: AppStrings.searchDrug,
-                  onChanged: (value) {}, // Listener já faz o trabalho
-                ),
-                const SizedBox(height: 12),
-                // Dropdown de Filtro por Classe - SEM LABEL e com opções dinâmicas
-                DropdownButtonFormField<String>(
-                  value: _selectedFilter,
-                  items: _filters.map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (newValue) {
-                    setState(() {
-                      _selectedFilter = newValue!;
-                    });
-                    _filterMedications();
-                  },
-                  decoration: InputDecoration(
-                    // labelText removido para um design mais limpo
-                    prefixIcon: const Icon(Icons.filter_list),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          // Lista de Medicamentos
-          Expanded(
-            child: _filteredMedications.isEmpty
-                ? EmptyState(
-                    icon: Icons.search_off,
-                    title: 'Nenhum medicamento encontrado',
-                    message:
-                        'Tente ajustar os filtros ou buscar por outro termo.',
-                    action:
-                        _searchController.text.isNotEmpty || _selectedFilter != 'Todos'
-                            ? ElevatedButton.icon(
-                                onPressed: _clearFilters,
-                                icon: const Icon(Icons.clear_all),
-                                label: const Text('Limpar Filtros'),
-                              )
-                            : null,
-                  )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(horizontal: AppConstants.defaultPadding),
-                    itemCount: _filteredMedications.length,
-                    itemBuilder: (context, index) {
-                      final medication = _filteredMedications[index];
-                      return MedicationListItem(
-                        icon: Icons.medication_outlined,
-                        iconColor: _getIconColor(medication.category),
-                        title: medication.name,
-                        subtitle: medication.category,
-                        tag: _getTag(medication),
-                        tagColor: _getTagColor(_getTag(medication)),
-                        onTap: () => _showMedicationDetails(medication),
-                      );
-                    },
-                  ),
+        actions: [
+          // Botão de refresh
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _isLoading ? null : _refreshMedications,
+            tooltip: 'Atualizar dados do servidor',
           ),
         ],
       ),
+      body: _isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Carregando medicamentos do servidor...'),
+                ],
+              ),
+            )
+          : _errorMessage != null
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 64, color: Colors.red),
+                      const SizedBox(height: 16),
+                      Text(
+                        _errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton.icon(
+                        onPressed: _loadMedications,
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Tentar Novamente'),
+                      ),
+                    ],
+                  ),
+                )
+              : Column(
+                  children: [
+                    // Barra de Busca e Filtro
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                      child: Column(
+                        children: [
+                          ModernSearchBar(
+                            controller: _searchController,
+                            hintText: AppStrings.searchDrug,
+                            onChanged: (value) {}, // Listener já faz o trabalho
+                          ),
+                          const SizedBox(height: 12),
+                          // Dropdown de Filtro por Classe - SEM LABEL e com opções dinâmicas
+                          DropdownButtonFormField<String>(
+                            value: _selectedFilter,
+                            items: _filters.map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                            onChanged: (newValue) {
+                              setState(() {
+                                _selectedFilter = newValue!;
+                              });
+                              _filterMedications();
+                            },
+                            decoration: InputDecoration(
+                              // labelText removido para um design mais limpo
+                              prefixIcon: const Icon(Icons.filter_list),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Lista de Medicamentos
+                    Expanded(
+                      child: _filteredMedications.isEmpty
+                          ? EmptyState(
+                              icon: Icons.search_off,
+                              title: _medications.isEmpty
+                                  ? 'Nenhum medicamento carregado'
+                                  : 'Nenhum medicamento encontrado',
+                              message: _medications.isEmpty
+                                  ? 'Clique no botão de atualizar para carregar do servidor'
+                                  : 'Tente ajustar os filtros ou buscar por outro termo.',
+                              action: _searchController.text.isNotEmpty ||
+                                      _selectedFilter != 'Todos'
+                                  ? ElevatedButton.icon(
+                                      onPressed: _clearFilters,
+                                      icon: const Icon(Icons.clear_all),
+                                      label: const Text('Limpar Filtros'),
+                                    )
+                                  : null,
+                            )
+                          : RefreshIndicator(
+                              onRefresh: _refreshMedications,
+                              child: ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: AppConstants.defaultPadding),
+                                itemCount: _filteredMedications.length,
+                                itemBuilder: (context, index) {
+                                  final medication = _filteredMedications[index];
+                                  return MedicationListItem(
+                                    icon: Icons.medication_outlined,
+                                    iconColor: _getIconColor(medication.category),
+                                    title: medication.name,
+                                    subtitle: medication.category,
+                                    tag: _getTag(medication),
+                                    tagColor: _getTagColor(_getTag(medication)),
+                                    onTap: () => _showMedicationDetails(medication),
+                                  );
+                                },
+                              ),
+                            ),
+                    ),
+                  ],
+                ),
     );
   }
 }

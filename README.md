@@ -1,9 +1,29 @@
 
-# Vet Anesthesia Helper
+# GDAV - Guia de Desenvolvimento em Anestesiologia Veterinária
+
+Aplicativo mobile completo para auxiliar profissionais de anestesiologia veterinária, com backend API integrado.
+
+## 🚀 Início Rápido
+
+```powershell
+# Inicie o aplicativo (backend + frontend automaticamente)
+.\quick-start.ps1
+
+# Em outro terminal, crie um usuário admin (opcional para recursos avançados)
+.\create-admin.ps1
+```
+
+**Pronto!** O script configura e inicia tudo automaticamente.
+
+📖 **Documentação completa**: [SETUPGUIDE.md](SETUPGUIDE.md) | [SCRIPTS.md](SCRIPTS.md)
+
+---
+
+## 📱 Sobre o Aplicativo
 
 O Vet Anesthesia Helper é um aplicativo móvel completo, desenvolvido em Flutter, para auxiliar médicos veterinários e estudantes de veterinária em diversas tarefas relacionadas à anestesiologia. O aplicativo oferece um conjunto de ferramentas para cálculos de doses, guias de medicamentos, checklists pré-operatórios, e módulos especializados para RCP, fluidoterapia e transfusão.
 
-Este projeto agora inclui um **backend API completo** desenvolvido em Dart Frog para gerenciamento centralizado de dados e autenticação de usuários.
+Este projeto agora inclui um **backend API completo** desenvolvido em Dart Frog para gerenciamento centralizado de dados de medicamentos.
 
 ---
 
