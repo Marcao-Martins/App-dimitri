@@ -5,7 +5,61 @@ Este guia fornece instruções detalhadas para configurar o ambiente de desenvol
 
 ---
 
-## 📋 Índice
+## � Início Rápido (Recomendado)
+
+**Se você quer começar imediatamente sem configuração manual**, use os scripts de automação:
+
+### Windows PowerShell
+
+```powershell
+# 1. Iniciar backend + frontend automaticamente
+.\quick-start.ps1
+
+# 2. Em outro terminal, criar usuário administrador
+.\create-admin.ps1
+
+# 3. Fazer login no app com as credenciais:
+#    Email: admin@gdav.com
+#    Senha: Admin@2024!
+
+# 4. Quando terminar, parar os serviços
+.\stop.ps1
+```
+
+**Pronto!** Os scripts fazem tudo automaticamente:
+- ✅ Verificam dependências (Dart, Flutter, Dart Frog)
+- ✅ Instalam pacotes necessários
+- ✅ Copiam arquivo de dados para o backend
+- ✅ Iniciam o servidor backend na porta 8080
+- ✅ Configuram conexão do frontend
+- ✅ Iniciam o aplicativo Flutter
+
+📖 **Para mais opções e detalhes**, veja [SCRIPTS.md](SCRIPTS.md)
+
+### Opções Avançadas dos Scripts
+
+```powershell
+# Apenas backend (para testes de API)
+.\start.ps1 -SkipFrontend
+
+# Apenas frontend (backend já rodando)
+.\start.ps1 -SkipBackend
+
+# Modo produção (otimizado)
+.\start.ps1 -ProductionMode
+
+# Porta customizada
+.\start.ps1 -BackendPort 3000
+
+# Criar admin com credenciais customizadas
+.\create-admin.ps1 -Email "seu@email.com" -Password "SuaSenha@123"
+```
+
+---
+
+## �📋 Índice
+
+**Configuração Manual** (se não quiser usar os scripts):
 
 1. [Frontend Flutter](#1-frontend-flutter)
    - Pré-requisitos

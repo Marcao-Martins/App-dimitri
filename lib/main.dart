@@ -12,21 +12,53 @@ import 'features/ficha_anestesica/ficha_anestesica_page.dart';
 import 'features/ficha_anestesica/ficha_provider.dart';
 import 'features/ficha_anestesica/services/storage_service.dart';
 import 'features/pre_op_checklist/pre_op_checklist_page.dart';
+import 'services/auth_service.dart';
+import 'services/medication_service.dart';
+import 'services/api_service.dart';
 
 /// Ponto de entrada do aplicativo GDAV
 /// Aplicativo desenvolvido para auxiliar anestesiologistas veterinários
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Inicializar serviços
   await StorageService.init();
+  
+  // Inicializar autenticação
+  final authService = AuthService();
+  await authService.init();
+  
+  // Tentar carregar medicamentos do backend (não bloqueia a inicialização)
+  _loadMedicationsInBackground();
+  
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => FichaProvider()),
+        Provider<AuthService>.value(value: authService),
       ],
       child: const GdavApp(),
     ),
   );
+}
+
+/// Carrega medicamentos em background
+void _loadMedicationsInBackground() {
+  Future.microtask(() async {
+    try {
+      // Testa conexão primeiro
+      final isConnected = await ApiService.testConnection();
+      if (isConnected) {
+        await MedicationService.loadMedicationsFromBackend();
+        print('✓ Medicamentos carregados do backend');
+      } else {
+        print('⚠ Backend não disponível - usando modo offline');
+      }
+    } catch (e) {
+      print('⚠ Erro ao carregar medicamentos: $e');
+    }
+  });
 }
 
 /// Widget raiz do aplicativo

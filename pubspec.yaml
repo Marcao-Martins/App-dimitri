@@ -16,6 +16,9 @@ dependencies:
   # Estado
   provider: ^6.1.5
   
+  # HTTP
+  http: ^1.1.0
+  
   # Persistência
   shared_preferences: ^2.5.3
   hive: ^2.2.3
