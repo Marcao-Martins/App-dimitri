@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'models/ficha_anestesica.dart';
 import 'models/paciente.dart';
 import 'models/medicacao.dart';
@@ -17,11 +18,26 @@ class FichaProvider extends ChangeNotifier {
   // Gerenciamento do cronômetro
   Timer? _procedureTimer;
   bool _isTimerRunning = false;
+  
+  // Gerenciamento do alarme de monitorização
+  Timer? _alarmeTimer;
+  bool _alarmeAtivo = false;
+  int _intervaloMinutos = 5;
+  DateTime? _proximoAlarme;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  
+  // Callback para notificação visual
+  Function()? _onAlarmeTocar;
 
   List<FichaAnestesica> get fichas => List.unmodifiable(_fichas);
   FichaAnestesica? get current => _current;
   bool get isTimerRunning => _isTimerRunning;
   int get procedureTimeSeconds => _current?.procedureTimeSeconds ?? 0;
+  
+  // Getters para alarme
+  bool get alarmeAtivo => _alarmeAtivo;
+  int get intervaloMinutos => _intervaloMinutos;
+  DateTime? get proximoAlarme => _proximoAlarme;
 
   FichaProvider() {
     _loadAllFichas();
@@ -30,6 +46,8 @@ class FichaProvider extends ChangeNotifier {
   @override
   void dispose() {
     _procedureTimer?.cancel();
+    _alarmeTimer?.cancel();
+    _audioPlayer.dispose();
     super.dispose();
   }
 
@@ -240,8 +258,85 @@ class FichaProvider extends ChangeNotifier {
 
   void clearCurrent() {
     _stopTimer(); // Para o timer antes de limpar
+    _pararAlarme(); // Para o alarme antes de limpar
     _current = null;
     _currentId = null;
     notifyListeners();
   }
+  
+  // ===== MÉTODOS DE ALARME DE MONITORIZAÇÃO =====
+  
+  /// Define callback para quando o alarme tocar
+  void setAlarmeCallback(Function() callback) {
+    _onAlarmeTocar = callback;
+  }
+  
+  /// Inicia o alarme de monitorização
+  void iniciarAlarme() {
+    _alarmeTimer?.cancel();
+    
+    _alarmeAtivo = true;
+    _proximoAlarme = DateTime.now().add(Duration(minutes: _intervaloMinutos));
+    
+    _alarmeTimer = Timer.periodic(Duration(minutes: _intervaloMinutos), (timer) {
+      if (_alarmeAtivo) {
+        _tocarBeep();
+        _onAlarmeTocar?.call(); // Notifica o widget
+        _proximoAlarme = DateTime.now().add(Duration(minutes: _intervaloMinutos));
+        notifyListeners();
+      }
+    });
+    
+    notifyListeners();
+  }
+  
+  /// Para o alarme de monitorização
+  void pararAlarme() {
+    _pararAlarme();
+    notifyListeners();
+  }
+  
+  void _pararAlarme() {
+    _alarmeTimer?.cancel();
+    _alarmeAtivo = false;
+    _proximoAlarme = null;
+  }
+  
+  /// Altera o intervalo do alarme
+  void setIntervaloAlarme(int minutos) {
+    _intervaloMinutos = minutos;
+    if (_alarmeAtivo) {
+      _pararAlarme();
+      iniciarAlarme();
+    }
+    notifyListeners();
+  }
+  
+  /// Toca o beep de alerta (3 beeps curtos)
+  Future<void> _tocarBeep() async {
+    try {
+      for (int i = 0; i < 3; i++) {
+        await _audioPlayer.play(AssetSource('sounds/beep.mp3'));
+        await Future.delayed(const Duration(milliseconds: 300));
+      }
+    } catch (e) {
+      debugPrint('Erro ao tocar beep: $e');
+    }
+  }
+  
+  /// Calcula tempo restante até próximo alarme
+  String getTempoRestanteAlarme() {
+    if (_proximoAlarme == null) return '';
+    
+    final agora = DateTime.now();
+    final diferenca = _proximoAlarme!.difference(agora);
+    
+    if (diferenca.isNegative) return 'Próximo alarme';
+    
+    final minutos = diferenca.inMinutes;
+    final segundos = diferenca.inSeconds % 60;
+    
+    return '${minutos}:${segundos.toString().padLeft(2, '0')}';
+  }
 }
+

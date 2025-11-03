@@ -58,7 +58,7 @@ class SpeciesSelector extends StatelessWidget {
             value: selectedSpecies,
             decoration: InputDecoration(
               filled: true,
-              fillColor: Colors.white,
+              fillColor: Theme.of(context).cardColor,
               hintText: 'Selecione a espécie',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -69,7 +69,7 @@ class SpeciesSelector extends StatelessWidget {
                 vertical: 16,
               ),
             ),
-            dropdownColor: Colors.white,
+            dropdownColor: Theme.of(context).cardColor,
             isExpanded: true,
             items: const [
               DropdownMenuItem(

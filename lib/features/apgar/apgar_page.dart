@@ -54,14 +54,14 @@ class _ApgarPageState extends State<ApgarPage> {
             children: [
               // Informação inicial
               Card(
-                color: Colors.blue.shade50,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
                       Icon(
-                        Icons.info_outline,
-                        color: Colors.blue.shade700,
+                        Icons.pets,
+                        color: Theme.of(context).colorScheme.primary,
                         size: 28,
                       ),
                       const SizedBox(width: 12),
@@ -70,7 +70,7 @@ class _ApgarPageState extends State<ApgarPage> {
                           'Avalie o neonato nos primeiros 5 minutos de vida',
                           style: TextStyle(
                             fontSize: 14,
-                            color: Colors.blue.shade900,
+                            color: Theme.of(context).colorScheme.onPrimaryContainer,
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -293,9 +293,9 @@ class _ApgarPageState extends State<ApgarPage> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Por favor, preencha todos os campos'),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: const Text('Por favor, preencha todos os campos'),
+          backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
     }
@@ -347,11 +347,11 @@ class _ApgarPageState extends State<ApgarPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildHelpItem('1. Cor das mucosas'),
-              _buildHelpItem('2. Frequência cardíaca'),
-              _buildHelpItem('3. Reflexo de irritabilidade'),
-              _buildHelpItem('4. Motilidade/Tônus muscular'),
-              _buildHelpItem('5. Esforços respiratórios'),
+              _buildHelpItem(context, '1. Cor das mucosas'),
+              _buildHelpItem(context, '2. Frequência cardíaca'),
+              _buildHelpItem(context, '3. Reflexo de irritabilidade'),
+              _buildHelpItem(context, '4. Motilidade/Tônus muscular'),
+              _buildHelpItem(context, '5. Esforços respiratórios'),
               const SizedBox(height: 16),
               const Text(
                 'Interpretação:',
@@ -361,16 +361,16 @@ class _ApgarPageState extends State<ApgarPage> {
                 ),
               ),
               const SizedBox(height: 8),
-              _buildHelpItem('8-10: Excelente', color: Colors.green),
-              _buildHelpItem('6-7: Bom', color: Colors.orange),
-              _buildHelpItem('4-5: Regular', color: Colors.deepOrange),
-              _buildHelpItem('0-3: Crítico', color: Colors.red),
+              _buildHelpItem(context, '8-10: Excelente', color: Colors.green),
+              _buildHelpItem(context, '6-7: Bom', color: Colors.orange),
+              _buildHelpItem(context, '4-5: Regular', color: Colors.deepOrange),
+              _buildHelpItem(context, '0-3: Crítico', color: Colors.red),
               const SizedBox(height: 16),
               Text(
                 'Cada parâmetro recebe pontuação de 0 a 2, totalizando 0 a 10 pontos.',
                 style: TextStyle(
                   fontSize: 13,
-                  color: Colors.grey[700],
+                  color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                   fontStyle: FontStyle.italic,
                 ),
               ),
@@ -387,7 +387,7 @@ class _ApgarPageState extends State<ApgarPage> {
     );
   }
 
-  Widget _buildHelpItem(String text, {Color? color}) {
+  Widget _buildHelpItem(BuildContext context, String text, {Color? color}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
       child: Row(
@@ -395,7 +395,7 @@ class _ApgarPageState extends State<ApgarPage> {
           Icon(
             Icons.fiber_manual_record,
             size: 8,
-            color: color ?? Colors.grey[600],
+            color: color ?? Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -403,7 +403,7 @@ class _ApgarPageState extends State<ApgarPage> {
               text,
               style: TextStyle(
                 fontSize: 13,
-                color: color ?? Colors.grey[800],
+                color: color ?? Theme.of(context).textTheme.bodyMedium?.color,
               ),
             ),
           ),

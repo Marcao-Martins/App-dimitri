@@ -25,11 +25,11 @@ class ParameterSelector extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Theme.of(context).shadowColor.withOpacity(0.1),
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
@@ -51,10 +51,10 @@ class ParameterSelector extends StatelessWidget {
             ),
             child: Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1565C0),
+                color: Theme.of(context).colorScheme.primary,
               ),
             ),
           ),
@@ -117,7 +117,7 @@ class ParameterSelector extends StatelessWidget {
                               option.description,
                               style: TextStyle(
                                 fontSize: 12,
-                                color: Colors.grey[600],
+                                color: Theme.of(context).textTheme.bodySmall?.color,
                               ),
                             ),
                           ],

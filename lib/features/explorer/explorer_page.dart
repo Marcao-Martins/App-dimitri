@@ -150,7 +150,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       onTap: () => _navigateTo(const TransfusionPage()),
                     ),
                     LibraryIconButton(
-                      icon: Icons.baby_changing_station,
+                      icon: Icons.pets,
                       label: 'Escore Apgar',
                       color: AppColors.categoryPink,
                       onTap: () => _navigateTo(const ApgarPage()),

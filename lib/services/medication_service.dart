@@ -38,7 +38,8 @@ class MedicationService {
       final response = await ApiService.get(ApiConfig.farmacosEndpoint);
       
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> data = responseData['data'] as List<dynamic>;
         _medications.clear();
         _medications.addAll(
           data.map((json) => _parseMedication(json)).toList(),
@@ -62,7 +63,8 @@ class MedicationService {
       );
       
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> data = responseData['data'] as List<dynamic>;
         return data.map((json) => _parseMedication(json)).toList();
       } else {
         throw Exception('Falha ao buscar medicamentos');
@@ -82,7 +84,8 @@ class MedicationService {
       );
       
       if (response.statusCode == 200) {
-        final List<dynamic> data = json.decode(response.body);
+        final responseData = json.decode(response.body) as Map<String, dynamic>;
+        final List<dynamic> data = responseData['data'] as List<dynamic>;
         return data.map((json) => _parseMedication(json)).toList();
       } else {
         throw Exception('Falha ao buscar medicamentos por espécie');
@@ -96,31 +99,60 @@ class MedicationService {
   
   /// Converte JSON do backend para Medication
   static Medication _parseMedication(Map<String, dynamic> json) {
+    // Extrai a posologia de cães para análise de dose
+    final dogDosage = json['posologia_caes']?.toString() ?? '';
+    final doseParts = _parseDose(dogDosage);
+    
+    // Define espécies com base na posologia disponível
+    final species = <String>[];
+    if (json['posologia_caes']?.toString().isNotEmpty ?? false) {
+      species.add('Cão');
+    }
+    if (json['posologia_gatos']?.toString().isNotEmpty ?? false) {
+      species.add('Gato');
+    }
+    if (species.isEmpty) {
+      species.add('Não especificado');
+    }
+
     return Medication(
-      id: json['id']?.toString() ?? '',
+      id: json['post_id']?.toString() ?? json['id']?.toString() ?? '',
       name: json['farmaco']?.toString() ?? json['name']?.toString() ?? '',
-      category: json['categoria']?.toString() ?? json['category']?.toString() ?? '',
-      species: _parseSpecies(json['especie']?.toString() ?? json['species']?.toString() ?? ''),
-      dosage: json['dose']?.toString() ?? json['dosage']?.toString() ?? '',
-      route: json['via']?.toString() ?? json['route']?.toString() ?? '',
-      frequency: json['frequencia']?.toString() ?? json['frequency']?.toString() ?? '',
-      contraindications: json['contraindicacoes']?.toString() ?? 
-                        json['contraindications']?.toString() ?? '',
-      sideEffects: json['efeitos_adversos']?.toString() ?? 
-                  json['sideEffects']?.toString() ?? '',
-      observations: json['observacoes']?.toString() ?? 
-                   json['observations']?.toString() ?? '',
+      category: json['classe_farmacologica']?.toString() ?? json['category']?.toString() ?? '',
+      species: species,
+      minDose: doseParts['minDose']!,
+      maxDose: doseParts['maxDose']!,
+      unit: doseParts['unit']!,
+      tradeName: json['nome_comercial']?.toString(),
+      mechanismOfAction: json['mecanismo_de_acao']?.toString(),
+      dogDosage: json['posologia_caes']?.toString(),
+      catDosage: json['posologia_gatos']?.toString(),
+      cri: json['ivc']?.toString(),
+      comments: json['comentarios']?.toString(),
+      references: json['referencia']?.toString(),
+      link: json['link']?.toString(),
+      indications: json['indicacoes']?.toString() ?? json['indications']?.toString(),
+      contraindications: json['contraindicacoes']?.toString() ?? json['contraindications']?.toString(),
+      precautions: json['observacoes']?.toString() ?? json['precautions']?.toString(),
+      description: json['titulo']?.toString() ?? json['description']?.toString(),
     );
   }
-  
-  /// Parse das espécies do formato CSV
-  static List<String> _parseSpecies(String speciesStr) {
-    if (speciesStr.isEmpty) return [];
-    return speciesStr
-        .split(',')
-        .map((s) => s.trim())
-        .where((s) => s.isNotEmpty)
-        .toList();
+
+  /// Analisa a string de dose para extrair min, max e unidade.
+  /// Ex: "0.1-0.2 mg/kg" -> {min: 0.1, max: 0.2, unit: "mg/kg"}
+  static Map<String, dynamic> _parseDose(String doseString) {
+    doseString = doseString.replaceAll(',', '.');
+    final RegExp doseRegex = RegExp(r'([\d\.]+)(?:-([\d\.]+))?\s*(\w+\/\w+)');
+    final match = doseRegex.firstMatch(doseString);
+
+    if (match != null) {
+      final minDose = double.tryParse(match.group(1)!) ?? 0.0;
+      final maxDose = double.tryParse(match.group(2) ?? match.group(1)!) ?? minDose;
+      final unit = match.group(3) ?? 'mg/kg';
+      return {'minDose': minDose, 'maxDose': maxDose, 'unit': unit};
+    }
+
+    return {'minDose': 0.0, 'maxDose': 0.0, 'unit': 'N/A'};
   }
   
   /// Adiciona um medicamento à lista (útil para testes ou adição manual)
@@ -187,6 +219,9 @@ class MedicationService {
         .toList()
       ..sort();
   }
+  
+  /// Retorna todas as categorias disponíveis (alias)
+  static List<String> getCategories() => getAllCategories();
   
   /// Retorna todas as espécies suportadas
   static List<String> getAllSpecies() {

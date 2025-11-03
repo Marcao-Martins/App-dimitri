@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'core/constants/app_strings.dart';
 import 'core/providers/theme_provider.dart';
 import 'core/themes/app_theme.dart';
+import 'features/auth/login_page.dart';
 import 'features/dose_calculator/dose_calculator_page.dart';
 import 'features/drug_guide/drug_guide_page.dart';
 import 'features/explorer/explorer_page.dart';
@@ -12,6 +13,7 @@ import 'features/ficha_anestesica/ficha_anestesica_page.dart';
 import 'features/ficha_anestesica/ficha_provider.dart';
 import 'features/ficha_anestesica/services/storage_service.dart';
 import 'features/pre_op_checklist/pre_op_checklist_page.dart';
+import 'features/admin/admin_dashboard.dart';
 import 'services/auth_service.dart';
 import 'services/medication_service.dart';
 import 'services/api_service.dart';
@@ -36,7 +38,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => FichaProvider()),
-        Provider<AuthService>.value(value: authService),
+        ChangeNotifierProvider<AuthService>.value(value: authService),
       ],
       child: const GdavApp(),
     ),
@@ -78,8 +80,21 @@ class GdavApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
           
-          // Tela inicial
-          home: const MainNavigationScreen(),
+          // Tela inicial baseada no estado de autenticação
+          home: Consumer<AuthService>(
+            builder: (context, authService, _) {
+              return authService.isAuthenticated 
+                  ? const MainNavigationScreen()
+                  : const LoginPage();
+            },
+          ),
+          
+          // Rotas nomeadas
+          routes: {
+            '/home': (context) => const MainNavigationScreen(),
+            '/login': (context) => const LoginPage(),
+            '/admin': (context) => const AdminDashboard(),
+          },
         );
       },
     );
@@ -121,11 +136,21 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
+    final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
       appBar: AppBar(
         title: Text(_titles[_currentIndex]),
         actions: [
+          // Botão Admin (apenas para administradores)
+          if (authService.isAdmin)
+            IconButton(
+              icon: const Icon(Icons.admin_panel_settings_outlined),
+              tooltip: 'Painel Administrativo',
+              onPressed: () {
+                Navigator.of(context).pushNamed('/admin');
+              },
+            ),
           IconButton(
             icon: Icon(
               themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
@@ -133,6 +158,33 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             tooltip: themeProvider.isDarkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro',
             onPressed: () {
               themeProvider.toggleTheme(!themeProvider.isDarkMode);
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout_outlined),
+            tooltip: 'Sair',
+            onPressed: () async {
+              final confirm = await showDialog<bool>(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Sair'),
+                  content: const Text('Deseja realmente sair?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      child: const Text('Cancelar'),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('Sair'),
+                    ),
+                  ],
+                ),
+              );
+              
+              if (confirm == true && context.mounted) {
+                await authService.logout();
+              }
             },
           ),
         ],

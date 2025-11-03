@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../core/config/api_config.dart';
 import 'api_service.dart';
@@ -37,7 +38,7 @@ class AuthUser {
 }
 
 /// Serviço de autenticação
-class AuthService {
+class AuthService extends ChangeNotifier {
   static const String _storageKey = 'auth_user';
   AuthUser? _currentUser;
   
@@ -76,6 +77,7 @@ class AuthService {
         await _saveUser(user);
         _currentUser = user;
         ApiService.setAuthToken(user.token);
+        notifyListeners();
         
         return user;
       } else if (response.statusCode == 401) {
@@ -143,6 +145,7 @@ class AuthService {
     _currentUser = null;
     ApiService.clearAuthToken();
     await _clearStorage();
+    notifyListeners();
   }
   
   /// Salva usuário no storage

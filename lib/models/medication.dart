@@ -2,12 +2,23 @@
 /// Contém informações completas sobre doses, indicações e contraindicações
 class Medication {
   final String id;
-  final String name;
+  final String name; // Nome do fármaco
   final double minDose; // Dose mínima em mg/kg
   final double maxDose; // Dose máxima em mg/kg
   final String unit; // Unidade (mg/kg, mcg/kg, etc)
   final List<String> species; // Espécies compatíveis
-  final String category; // Categoria do medicamento
+  final String category; // Classe farmacológica
+  
+  // Campos adicionais do CSV
+  final String? tradeName; // Nome comercial
+  final String? mechanismOfAction; // Mecanismo de ação
+  final String? dogDosage; // Posologia para cães
+  final String? catDosage; // Posologia para gatos
+  final String? cri; // Infusão venosa contínua (CRI/IVC)
+  final String? comments; // Comentários
+  final String? references; // Referências bibliográficas
+  final String? link; // Link para o post original
+  
   final String? indications; // Indicações de uso
   final String? contraindications; // Contraindicações
   final String? precautions; // Precauções especiais
@@ -21,6 +32,14 @@ class Medication {
     required this.unit,
     required this.species,
     required this.category,
+    this.tradeName,
+    this.mechanismOfAction,
+    this.dogDosage,
+    this.catDosage,
+    this.cri,
+    this.comments,
+    this.references,
+    this.link,
     this.indications,
     this.contraindications,
     this.precautions,
@@ -63,6 +82,14 @@ class Medication {
       'unit': unit,
       'species': species,
       'category': category,
+      'tradeName': tradeName,
+      'mechanismOfAction': mechanismOfAction,
+      'dogDosage': dogDosage,
+      'catDosage': catDosage,
+      'cri': cri,
+      'comments': comments,
+      'references': references,
+      'link': link,
       'indications': indications,
       'contraindications': contraindications,
       'precautions': precautions,
@@ -80,6 +107,14 @@ class Medication {
       unit: json['unit'] as String,
       species: List<String>.from(json['species'] as List),
       category: json['category'] as String,
+      tradeName: json['tradeName'] as String?,
+      mechanismOfAction: json['mechanismOfAction'] as String?,
+      dogDosage: json['dogDosage'] as String?,
+      catDosage: json['catDosage'] as String?,
+      cri: json['cri'] as String?,
+      comments: json['comments'] as String?,
+      references: json['references'] as String?,
+      link: json['link'] as String?,
       indications: json['indications'] as String?,
       contraindications: json['contraindications'] as String?,
       precautions: json['precautions'] as String?,

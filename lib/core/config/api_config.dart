@@ -26,6 +26,9 @@ class ApiConfig {
   static String farmacosBySpeciesEndpoint(String species) => 
       '$_baseUrl$apiVersion/farmacos/species/$species';
   
+  // Admin farmacos endpoints
+  static String get adminFarmacosEndpoint => '$_baseUrl$apiVersion/admin/farmacos';
+  
   /// Timeout padrão para requisições
   static const Duration requestTimeout = Duration(seconds: 30);
   

@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:dart_frog/dart_frog.dart';
 import '../../../../lib/providers/user_provider.dart';
 import '../../../../lib/models/user.dart';
+import '../../../../lib/services/jwt_service.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   // Apenas POST é permitido
@@ -25,6 +26,7 @@ Future<Response> onRequest(RequestContext context) async {
     final name = data['name']?.toString().trim();
     final email = data['email']?.toString().trim();
     final password = data['password']?.toString();
+    final roleStr = data['role']?.toString().trim();
 
     if (name == null || name.isEmpty) {
       return Response.json(
@@ -67,6 +69,16 @@ Future<Response> onRequest(RequestContext context) async {
       );
     }
 
+    // Parse do role (padrão é consumer)
+    UserRole role = UserRole.consumer;
+    if (roleStr != null && roleStr.isNotEmpty) {
+      if (roleStr.toLowerCase() == 'admin' || roleStr.toLowerCase() == 'administrator') {
+        role = UserRole.administrator;
+      } else if (roleStr.toLowerCase() == 'consumer') {
+        role = UserRole.consumer;
+      }
+    }
+
     // Obtém o provider de usuários
     final userProvider = context.read<UserProvider>();
 
@@ -82,12 +94,18 @@ Future<Response> onRequest(RequestContext context) async {
     }
 
     // Cria o usuário (a senha é hasheada dentro do método)
-    // Role padrão é 'consumer'
     final user = await userProvider.createUser(
       name: name,
       email: email,
       password: password,
-      role: UserRole.consumer,
+      role: role,
+    );
+
+    // Gera o token JWT para o usuário recém-criado
+    final token = JwtService.generateToken(
+      userId: user.id,
+      email: user.email,
+      role: user.role.name,
     );
 
     // Retorna sucesso (sem a senha)
@@ -97,6 +115,7 @@ Future<Response> onRequest(RequestContext context) async {
         'success': true,
         'message': 'Usuário criado com sucesso',
         'user': user.toJsonSafe(),
+        'token': token,
       },
     );
   } on Exception catch (e) {

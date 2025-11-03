@@ -6,6 +6,7 @@ import 'widgets/dynamic_table.dart';
 import 'widgets/monitoring_table.dart';
 import 'widgets/charts_widget.dart';
 import 'widgets/procedure_timer_widget.dart';
+import 'widgets/monitoring_alarm_widget.dart';
 import 'pdf/pdf_service.dart';
 
 class FichaAnestesicaPage extends StatefulWidget {
@@ -189,8 +190,14 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Cronômetro de Procedimento
-          const ProcedureTimerWidget(),
+          // Cronômetro e Alarme de Monitorização
+          Row(
+            children: [
+              const Expanded(child: ProcedureTimerWidget()),
+              const SizedBox(width: 8),
+              const MonitoringAlarmWidget(),
+            ],
+          ),
           const SizedBox(height: 12),
           
           // Informações do Paciente (resumo)

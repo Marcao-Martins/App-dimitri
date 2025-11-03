@@ -31,8 +31,10 @@ try {
 Write-Host "📝 Criando usuário administrador..." -ForegroundColor Cyan
 
 $body = @{
+    name = "Admin"
     email = $Email
     password = $Password
+    role = "admin"
 } | ConvertTo-Json
 
 try {
@@ -50,7 +52,6 @@ try {
     Write-Host "User ID: $($result.user.id)" -ForegroundColor White
     Write-Host "Email:   $($result.user.email)" -ForegroundColor White
     Write-Host "Role:    $($result.user.role)" -ForegroundColor White
-    Write-Host "Token:   $($result.token.Substring(0, 20))..." -ForegroundColor Gray
     Write-Host "═══════════════════════════════════════════════`n" -ForegroundColor Cyan
     
     Write-Host "💡 Use estas credenciais para fazer login no app`n" -ForegroundColor Yellow
@@ -62,12 +63,17 @@ try {
         Write-Host "`n⚠ Usuário já existe!" -ForegroundColor Yellow
         Write-Host "Use as credenciais existentes ou escolha outro email`n" -ForegroundColor Gray
     } elseif ($statusCode -eq 400) {
-        Write-Host "`n✗ Senha não atende aos requisitos:" -ForegroundColor Red
-        Write-Host "  • 8-128 caracteres" -ForegroundColor Gray
-        Write-Host "  • Pelo menos 1 maiúscula" -ForegroundColor Gray
-        Write-Host "  • Pelo menos 1 minúscula" -ForegroundColor Gray
-        Write-Host "  • Pelo menos 1 número" -ForegroundColor Gray
-        Write-Host "  • Pelo menos 1 caractere especial (@$!%*?&)`n" -ForegroundColor Gray
+        Write-Host "`n✗ Dados inválidos ou senha não atende aos requisitos" -ForegroundColor Red
+        try {
+            $errorBody = $_.ErrorDetails.Message | ConvertFrom-Json
+            Write-Host "Mensagem: $($errorBody.message)`n" -ForegroundColor Gray
+        } catch {
+            Write-Host "  • 8-128 caracteres" -ForegroundColor Gray
+            Write-Host "  • Pelo menos 1 maiúscula" -ForegroundColor Gray
+            Write-Host "  • Pelo menos 1 minúscula" -ForegroundColor Gray
+            Write-Host "  • Pelo menos 1 número" -ForegroundColor Gray
+            Write-Host "  • Pelo menos 1 caractere especial (@$!%*?&)`n" -ForegroundColor Gray
+        }
     } else {
         Write-Host "`n✗ Erro ao criar usuário: $($_.Exception.Message)`n" -ForegroundColor Red
     }

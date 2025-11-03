@@ -13,6 +13,19 @@ UserProvider? _userProvider;
 
 Handler middleware(Handler handler) {
   return (context) async {
+    // Trata requisições OPTIONS (preflight CORS)
+    if (context.request.method == HttpMethod.options) {
+      return Response(
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization',
+          'Access-Control-Max-Age': '86400',
+        },
+      );
+    }
+
     // Inicializa os provedores na primeira requisição
     // IMPORTANTE: Apenas para desenvolvimento! Em produção, use pool de conexões
     if (_dbProvider == null || _userProvider == null) {
@@ -30,6 +43,9 @@ Handler middleware(Handler handler) {
         print('❌ Erro ao inicializar provedores: $e');
         return Response.json(
           statusCode: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+          },
           body: {
             'error': 'Erro interno do servidor',
             'message': 'Falha ao inicializar banco de dados',
@@ -44,7 +60,17 @@ Handler middleware(Handler handler) {
         .provide<DatabaseProvider>(() => _dbProvider!)
         .provide<UserProvider>(() => _userProvider!);
 
-    // Continua para o próximo handler/rota
-    return handler(contextWithProviders);
+    // Processa a requisição
+    final response = await handler(contextWithProviders);
+    
+    // Adiciona headers CORS para permitir requisições do Flutter Web
+    return response.copyWith(
+      headers: {
+        ...response.headers,
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+        'Access-Control-Allow-Headers': 'Origin, Content-Type, Accept, Authorization',
+      },
+    );
   };
 }

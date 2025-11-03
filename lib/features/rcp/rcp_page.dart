@@ -32,23 +32,32 @@ class RcpPage extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Cycle Counter Badge
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Chip(
-                      label: Text(
-                        'Ciclo: ${controller.cycleCount}',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
+                  // Ciclo e Fármacos lado a lado
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Tabela de Fármacos (esquerda/centro)
+                      Expanded(
+                        child: _buildDrugTable(context),
+                      ),
+                      const SizedBox(width: 8),
+                      // Cycle Counter Badge (direita)
+                      Chip(
+                        label: Text(
+                          'Ciclo: ${controller.cycleCount}',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
+                        avatar: Icon(
+                          Icons.sync,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                        padding: const EdgeInsets.all(12),
                       ),
-                      avatar: Icon(
-                        Icons.sync,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                      padding: const EdgeInsets.all(12),
-                    ),
+                    ],
                   ),
 
                   const SizedBox(height: 16),
@@ -115,6 +124,69 @@ class RcpPage extends StatelessWidget {
             );
           },
         ),
+      ),
+    );
+  }
+
+  /// Constrói tabela discreta de fármacos
+  Widget _buildDrugTable(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            'Fármacos',
+            style: Theme.of(context).textTheme.labelSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            children: [
+              Icon(
+                Icons.medication,
+                size: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Atropina (0,04mg/kg)',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              Icon(
+                Icons.medication,
+                size: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant.withOpacity(0.7),
+              ),
+              const SizedBox(width: 4),
+              Text(
+                'Adrenalina (0,1mg/kg)',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  fontSize: 11,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

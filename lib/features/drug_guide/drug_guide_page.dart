@@ -307,7 +307,7 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
   }
 }
 
-/// Página de Detalhes do Medicamento
+/// Página de Detalhes do Medicamento - Layout Expandido
 class MedicationDetailPage extends StatelessWidget {
   final Medication medication;
 
@@ -318,106 +318,105 @@ class MedicationDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(medication.name),
+        actions: [
+          if (medication.link != null && medication.link!.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.open_in_browser),
+              tooltip: 'Ver online',
+              onPressed: () {
+                // TODO: Abrir link no navegador
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Link: ${medication.link}')),
+                );
+              },
+            ),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Cabeçalho
-            CustomCard(
-              color: AppColors.primaryTeal.withValues(alpha: 0.1),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(AppConstants.defaultPadding),
-                        decoration: BoxDecoration(
-                          color: AppColors.primaryTeal,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(
-                          Icons.medication_outlined,
-                          color: Colors.white,
-                          size: 32,
-                        ),
-                      ),
-                      const SizedBox(width: AppConstants.defaultPadding),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              medication.name,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              medication.category,
-                              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                    color: AppColors.primaryTeal,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppConstants.defaultPadding),
-                  InfoRow(
-                    label: 'Dose Mínima:',
-                    value: '${medication.minDose} ${medication.unit}',
-                    icon: Icons.arrow_downward_rounded,
-                  ),
-                  const SizedBox(height: AppConstants.smallPadding),
-                  InfoRow(
-                    label: 'Dose Máxima:',
-                    value: '${medication.maxDose} ${medication.unit}',
-                    icon: Icons.arrow_upward_rounded,
-                  ),
-                  const SizedBox(height: AppConstants.defaultPadding),
-                  Text(
-                    'Espécies Compatíveis:',
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: AppConstants.smallPadding),
-                  Wrap(
-                    spacing: AppConstants.smallPadding,
-                    runSpacing: AppConstants.smallPadding,
-                    children: medication.species.map((species) {
-                      return Chip(
-                        label: Text(species),
-                        avatar: const Icon(Icons.pets, size: 16),
-                        visualDensity: VisualDensity.compact,
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ),
-
+            // Cabeçalho Principal
+            _buildHeader(context),
+            
             const SizedBox(height: AppConstants.defaultPadding),
-
-            // Descrição
-            if (medication.description != null && medication.description!.isNotEmpty)
+            
+            // Classe Farmacológica
+            _buildInfoCard(
+              context,
+              'Classe Farmacológica',
+              medication.category,
+              Icons.category_outlined,
+              AppColors.categoryPurple,
+            ),
+            
+            // Nome Comercial
+            if (medication.tradeName != null && medication.tradeName!.isNotEmpty)
+              _buildInfoCard(
+                context,
+                'Nome Comercial',
+                medication.tradeName!,
+                Icons.shopping_bag_outlined,
+                AppColors.categoryBlue,
+              ),
+            
+            // Mecanismo de Ação
+            if (medication.mechanismOfAction != null && medication.mechanismOfAction!.isNotEmpty)
               _buildSection(
                 context,
-                'Descrição',
-                medication.description!,
-                Icons.info_outline,
+                'Mecanismo de Ação',
+                medication.mechanismOfAction!,
+                Icons.science_outlined,
                 AppColors.info,
               ),
-
+            
+            // Posologia - Cães
+            if (medication.dogDosage != null && medication.dogDosage!.isNotEmpty)
+              _buildDosageCard(
+                context,
+                'Posologia em Cães',
+                medication.dogDosage!,
+                Icons.pets,
+                AppColors.categoryOrange,
+              ),
+            
+            // Posologia - Gatos
+            if (medication.catDosage != null && medication.catDosage!.isNotEmpty)
+              _buildDosageCard(
+                context,
+                'Posologia em Gatos',
+                medication.catDosage!,
+                Icons.pets,
+                AppColors.primaryTeal,
+              ),
+            
+            // Infusão Venosa Contínua (CRI/IVC)
+            if (medication.cri != null && medication.cri!.isNotEmpty)
+              _buildSection(
+                context,
+                'Infusão Venosa Contínua (IVC)',
+                medication.cri!,
+                Icons.water_drop_outlined,
+                AppColors.categoryBlue,
+              ),
+            
+            // Comentários
+            if (medication.comments != null && medication.comments!.isNotEmpty)
+              _buildSection(
+                context,
+                'Comentários e Observações',
+                medication.comments!,
+                Icons.comment_outlined,
+                AppColors.warning,
+              ),
+            
             // Indicações
             if (medication.indications != null && medication.indications!.isNotEmpty)
               _buildSection(
@@ -427,7 +426,7 @@ class MedicationDetailPage extends StatelessWidget {
                 Icons.check_circle_outline,
                 AppColors.success,
               ),
-
+            
             // Contraindicações
             if (medication.contraindications != null && medication.contraindications!.isNotEmpty)
               _buildSection(
@@ -437,7 +436,7 @@ class MedicationDetailPage extends StatelessWidget {
                 Icons.cancel_outlined,
                 AppColors.error,
               ),
-
+            
             // Precauções
             if (medication.precautions != null && medication.precautions!.isNotEmpty)
               _buildSection(
@@ -447,12 +446,224 @@ class MedicationDetailPage extends StatelessWidget {
                 Icons.warning_amber_outlined,
                 AppColors.warning,
               ),
+            
+            // Referências Bibliográficas
+            if (medication.references != null && medication.references!.isNotEmpty)
+              _buildReferencesCard(context),
+            
+            const SizedBox(height: AppConstants.defaultPadding),
           ],
         ),
       ),
     );
   }
 
+  /// Cabeçalho com título e informações básicas
+  Widget _buildHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return CustomCard(
+      color: AppColors.primaryTeal.withValues(alpha: 0.1),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AppConstants.defaultPadding),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryTeal,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(
+                  Icons.medication_outlined,
+                  color: Colors.white,
+                  size: 32,
+                ),
+              ),
+              const SizedBox(width: AppConstants.defaultPadding),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Título (description) se disponível
+                    if (medication.description != null && medication.description!.isNotEmpty)
+                      Text(
+                        medication.description!,
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    const SizedBox(height: 4),
+                    Text(
+                      medication.name,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: AppColors.primaryTeal,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppConstants.defaultPadding),
+          
+          // Doses de referência
+          Row(
+            children: [
+              Expanded(
+                child: _buildDoseChip(
+                  context,
+                  'Min',
+                  '${medication.minDose} ${medication.unit}',
+                  Icons.arrow_downward_rounded,
+                  Colors.green,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: _buildDoseChip(
+                  context,
+                  'Max',
+                  '${medication.maxDose} ${medication.unit}',
+                  Icons.arrow_upward_rounded,
+                  Colors.orange,
+                ),
+              ),
+            ],
+          ),
+          
+          const SizedBox(height: AppConstants.defaultPadding),
+          
+          // Espécies compatíveis
+          Text(
+            'Espécies:',
+            style: theme.textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: AppConstants.smallPadding),
+          Wrap(
+            spacing: AppConstants.smallPadding,
+            runSpacing: AppConstants.smallPadding,
+            children: medication.species.map((species) {
+              return Chip(
+                label: Text(species),
+                avatar: const Icon(Icons.pets, size: 16),
+                visualDensity: VisualDensity.compact,
+                backgroundColor: AppColors.primaryTeal.withValues(alpha: 0.1),
+              );
+            }).toList(),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Card de informação simples
+  Widget _buildInfoCard(
+    BuildContext context,
+    String title,
+    String content,
+    IconData icon,
+    Color color,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
+      child: CustomCard(
+        color: color.withValues(alpha: 0.05),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 24),
+            const SizedBox(width: AppConstants.defaultPadding),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    content,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Card de dosagem com destaque
+  Widget _buildDosageCard(
+    BuildContext context,
+    String title,
+    String dosage,
+    IconData icon,
+    Color color,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
+      child: CustomCard(
+        color: color.withValues(alpha: 0.08),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(width: AppConstants.defaultPadding),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppConstants.defaultPadding),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: color.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                dosage,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      fontFamily: 'monospace',
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Seção expandida com conteúdo longo
   Widget _buildSection(
     BuildContext context,
     String title,
@@ -471,11 +682,14 @@ class MedicationDetailPage extends StatelessWidget {
               children: [
                 Icon(icon, color: color),
                 const SizedBox(width: AppConstants.smallPadding),
-                Text(
-                  title,
-                  style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        color: color,
-                      ),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: color,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
                 ),
               ],
             ),
@@ -483,11 +697,105 @@ class MedicationDetailPage extends StatelessWidget {
             Text(
               content,
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.8)
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.8),
+                    height: 1.5,
+                  ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// Card de referências bibliográficas
+  Widget _buildReferencesCard(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppConstants.defaultPadding),
+      child: CustomCard(
+        color: AppColors.info.withValues(alpha: 0.05),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(Icons.library_books_outlined, color: AppColors.info),
+                const SizedBox(width: AppConstants.smallPadding),
+                Text(
+                  'Referências Bibliográficas',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                        color: AppColors.info,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppConstants.defaultPadding),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
+              ),
+              child: Text(
+                medication.references!,
+                style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                      height: 1.4,
+                      fontStyle: FontStyle.italic,
+                    ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Chip de dose
+  Widget _buildDoseChip(
+    BuildContext context,
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              value,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+              textAlign: TextAlign.end,
+            ),
+          ),
+        ],
       ),
     );
   }

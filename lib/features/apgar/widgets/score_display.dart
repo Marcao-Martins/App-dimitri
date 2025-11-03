@@ -39,13 +39,13 @@ class ScoreDisplay extends StatelessWidget {
         child: Column(
           children: [
             // Título
-            const Text(
+            Text(
               'ESCORE APGAR',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 letterSpacing: 1.5,
-                color: Colors.black54,
+                color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.6),
               ),
             ),
             const SizedBox(height: 16),
@@ -131,7 +131,7 @@ class ScoreDisplay extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[700],
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -153,7 +153,7 @@ class ScoreDisplay extends StatelessWidget {
                         rec,
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[800],
+                          color: Theme.of(context).textTheme.bodyMedium?.color,
                           height: 1.4,
                         ),
                       ),
