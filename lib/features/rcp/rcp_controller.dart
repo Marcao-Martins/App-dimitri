@@ -10,6 +10,7 @@ class RcpController with ChangeNotifier {
   static const int cycleDuration = 120; // 2 minutos em segundos
   Timer? _countdownTimer;
   Timer? _metronomeTimer;
+  Timer? _breathTimer;
   int _secondsRemaining = cycleDuration;
   bool _isRunning = false;
 
@@ -19,9 +20,12 @@ class RcpController with ChangeNotifier {
   // Audio
   final AudioPlayer _metronomePlayer = AudioPlayer();
   final AudioPlayer _alertPlayer = AudioPlayer();
+  final AudioPlayer _breathPlayer = AudioPlayer();
   static const String _beepSound = 'sounds/beep.mp3';
   static const String _cycleEndSound = 'sounds/cycle_end.mp3';
+  static const String _breathSound = 'sounds/breath.mp3'; // opcional; fallback para beep
   bool _isMuted = false;
+  bool _hasBreathAsset = true;
   
   // Wake Lock (tela sempre ligada)
   bool _isWakeLockEnabled = false;
@@ -33,6 +37,10 @@ class RcpController with ChangeNotifier {
   bool get isMuted => _isMuted;
   bool get isWakeLockEnabled => _isWakeLockEnabled;
   double get progress => 1.0 - (_secondsRemaining / cycleDuration);
+
+  RcpController() {
+    _setupAudio();
+  }
   
   /// Retorna mensagem de status em tempo real
   String get statusMessage {
@@ -68,6 +76,8 @@ class RcpController with ChangeNotifier {
   /// Inicia o timer e metrônomo
   void _start() {
     _isRunning = true;
+    // Prime o áudio no web sob gesto do usuário
+    _primeAudioForWeb();
     
     // Timer principal de contagem regressiva (1 segundo)
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -86,6 +96,14 @@ class RcpController with ChangeNotifier {
       }
     });
 
+    // Respiração a cada 6 segundos (≈10 bpm)
+    _breathTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
+      if (_isRunning) {
+        final path = _hasBreathAsset ? _breathSound : _beepSound;
+        _playSound(_breathPlayer, path, volume: 0.9);
+      }
+    });
+
     notifyListeners();
   }
 
@@ -94,6 +112,7 @@ class RcpController with ChangeNotifier {
     _isRunning = false;
     _countdownTimer?.cancel();
     _metronomeTimer?.cancel();
+    _breathTimer?.cancel();
     notifyListeners();
   }
 
@@ -128,6 +147,36 @@ class RcpController with ChangeNotifier {
     }
   }
 
+  Future<void> _setupAudio() async {
+    try {
+      await _metronomePlayer.setReleaseMode(ReleaseMode.stop);
+      await _alertPlayer.setReleaseMode(ReleaseMode.stop);
+      await _breathPlayer.setReleaseMode(ReleaseMode.stop);
+      // Pré-carrega fontes conhecidas
+      await _metronomePlayer.setSource(AssetSource(_beepSound));
+      await _alertPlayer.setSource(AssetSource(_cycleEndSound));
+      try {
+        await _breathPlayer.setSource(AssetSource(_breathSound));
+        _hasBreathAsset = true;
+      } catch (_) {
+        _hasBreathAsset = false; // usar fallback
+      }
+    } catch (e) {
+      debugPrint('RCP audio setup error: $e');
+    }
+  }
+
+  Future<void> _primeAudioForWeb() async {
+    try {
+      await _metronomePlayer.setVolume(0.0);
+      await _metronomePlayer.setSource(AssetSource(_beepSound));
+      await _metronomePlayer.resume();
+      await Future.delayed(const Duration(milliseconds: 80));
+      await _metronomePlayer.stop();
+      await _metronomePlayer.setVolume(0.5);
+    } catch (_) {}
+  }
+
   /// Toggle wake lock (manter tela sempre ligada)
   Future<void> toggleWakeLock() async {
     _isWakeLockEnabled = !_isWakeLockEnabled;
@@ -145,8 +194,10 @@ class RcpController with ChangeNotifier {
   void dispose() {
     _countdownTimer?.cancel();
     _metronomeTimer?.cancel();
+    _breathTimer?.cancel();
     _metronomePlayer.dispose();
     _alertPlayer.dispose();
+    _breathPlayer.dispose();
     // Desativa wake lock ao sair
     WakelockPlus.disable();
     super.dispose();

@@ -41,6 +41,7 @@ class FichaProvider extends ChangeNotifier {
 
   FichaProvider() {
     _loadAllFichas();
+    _setupAudio();
   }
   
   @override
@@ -57,6 +58,18 @@ class FichaProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('Error loading fichas: $e');
+    }
+  }
+
+  /// Configuração inicial do player de áudio e pré-carregamento do beep
+  Future<void> _setupAudio() async {
+    try {
+      // Para permitir toques consecutivos sem loop automático
+      await _audioPlayer.setReleaseMode(ReleaseMode.stop);
+      // Pré-carrega a fonte para reduzir latência
+      await _audioPlayer.setSource(AssetSource('sounds/beep.mp3'));
+    } catch (e) {
+      debugPrint('Erro na configuração do áudio: $e');
     }
   }
 
@@ -277,6 +290,10 @@ class FichaProvider extends ChangeNotifier {
     
     _alarmeAtivo = true;
     _proximoAlarme = DateTime.now().add(Duration(minutes: _intervaloMinutos));
+
+    // Desbloqueia o contexto de áudio no web (requer gesto do usuário)
+    // Faz um play rápido e parado imediatamente para liberar autoplay policies
+    _primeAudioForWeb();
     
     _alarmeTimer = Timer.periodic(Duration(minutes: _intervaloMinutos), (timer) {
       if (_alarmeAtivo) {
@@ -315,12 +332,36 @@ class FichaProvider extends ChangeNotifier {
   /// Toca o beep de alerta (3 beeps curtos)
   Future<void> _tocarBeep() async {
     try {
+      // Garante a fonte definida (caso player tenha sido reiniciado)
+      await _audioPlayer.setSource(AssetSource('sounds/beep.mp3'));
+
       for (int i = 0; i < 3; i++) {
-        await _audioPlayer.play(AssetSource('sounds/beep.mp3'));
-        await Future.delayed(const Duration(milliseconds: 300));
+        // Inicia o beep
+        await _audioPlayer.resume();
+        // Mantém curto; interrompe antes do fim para efeito de beep
+        await Future.delayed(const Duration(milliseconds: 200));
+        await _audioPlayer.stop();
+        // Pequena pausa entre os beeps
+        await Future.delayed(const Duration(milliseconds: 150));
       }
     } catch (e) {
       debugPrint('Erro ao tocar beep: $e');
+    }
+  }
+
+  /// Faz um play silencioso imediato para "desbloquear" áudio no Web (autoplay policies)
+  Future<void> _primeAudioForWeb() async {
+    try {
+      // Volume zero, toca rapidamente e para. Depois restaura volume padrão (1.0)
+      await _audioPlayer.setVolume(0.0);
+      await _audioPlayer.setSource(AssetSource('sounds/beep.mp3'));
+      await _audioPlayer.resume();
+      await Future.delayed(const Duration(milliseconds: 100));
+      await _audioPlayer.stop();
+      await _audioPlayer.setVolume(1.0);
+    } catch (e) {
+      // Mesmo que falhe aqui, o alarme seguirá tentando tocar depois
+      debugPrint('Falha ao primar áudio: $e');
     }
   }
   

@@ -133,37 +133,49 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     'Perfil',
   ];
 
+  // Quais páginas já possuem AppBar própria (para evitar cabeçalhos duplicados)
+  final List<bool> _pageHasOwnAppBar = const [
+    false, // ExplorerPage não tem AppBar
+    true,  // RcpPage tem AppBar própria
+    true,  // DoseCalculatorPage tem AppBar própria
+    true,  // DrugGuidePage tem AppBar própria
+    true,  // FichaAnestesicaPage tem AppBar própria
+    true,  // ProfilePage (assumido com AppBar própria)
+  ];
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final authService = Provider.of<AuthService>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_titles[_currentIndex]),
-        actions: [
-          // Botão Admin (apenas para administradores)
-          if (authService.isAdmin)
-            IconButton(
-              icon: const Icon(Icons.admin_panel_settings_outlined),
-              tooltip: 'Painel Administrativo',
-              onPressed: () {
-                Navigator.of(context).pushNamed('/admin');
-              },
+      appBar: _pageHasOwnAppBar[_currentIndex]
+          ? null
+          : AppBar(
+              title: Text(_titles[_currentIndex]),
+              actions: [
+                // Botão Admin (apenas para administradores)
+                if (authService.isAdmin)
+                  IconButton(
+                    icon: const Icon(Icons.admin_panel_settings_outlined),
+                    tooltip: 'Painel Administrativo',
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('/admin');
+                    },
+                  ),
+                // Botão de tema (esconder na página de perfil)
+                if (_currentIndex != 5)
+                  IconButton(
+                    icon: Icon(
+                      themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                    ),
+                    tooltip: themeProvider.isDarkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro',
+                    onPressed: () {
+                      themeProvider.toggleTheme(!themeProvider.isDarkMode);
+                    },
+                  ),
+              ],
             ),
-          // Botão de tema (esconder na página de perfil)
-          if (_currentIndex != 5)
-            IconButton(
-              icon: Icon(
-                themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
-              ),
-              tooltip: themeProvider.isDarkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro',
-              onPressed: () {
-                themeProvider.toggleTheme(!themeProvider.isDarkMode);
-              },
-            ),
-        ],
-      ),
       body: IndexedStack(
         index: _currentIndex,
         children: _pages,
