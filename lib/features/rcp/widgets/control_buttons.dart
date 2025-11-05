@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 
 /// Controles do RCP Coach
-/// Botões de play/pause, reset, mute e wake lock
+/// Botões de play/pause, reset e wake lock
 class ControlButtons extends StatelessWidget {
   final bool isRunning;
-  final bool isMuted;
   final bool isWakeLockEnabled;
   final VoidCallback onStartStop;
   final VoidCallback onReset;
-  final VoidCallback onMute;
   final VoidCallback onToggleWakeLock;
 
   const ControlButtons({
     super.key,
     required this.isRunning,
-    required this.isMuted,
     required this.isWakeLockEnabled,
     required this.onStartStop,
     required this.onReset,
-    required this.onMute,
     required this.onToggleWakeLock,
   });
 
@@ -49,8 +45,8 @@ class ControlButtons extends StatelessWidget {
                   ),
                 ),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isRunning 
-                      ? Colors.orange 
+                  backgroundColor: isRunning
+                      ? Colors.orange
                       : Theme.of(context).colorScheme.primary,
                   foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -65,18 +61,10 @@ class ControlButtons extends StatelessWidget {
 
         const SizedBox(height: 24),
 
-        // Botões secundários (Reset, Mute e Wake Lock)
+        // Botões secundários (Reset e Wake Lock)
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            // Botão Mute
-            _SecondaryButton(
-              icon: isMuted ? Icons.volume_off : Icons.volume_up,
-              label: isMuted ? 'Som OFF' : 'Som ON',
-              onPressed: onMute,
-              color: isMuted ? Colors.grey : Theme.of(context).colorScheme.primary,
-            ),
-
             // Botão Wake Lock (Tela Sempre Ligada)
             _SecondaryButton(
               icon: Icons.screen_lock_portrait,

@@ -4,13 +4,11 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 /// Controller para o módulo RCP Coach
-/// Gerencia timer de 2 minutos, áudio (metrônomo + alertas), ciclos e wake lock
-class RcpController with ChangeNotifier {
+/// Gerencia timer de 2 minutos, ciclos, áudio contínuo e wake lock
+class RcpController with ChangeNotifier, WidgetsBindingObserver {
   // Timer
   static const int cycleDuration = 120; // 2 minutos em segundos
   Timer? _countdownTimer;
-  Timer? _metronomeTimer;
-  Timer? _breathTimer;
   int _secondsRemaining = cycleDuration;
   bool _isRunning = false;
 
@@ -18,30 +16,25 @@ class RcpController with ChangeNotifier {
   int _cycleCount = 0;
 
   // Audio
-  final AudioPlayer _metronomePlayer = AudioPlayer();
-  final AudioPlayer _alertPlayer = AudioPlayer();
-  final AudioPlayer _breathPlayer = AudioPlayer();
+  final AudioPlayer _beepPlayer = AudioPlayer();
   static const String _beepSound = 'sounds/beep.mp3';
-  static const String _cycleEndSound = 'sounds/cycle_end.mp3';
-  static const String _breathSound = 'sounds/breath.mp3'; // opcional; fallback para beep
-  bool _isMuted = false;
-  bool _hasBreathAsset = true;
-  
+  bool _audioInitialized = false;
+
   // Wake Lock (tela sempre ligada)
   bool _isWakeLockEnabled = false;
+
+  RcpController() {
+    WidgetsBinding.instance.addObserver(this);
+    _setupAudio();
+  }
 
   // Getters
   int get secondsRemaining => _secondsRemaining;
   bool get isRunning => _isRunning;
   int get cycleCount => _cycleCount;
-  bool get isMuted => _isMuted;
   bool get isWakeLockEnabled => _isWakeLockEnabled;
   double get progress => 1.0 - (_secondsRemaining / cycleDuration);
 
-  RcpController() {
-    _setupAudio();
-  }
-  
   /// Retorna mensagem de status em tempo real
   String get statusMessage {
     if (!_isRunning && _secondsRemaining == cycleDuration) {
@@ -73,12 +66,13 @@ class RcpController with ChangeNotifier {
     }
   }
 
-  /// Inicia o timer e metrônomo
+  /// Inicia o timer
   void _start() {
     _isRunning = true;
-    // Prime o áudio no web sob gesto do usuário
-    _primeAudioForWeb();
-    
+
+    // Inicia o áudio em loop
+    _playBeep();
+
     // Timer principal de contagem regressiva (1 segundo)
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_secondsRemaining > 0) {
@@ -89,30 +83,17 @@ class RcpController with ChangeNotifier {
       notifyListeners();
     });
 
-    // Metrônomo para compressões (500ms = 120 BPM)
-    _metronomeTimer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
-      if (_isRunning) {
-        _playSound(_metronomePlayer, _beepSound, volume: 0.5);
-      }
-    });
-
-    // Respiração a cada 6 segundos (≈10 bpm)
-    _breathTimer = Timer.periodic(const Duration(seconds: 6), (timer) {
-      if (_isRunning) {
-        final path = _hasBreathAsset ? _breathSound : _beepSound;
-        _playSound(_breathPlayer, path, volume: 0.9);
-      }
-    });
-
     notifyListeners();
   }
 
-  /// Pausa o timer e metrônomo
+  /// Pausa o timer
   void _pause() {
     _isRunning = false;
     _countdownTimer?.cancel();
-    _metronomeTimer?.cancel();
-    _breathTimer?.cancel();
+
+    // Para o áudio
+    _stopBeep();
+
     notifyListeners();
   }
 
@@ -121,83 +102,85 @@ class RcpController with ChangeNotifier {
     _pause();
     _secondsRemaining = cycleDuration;
     _cycleCount = 0;
+
     notifyListeners();
   }
 
   /// Completou um ciclo de 2 minutos
   void _cycleCompleted() {
     _cycleCount++;
-    _playSound(_alertPlayer, _cycleEndSound, volume: 1.0);
     _secondsRemaining = cycleDuration; // Reset para próximo ciclo
     // Timer continua rodando automaticamente
     notifyListeners();
   }
 
-  /// Toggle mute/unmute
-  void toggleMute() {
-    _isMuted = !_isMuted;
-    notifyListeners();
-  }
-
-  /// Reproduz som com controle de volume
-  Future<void> _playSound(AudioPlayer player, String soundPath, {double volume = 1.0}) async {
-    if (!_isMuted) {
-      await player.setVolume(volume);
-      await player.play(AssetSource(soundPath));
-    }
-  }
-
-  Future<void> _setupAudio() async {
-    try {
-      await _metronomePlayer.setReleaseMode(ReleaseMode.stop);
-      await _alertPlayer.setReleaseMode(ReleaseMode.stop);
-      await _breathPlayer.setReleaseMode(ReleaseMode.stop);
-      // Pré-carrega fontes conhecidas
-      await _metronomePlayer.setSource(AssetSource(_beepSound));
-      await _alertPlayer.setSource(AssetSource(_cycleEndSound));
-      try {
-        await _breathPlayer.setSource(AssetSource(_breathSound));
-        _hasBreathAsset = true;
-      } catch (_) {
-        _hasBreathAsset = false; // usar fallback
-      }
-    } catch (e) {
-      debugPrint('RCP audio setup error: $e');
-    }
-  }
-
-  Future<void> _primeAudioForWeb() async {
-    try {
-      await _metronomePlayer.setVolume(0.0);
-      await _metronomePlayer.setSource(AssetSource(_beepSound));
-      await _metronomePlayer.resume();
-      await Future.delayed(const Duration(milliseconds: 80));
-      await _metronomePlayer.stop();
-      await _metronomePlayer.setVolume(0.5);
-    } catch (_) {}
-  }
-
   /// Toggle wake lock (manter tela sempre ligada)
   Future<void> toggleWakeLock() async {
     _isWakeLockEnabled = !_isWakeLockEnabled;
-    
+
     if (_isWakeLockEnabled) {
       await WakelockPlus.enable();
     } else {
       await WakelockPlus.disable();
     }
-    
+
     notifyListeners();
+  }
+
+  /// Configuração inicial do áudio
+  Future<void> _setupAudio() async {
+    try {
+      await _beepPlayer.setReleaseMode(ReleaseMode.loop);
+      await _beepPlayer.setSource(AssetSource(_beepSound));
+      _audioInitialized = true;
+    } catch (e) {
+      debugPrint('RCP audio setup error: $e');
+      _audioInitialized = false;
+    }
+  }
+
+  /// Inicia o áudio em loop
+  Future<void> _playBeep() async {
+    if (!_audioInitialized) return;
+
+    try {
+      await _beepPlayer.resume();
+    } catch (e) {
+      debugPrint('RCP play error: $e');
+    }
+  }
+
+  /// Para o áudio
+  Future<void> _stopBeep() async {
+    try {
+      await _beepPlayer.pause();
+    } catch (e) {
+      debugPrint('RCP stop error: $e');
+    }
+  }
+
+  /// Detecta quando o app vai para background ou usuário troca de aba
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive) {
+      // Para o áudio quando app vai para background ou troca de aba
+      if (_isRunning) {
+        _stopBeep();
+      }
+    } else if (state == AppLifecycleState.resumed) {
+      // Retoma o áudio quando volta para o app (se estava rodando)
+      if (_isRunning) {
+        _playBeep();
+      }
+    }
   }
 
   @override
   void dispose() {
     _countdownTimer?.cancel();
-    _metronomeTimer?.cancel();
-    _breathTimer?.cancel();
-    _metronomePlayer.dispose();
-    _alertPlayer.dispose();
-    _breathPlayer.dispose();
+    _beepPlayer.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     // Desativa wake lock ao sair
     WakelockPlus.disable();
     super.dispose();
