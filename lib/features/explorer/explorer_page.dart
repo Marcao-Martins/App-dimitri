@@ -6,6 +6,7 @@ import '../dose_calculator/dose_calculator_page.dart';
 import '../pre_op_checklist/pre_op_checklist_page.dart';
 import '../drug_guide/drug_guide_page.dart';
 import '../ficha_anestesica/ficha_anestesica_page.dart';
+import '../patient_history/ultimos_pacientes_page.dart';
 import '../rcp/rcp_page.dart';
 import 'all_features_page.dart';
 import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
@@ -181,16 +182,16 @@ class _ExplorerPageState extends State<ExplorerPage> {
             
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
             
-            // Seção: Bulário (Funcionalidades Principais)
+            // Seção: Favoritos (Funcionalidades Principais)
             SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'Bulário',
+                title: 'Favoritos',
                 actionText: 'Ver todos',
                 onActionTap: () => _navigateTo(const DrugGuidePage()),
               ),
             ),
             
-            // Grid de cards do Bulário
+            // Grid de cards de Favoritos
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverGrid(
@@ -203,37 +204,31 @@ class _ExplorerPageState extends State<ExplorerPage> {
                 delegate: SliverChildListDelegate([
                   CategoryCard(
                     icon: Icons.medication_outlined,
-                    title: 'Medicamentos',
-                    subtitle: '20 fármacos',
+                    title: 'Bulário',
+                    subtitle: 'Guia de fármacos',
                     iconColor: AppColors.primaryTeal,
                     onTap: () => _navigateTo(const DrugGuidePage()),
                   ),
                   CategoryCard(
-                    icon: Icons.local_hospital_outlined,
+                    icon: Icons.water_drop_outlined,
                     title: 'Fluidoterapia',
-                    subtitle: 'Calculadoras',
+                    subtitle: 'Calculadora',
                     iconColor: AppColors.categoryBlue,
-                    onTap: () {
-                      // TODO: Implementar calculadora de fluidoterapia
-                    },
+                    onTap: () => _navigateTo(const FluidotherapyPage()),
                   ),
                   CategoryCard(
-                    icon: Icons.monitor_heart_outlined,
-                    title: 'CRI',
-                    subtitle: 'Infusão contínua',
-                    iconColor: AppColors.categoryOrange,
-                    onTap: () {
-                      // TODO: Implementar calculadora de CRI
-                    },
+                    icon: Icons.bloodtype_outlined,
+                    title: 'Transfusão',
+                    subtitle: 'Cálculos',
+                    iconColor: AppColors.error,
+                    onTap: () => _navigateTo(const TransfusionPage()),
                   ),
                   CategoryCard(
-                    icon: Icons.wb_sunny_outlined,
-                    title: 'Analgesia',
-                    subtitle: 'Protocolos',
+                    icon: Icons.pets,
+                    title: 'Escore Apgar',
+                    subtitle: 'Neonatos',
                     iconColor: AppColors.categoryPurple,
-                    onTap: () {
-                      // TODO: Implementar tela de protocolos de analgesia
-                    },
+                    onTap: () => _navigateTo(const ApgarPage()),
                   ),
                 ]),
               ),

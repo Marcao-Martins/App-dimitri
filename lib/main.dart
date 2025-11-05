@@ -6,14 +6,14 @@ import 'core/providers/theme_provider.dart';
 import 'core/themes/app_theme.dart';
 import 'features/auth/login_page.dart';
 import 'features/dose_calculator/dose_calculator_page.dart';
-import 'features/drug_guide/drug_guide_page.dart';
 import 'features/explorer/explorer_page.dart';
 import 'features/rcp/rcp_page.dart';
 import 'features/ficha_anestesica/ficha_anestesica_page.dart';
 import 'features/ficha_anestesica/ficha_provider.dart';
 import 'features/ficha_anestesica/services/storage_service.dart';
-import 'features/pre_op_checklist/pre_op_checklist_page.dart';
+import 'features/drug_guide/drug_guide_page.dart';
 import 'features/admin/admin_dashboard.dart';
+import 'features/profile/profile_page.dart';
 import 'services/auth_service.dart';
 import 'services/medication_service.dart';
 import 'services/api_service.dart';
@@ -118,9 +118,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     const ExplorerPage(), // Tela Home
     const RcpPage(), // RCP Coach
     const DoseCalculatorPage(),
-    const PreOpChecklistPage(),
-    const DrugGuidePage(),
+    const DrugGuidePage(), // Bulário
     const FichaAnestesicaPage(),
+    const ProfilePage(), // Perfil
   ];
 
   // Lista de títulos para a AppBar
@@ -128,9 +128,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     'Início',
     'RCP',
     'Calculadora de Doses',
-    'Checklist Pré-Operatório',
     'Guia de Fármacos',
     'Ficha Anestésica',
+    'Perfil',
   ];
 
   @override
@@ -151,42 +151,17 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
                 Navigator.of(context).pushNamed('/admin');
               },
             ),
-          IconButton(
-            icon: Icon(
-              themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+          // Botão de tema (esconder na página de perfil)
+          if (_currentIndex != 5)
+            IconButton(
+              icon: Icon(
+                themeProvider.isDarkMode ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+              ),
+              tooltip: themeProvider.isDarkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro',
+              onPressed: () {
+                themeProvider.toggleTheme(!themeProvider.isDarkMode);
+              },
             ),
-            tooltip: themeProvider.isDarkMode ? 'Mudar para tema claro' : 'Mudar para tema escuro',
-            onPressed: () {
-              themeProvider.toggleTheme(!themeProvider.isDarkMode);
-            },
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout_outlined),
-            tooltip: 'Sair',
-            onPressed: () async {
-              final confirm = await showDialog<bool>(
-                context: context,
-                builder: (context) => AlertDialog(
-                  title: const Text('Sair'),
-                  content: const Text('Deseja realmente sair?'),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('Cancelar'),
-                    ),
-                    FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('Sair'),
-                    ),
-                  ],
-                ),
-              );
-              
-              if (confirm == true && context.mounted) {
-                await authService.logout();
-              }
-            },
-          ),
         ],
       ),
       body: IndexedStack(
@@ -220,12 +195,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             tooltip: 'Calculadora de Doses Veterinárias',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.checklist_outlined),
-            activeIcon: Icon(Icons.checklist),
-            label: 'Checklist',
-            tooltip: 'Checklist Pré-Operatório',
-          ),
-          BottomNavigationBarItem(
             icon: Icon(Icons.menu_book_outlined),
             activeIcon: Icon(Icons.menu_book),
             label: 'Bulário',
@@ -236,6 +205,12 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
             activeIcon: Icon(Icons.assignment),
             label: 'Ficha',
             tooltip: 'Ficha Anestésica',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Perfil',
+            tooltip: 'Perfil do Usuário',
           ),
         ],
       ),

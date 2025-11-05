@@ -114,10 +114,14 @@ class MedicationService {
     if (species.isEmpty) {
       species.add('Não especificado');
     }
+    // Se o campo 'farmaco' estiver vazio, usar 'titulo' como fallback
+    final String nameField = (json['farmaco']?.toString().trim().isNotEmpty ?? false)
+        ? json['farmaco'].toString()
+        : (json['titulo']?.toString() ?? json['name']?.toString() ?? '');
 
     return Medication(
       id: json['post_id']?.toString() ?? json['id']?.toString() ?? '',
-      name: json['farmaco']?.toString() ?? json['name']?.toString() ?? '',
+      name: nameField,
       category: json['classe_farmacologica']?.toString() ?? json['category']?.toString() ?? '',
       species: species,
       minDose: doseParts['minDose']!,

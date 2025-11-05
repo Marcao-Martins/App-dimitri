@@ -381,21 +381,23 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                     ...provider.current!.intercorrencias.asMap().entries.map((entry) {
                       final index = entry.key;
                       final inter = entry.value;
+                      final isDark = Theme.of(context).brightness == Brightness.dark;
+                      
                       return Card(
                         margin: const EdgeInsets.only(bottom: 8),
                         color: inter.gravidade == 'grave'
-                            ? Colors.red.shade50
+                            ? (isDark ? Colors.red.shade900.withOpacity(0.3) : Colors.red.shade50)
                             : inter.gravidade == 'moderada'
-                                ? Colors.orange.shade50
-                                : Colors.yellow.shade50,
+                                ? (isDark ? Colors.orange.shade900.withOpacity(0.3) : Colors.orange.shade50)
+                                : (isDark ? Colors.yellow.shade900.withOpacity(0.3) : Colors.yellow.shade50),
                         child: ListTile(
                           leading: Icon(
                             Icons.warning_amber,
                             color: inter.gravidade == 'grave'
-                                ? Colors.red
+                                ? (isDark ? Colors.red.shade300 : Colors.red)
                                 : inter.gravidade == 'moderada'
-                                    ? Colors.orange
-                                    : Colors.amber,
+                                    ? (isDark ? Colors.orange.shade300 : Colors.orange)
+                                    : (isDark ? Colors.yellow.shade300 : Colors.amber),
                           ),
                           title: Text(inter.descricao),
                           subtitle: Text(

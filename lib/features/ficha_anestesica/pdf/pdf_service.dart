@@ -61,6 +61,9 @@ class PdfService {
             _buildInfoRow('Procedimento', ficha.paciente.procedimento ?? '-'),
             _buildInfoRow('Doenças', ficha.paciente.doencas ?? '-'),
             _buildInfoRow('Observações', ficha.paciente.observacoes ?? '-'),
+            _buildInfoRow('Tempo Total', ficha.procedureTimeSeconds > 0 
+                ? '${(ficha.procedureTimeSeconds / 60).floor()}:${(ficha.procedureTimeSeconds % 60).toString().padLeft(2, '0')} minutos'
+                : '-'),
           ]),
 
           pw.SizedBox(height: 16),
@@ -310,20 +313,21 @@ class PdfService {
           ),
           pw.SizedBox(height: 12),
           
-          // Gráfico de FC
-          if (params.any((p) => p.fc != null))
+          // Gráfico de Frequência Cardíaca
+          if (params.any((p) => p.fc != null)) ...[
             _buildLineChart(
-              'Frequência Cardíaca (bpm)',
+              'Frequência Cardíaca (BPM)',
               params,
               (p) => p.fc?.toDouble(),
               PdfColors.red,
               0,
               200,
             ),
-          pw.SizedBox(height: 12),
+            pw.SizedBox(height: 12),
+          ],
           
           // Gráfico de Pressão Arterial
-          if (params.any((p) => p.pas != null || p.pad != null || p.pam != null))
+          if (params.any((p) => p.pas != null || p.pad != null || p.pam != null)) ...[
             _buildMultiLineChart(
               'Pressão Arterial (mmHg)',
               params,
@@ -335,18 +339,33 @@ class PdfService {
               0,
               200,
             ),
-          pw.SizedBox(height: 12),
+            pw.SizedBox(height: 12),
+          ],
           
           // Gráfico de SpO2
-          if (params.any((p) => p.spo2 != null))
+          if (params.any((p) => p.spo2 != null)) ...[
             _buildLineChart(
-              'SpO2 (%)',
+              'Saturação de O₂ (%)',
               params,
               (p) => p.spo2?.toDouble(),
               PdfColors.green,
               80,
               100,
             ),
+            pw.SizedBox(height: 12),
+          ],
+          
+          // Gráfico de Temperatura
+          if (params.any((p) => p.temp != null)) ...[
+            _buildLineChart(
+              'Temperatura (°C)',
+              params,
+              (p) => p.temp?.toDouble(),
+              PdfColors.orange,
+              35,
+              42,
+            ),
+          ],
         ],
       ),
     );
@@ -362,6 +381,7 @@ class PdfService {
   ) {
     final chartWidth = 480.0;
     final chartHeight = 100.0;
+    final effectiveWidth = chartWidth - 42.0; // 36 para labels Y + 6 de espaçamento
     
     // Coletar valores válidos com seus índices
     final validData = <int, double>{};
@@ -375,104 +395,158 @@ class PdfService {
     if (validData.isEmpty) return pw.SizedBox();
     
     final maxIndex = params.length - 1;
+    final midY = (minY + maxY) / 2;
+    String fmt(double v) => (v % 1 == 0) ? v.toInt().toString() : v.toStringAsFixed(1);
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Text(title, style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
+        // Título do gráfico
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.center,
+          children: [
+            pw.Text(
+              title,
+              style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+            ),
+          ],
+        ),
         pw.SizedBox(height: 4),
-        pw.Container(
-          width: chartWidth,
-          height: chartHeight + 20,
-          child: pw.Stack(
-            children: [
-              // Grade de fundo
-              pw.Positioned(
-                left: 0,
-                top: 0,
-                child: pw.Container(
-                  width: chartWidth,
-                  height: chartHeight,
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.grey300),
-                  ),
-                  child: pw.CustomPaint(
-                    painter: (canvas, size) {
-                      // Linhas horizontais da grade
-                      for (var i = 0; i <= 4; i++) {
-                        final y = (i / 4) * chartHeight;
-                        canvas.drawLine(0, y, chartWidth, y);
-                        canvas.setStrokeColor(PdfColors.grey200);
-                        canvas.strokePath();
-                      }
-                    },
-                  ),
-                ),
+
+        // Área do gráfico com rótulos Y
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Rótulos do eixo Y
+            pw.Container(
+              height: chartHeight,
+              width: 36,
+              child: pw.Column(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text(fmt(maxY), style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700)),
+                  pw.Text(fmt(midY), style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700)),
+                  pw.Text(fmt(minY), style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700)),
+                ],
               ),
-              // Linha do gráfico
-              pw.Positioned(
-                left: 0,
-                top: 0,
-                child: pw.CustomPaint(
-                  size: PdfPoint(chartWidth, chartHeight),
-                  painter: (canvas, size) {
-                    final entries = validData.entries.toList();
-                    
-                    // Desenhar linhas conectando os pontos
-                    canvas.setStrokeColor(color);
-                    canvas.setLineWidth(1.5);
-                    
-                    for (var i = 0; i < entries.length - 1; i++) {
-                      final x1 = (entries[i].key / maxIndex) * chartWidth;
-                      final y1 = chartHeight - ((entries[i].value - minY) / (maxY - minY) * chartHeight);
-                      final x2 = (entries[i + 1].key / maxIndex) * chartWidth;
-                      final y2 = chartHeight - ((entries[i + 1].value - minY) / (maxY - minY) * chartHeight);
-                      
-                      canvas.moveTo(x1, y1.clamp(0, chartHeight));
-                      canvas.lineTo(x2, y2.clamp(0, chartHeight));
-                      canvas.strokePath();
-                    }
-                    
-                    // Desenhar pontos
-                    canvas.setFillColor(color);
-                    for (final entry in entries) {
-                      final x = (entry.key / maxIndex) * chartWidth;
-                      final y = chartHeight - ((entry.value - minY) / (maxY - minY) * chartHeight);
-                      final yPos = y.clamp(0, chartHeight);
-                      
-                      canvas.drawEllipse(x - 2, yPos - 2, 4, 4);
-                      canvas.fillPath();
-                    }
-                  },
-                ),
-              ),
-              // Labels de tempo
-              pw.Positioned(
-                left: 0,
-                top: chartHeight + 4,
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.SizedBox(
-                      width: chartWidth / 2,
-                      child: pw.Text(
-                        '${params.first.momento.hour}:${params.first.momento.minute.toString().padLeft(2, '0')}',
-                        style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+            ),
+            pw.SizedBox(width: 6),
+
+            // Área do gráfico
+            pw.Container(
+              width: effectiveWidth,
+              height: chartHeight + 20,
+              child: pw.Stack(
+                children: [
+                  // Grade de fundo
+                  pw.Positioned(
+                    left: 0,
+                    top: 0,
+                    child: pw.Container(
+                      width: effectiveWidth,
+                      height: chartHeight,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.grey300),
+                      ),
+                      child: pw.CustomPaint(
+                        painter: (canvas, size) {
+                          // Linhas horizontais da grade
+                          for (var i = 0; i <= 4; i++) {
+                            final y = (i / 4) * chartHeight;
+                            canvas.drawLine(0, y, effectiveWidth, y);
+                            canvas.setStrokeColor(PdfColors.grey200);
+                            canvas.strokePath();
+                          }
+
+                          // Eixo Y (linha vertical mais escura)
+                          canvas.setStrokeColor(PdfColors.grey700);
+                          canvas.setLineWidth(0.8);
+                          canvas.moveTo(0, 0);
+                          canvas.lineTo(0, chartHeight);
+                          canvas.strokePath();
+                        },
                       ),
                     ),
-                    pw.SizedBox(
-                      width: chartWidth / 2,
-                      child: pw.Text(
-                        '${params.last.momento.hour}:${params.last.momento.minute.toString().padLeft(2, '0')}',
-                        style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
-                        textAlign: pw.TextAlign.right,
-                      ),
+                  ),
+                  // Linha do gráfico
+                  pw.Positioned(
+                    left: 0,
+                    top: 0,
+                    child: pw.CustomPaint(
+                      size: PdfPoint(effectiveWidth, chartHeight),
+                      painter: (canvas, size) {
+                        final entries = validData.entries.toList();
+                        
+                        // Desenhar linhas conectando os pontos
+                        canvas.setStrokeColor(color);
+                        canvas.setLineWidth(1.5);
+                        
+                        for (var i = 0; i < entries.length - 1; i++) {
+                          final x1 = (entries[i].key / maxIndex) * effectiveWidth;
+                          final y1 = chartHeight - ((entries[i].value - minY) / (maxY - minY) * chartHeight);
+                          final x2 = (entries[i + 1].key / maxIndex) * effectiveWidth;
+                          final y2 = chartHeight - ((entries[i + 1].value - minY) / (maxY - minY) * chartHeight);
+                          
+                          canvas.moveTo(x1, y1.clamp(0, chartHeight));
+                          canvas.lineTo(x2, y2.clamp(0, chartHeight));
+                          canvas.strokePath();
+                        }
+                        
+                        // Desenhar pontos
+                        canvas.setFillColor(color);
+                        for (final entry in entries) {
+                          final x = (entry.key / maxIndex) * effectiveWidth;
+                          final y = chartHeight - ((entry.value - minY) / (maxY - minY) * chartHeight);
+                          final yPos = y.clamp(0, chartHeight);
+                          
+                          canvas.drawEllipse(x - 1.5, yPos - 1.5, 3, 3);
+                          canvas.fillPath();
+                        }
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                  // Labels de tempo e eixo X
+                  pw.Positioned(
+                    left: 0,
+                    top: chartHeight + 4,
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.SizedBox(
+                              width: effectiveWidth / 2,
+                              child: pw.Text(
+                                '${params.first.momento.hour}:${params.first.momento.minute.toString().padLeft(2, '0')}',
+                                style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                              ),
+                            ),
+                            pw.SizedBox(
+                              width: effectiveWidth / 2,
+                              child: pw.Text(
+                                '${params.last.momento.hour}:${params.last.momento.minute.toString().padLeft(2, '0')}',
+                                style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                                textAlign: pw.TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(height: 2),
+                        pw.Center(
+                          child: pw.Text(
+                            'Tempo (minutos)',
+                            style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
@@ -487,129 +561,187 @@ class PdfService {
   ) {
     final chartWidth = 480.0;
     final chartHeight = 100.0;
+    final effectiveWidth = chartWidth - 42.0; // 36 para labels Y + 6 de espaçamento
     final maxIndex = params.length - 1;
+    final midY = (minY + maxY) / 2;
+    String fmt(double v) => (v % 1 == 0) ? v.toInt().toString() : v.toStringAsFixed(1);
 
     return pw.Column(
       crossAxisAlignment: pw.CrossAxisAlignment.start,
       children: [
-        pw.Row(
+        // Título e legendas
+        pw.Column(
           children: [
-            pw.Text(title, style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
-            pw.SizedBox(width: 8),
-            ...lines.map((line) => pw.Container(
-              margin: const pw.EdgeInsets.only(right: 6),
-              child: pw.Row(
-                children: [
-                  pw.Container(
-                    width: 10,
-                    height: 2,
-                    color: line.color,
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              children: [
+                pw.Text(title, style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold)),
+              ],
+            ),
+            pw.SizedBox(height: 4),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              children: [
+                ...lines.map((line) => pw.Container(
+                  margin: const pw.EdgeInsets.only(right: 6),
+                  child: pw.Row(
+                    children: [
+                      pw.Container(
+                        width: 10,
+                        height: 2,
+                        color: line.color,
+                      ),
+                      pw.SizedBox(width: 2),
+                      pw.Text(line.label, style: const pw.TextStyle(fontSize: 7)),
+                    ],
                   ),
-                  pw.SizedBox(width: 2),
-                  pw.Text(line.label, style: const pw.TextStyle(fontSize: 7)),
-                ],
-              ),
-            )),
+                )),
+              ],
+            ),
           ],
         ),
         pw.SizedBox(height: 4),
-        pw.Container(
-          width: chartWidth,
-          height: chartHeight + 20,
-          child: pw.Stack(
-            children: [
-              // Grade
-              pw.Positioned(
-                left: 0,
-                top: 0,
-                child: pw.Container(
-                  width: chartWidth,
-                  height: chartHeight,
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.grey300),
-                  ),
-                  child: pw.CustomPaint(
-                    painter: (canvas, size) {
-                      for (var i = 0; i <= 4; i++) {
-                        final y = (i / 4) * chartHeight;
-                        canvas.drawLine(0, y, chartWidth, y);
-                        canvas.setStrokeColor(PdfColors.grey200);
-                        canvas.strokePath();
-                      }
-                    },
-                  ),
-                ),
+
+        // Gráfico com rótulos Y
+        pw.Row(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            // Rótulos do eixo Y
+            pw.Container(
+              height: chartHeight,
+              width: 36,
+              child: pw.Column(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: pw.CrossAxisAlignment.end,
+                children: [
+                  pw.Text(fmt(maxY), style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700)),
+                  pw.Text(fmt(midY), style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700)),
+                  pw.Text(fmt(minY), style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700)),
+                ],
               ),
-              // Linhas
-              pw.Positioned(
-                left: 0,
-                top: 0,
-                child: pw.CustomPaint(
-                  size: PdfPoint(chartWidth, chartHeight),
-                  painter: (canvas, size) {
-                    for (final line in lines) {
-                      final validData = <int, double>{};
-                      for (var i = 0; i < params.length; i++) {
-                        final value = line.getValue(params[i]);
-                        if (value != null) validData[i] = value;
-                      }
-                      
-                      if (validData.isNotEmpty) {
-                        final entries = validData.entries.toList();
-                        
-                        canvas.setStrokeColor(line.color);
-                        canvas.setLineWidth(1.2);
-                        
-                        for (var i = 0; i < entries.length - 1; i++) {
-                          final x1 = (entries[i].key / maxIndex) * chartWidth;
-                          final y1 = chartHeight - ((entries[i].value - minY) / (maxY - minY) * chartHeight);
-                          final x2 = (entries[i + 1].key / maxIndex) * chartWidth;
-                          final y2 = chartHeight - ((entries[i + 1].value - minY) / (maxY - minY) * chartHeight);
-                          
-                          canvas.moveTo(x1, y1.clamp(0, chartHeight));
-                          canvas.lineTo(x2, y2.clamp(0, chartHeight));
+            ),
+            pw.SizedBox(width: 6),
+
+            // Área do gráfico
+            pw.Container(
+              width: effectiveWidth,
+              height: chartHeight + 20,
+              child: pw.Stack(
+                children: [
+                  // Grade de fundo
+                  pw.Positioned(
+                    left: 0,
+                    top: 0,
+                    child: pw.Container(
+                      width: effectiveWidth,
+                      height: chartHeight,
+                      decoration: pw.BoxDecoration(
+                        border: pw.Border.all(color: PdfColors.grey300),
+                      ),
+                      child: pw.CustomPaint(
+                        painter: (canvas, size) {
+                          // Linhas horizontais da grade
+                          for (var i = 0; i <= 4; i++) {
+                            final y = (i / 4) * chartHeight;
+                            canvas.drawLine(0, y, effectiveWidth, y);
+                            canvas.setStrokeColor(PdfColors.grey200);
+                            canvas.strokePath();
+                          }
+
+                          // Eixo Y (linha vertical mais escura)
+                          canvas.setStrokeColor(PdfColors.grey700);
+                          canvas.setLineWidth(0.8);
+                          canvas.moveTo(0, 0);
+                          canvas.lineTo(0, chartHeight);
                           canvas.strokePath();
-                        }
-                        
-                        canvas.setFillColor(line.color);
-                        for (final entry in entries) {
-                          final x = (entry.key / maxIndex) * chartWidth;
-                          final y = chartHeight - ((entry.value - minY) / (maxY - minY) * chartHeight);
-                          canvas.drawEllipse(x - 1.5, y.clamp(0, chartHeight) - 1.5, 3, 3);
-                          canvas.fillPath();
-                        }
-                      }
-                    }
-                  },
-                ),
-              ),
-              // Labels
-              pw.Positioned(
-                left: 0,
-                top: chartHeight + 4,
-                child: pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.SizedBox(
-                      width: chartWidth / 2,
-                      child: pw.Text(
-                        '${params.first.momento.hour}:${params.first.momento.minute.toString().padLeft(2, '0')}',
-                        style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                        },
                       ),
                     ),
-                    pw.SizedBox(
-                      width: chartWidth / 2,
-                      child: pw.Text(
-                        '${params.last.momento.hour}:${params.last.momento.minute.toString().padLeft(2, '0')}',
-                        style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
-                        textAlign: pw.TextAlign.right,
-                      ),
+                  ),
+                  // Linhas do gráfico
+                  pw.Positioned(
+                    left: 0,
+                    top: 0,
+                    child: pw.CustomPaint(
+                      size: PdfPoint(effectiveWidth, chartHeight),
+                      painter: (canvas, size) {
+                        for (final line in lines) {
+                          final validData = <int, double>{};
+                          for (var i = 0; i < params.length; i++) {
+                            final value = line.getValue(params[i]);
+                            if (value != null) validData[i] = value;
+                          }
+                          
+                          if (validData.isNotEmpty) {
+                            final entries = validData.entries.toList();
+                            
+                            canvas.setStrokeColor(line.color);
+                            canvas.setLineWidth(1.2);
+                            
+                            for (var i = 0; i < entries.length - 1; i++) {
+                              final x1 = (entries[i].key / maxIndex) * effectiveWidth;
+                              final y1 = chartHeight - ((entries[i].value - minY) / (maxY - minY) * chartHeight);
+                              final x2 = (entries[i + 1].key / maxIndex) * effectiveWidth;
+                              final y2 = chartHeight - ((entries[i + 1].value - minY) / (maxY - minY) * chartHeight);
+                              
+                              canvas.moveTo(x1, y1.clamp(0, chartHeight));
+                              canvas.lineTo(x2, y2.clamp(0, chartHeight));
+                              canvas.strokePath();
+                            }
+                            
+                            canvas.setFillColor(line.color);
+                            for (final entry in entries) {
+                              final x = (entry.key / maxIndex) * effectiveWidth;
+                              final y = chartHeight - ((entry.value - minY) / (maxY - minY) * chartHeight);
+                              canvas.drawEllipse(x - 1.5, y.clamp(0, chartHeight) - 1.5, 3, 3);
+                              canvas.fillPath();
+                            }
+                          }
+                        }
+                      },
                     ),
-                  ],
-                ),
+                  ),
+                  // Labels de tempo e eixo X
+                  pw.Positioned(
+                    left: 0,
+                    top: chartHeight + 4,
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Row(
+                          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                          children: [
+                            pw.SizedBox(
+                              width: effectiveWidth / 2,
+                              child: pw.Text(
+                                '${params.first.momento.hour}:${params.first.momento.minute.toString().padLeft(2, '0')}',
+                                style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                              ),
+                            ),
+                            pw.SizedBox(
+                              width: effectiveWidth / 2,
+                              child: pw.Text(
+                                '${params.last.momento.hour}:${params.last.momento.minute.toString().padLeft(2, '0')}',
+                                style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey600),
+                                textAlign: pw.TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                        pw.SizedBox(height: 2),
+                        pw.Center(
+                          child: pw.Text(
+                            'Tempo (minutos)',
+                            style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ],
     );
