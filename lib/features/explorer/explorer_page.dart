@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_strings.dart';
 import '../../core/widgets/modern_widgets.dart';
-import '../dose_calculator/dose_calculator_page.dart';
 import '../pre_op_checklist/pre_op_checklist_page.dart';
 import '../drug_guide/drug_guide_page.dart';
 import '../ficha_anestesica/ficha_anestesica_page.dart';
-import '../patient_history/ultimos_pacientes_page.dart';
-import '../rcp/rcp_page.dart';
 import 'all_features_page.dart';
 import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
 import '../fluidotherapy/fluidotherapy_page.dart';
@@ -119,18 +116,6 @@ class _ExplorerPageState extends State<ExplorerPage> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    LibraryIconButton(
-                      icon: Icons.monitor_heart, // Ícone de RCP
-                      label: 'RCP Coach',
-                      color: AppColors.error, // Cor de emergência
-                      onTap: () => _navigateTo(const RcpPage()),
-                    ),
-                    LibraryIconButton(
-                      icon: Icons.calculate_outlined,
-                      label: 'Calculadoras',
-                      color: AppColors.categoryOrange,
-                      onTap: () => _navigateTo(const DoseCalculatorPage()),
-                    ),
                     // Novo ícone para a Calculadora de Autonomia de O2
                     LibraryIconButton(
                       icon: Icons.air,
@@ -174,7 +159,6 @@ class _ExplorerPageState extends State<ExplorerPage> {
                       color: AppColors.categoryGreen,
                       onTap: () => _navigateTo(const PreOpChecklistPage()),
                     ),
-                    // Ícones não funcionais (Protocolos, Estudos, Prontuários) foram removidos.
                   ],
                 ),
               ),

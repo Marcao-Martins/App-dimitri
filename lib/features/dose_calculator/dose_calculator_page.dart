@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'oxygen_autonomy_calculator_page.dart';
 import '../unit_converter/unit_converter_page.dart';
+import '../../models/medication.dart';
+import '../../services/medication_service.dart';
 
 /// Modelo simplificado para histórico de cálculos
 class CalculationHistory {
@@ -40,10 +42,18 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
   final _doseController = TextEditingController();
   final _concentrationController = TextEditingController();
   
-  String _doseUnit = 'mcg/kg';
-  String _concentrationUnit = 'mcg/ml';
+  String _doseUnit = 'mg/kg';
+  String _concentrationUnit = 'mg/ml';
   double? _calculatedVolume;
   final List<CalculationHistory> _history = [];
+  
+  // Campos para integração com fármacos
+  List<Medication> _medications = [];
+  List<Medication> _filteredMedications = [];
+  Medication? _selectedMedication;
+  final _medicationSearchController = TextEditingController();
+  bool _isLoadingMedications = false;
+  bool _showMedicationDropdown = false;
   
   @override
   void initState() {
@@ -52,6 +62,9 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
     _weightController.addListener(_updateLiveCalculation);
     _doseController.addListener(_updateLiveCalculation);
     _concentrationController.addListener(_updateLiveCalculation);
+    
+    // Carregar medicamentos
+    _loadMedications();
   }
   
   @override
@@ -59,7 +72,101 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
     _weightController.dispose();
     _doseController.dispose();
     _concentrationController.dispose();
+    _medicationSearchController.dispose();
     super.dispose();
+  }
+  
+  /// Carrega medicamentos do serviço
+  Future<void> _loadMedications() async {
+    setState(() {
+      _isLoadingMedications = true;
+    });
+    
+    try {
+      await MedicationService.loadMedicationsFromBackend();
+      setState(() {
+        _medications = MedicationService.getAllMedications();
+        _filteredMedications = _medications;
+        _isLoadingMedications = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoadingMedications = false;
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao carregar fármacos: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+  
+  /// Filtra medicamentos com base na busca
+  void _filterMedications(String query) {
+    setState(() {
+      if (query.isEmpty) {
+        _filteredMedications = _medications;
+      } else {
+        _filteredMedications = _medications
+            .where((med) => 
+                med.name.toLowerCase().contains(query.toLowerCase()) ||
+                (med.tradeName?.toLowerCase().contains(query.toLowerCase()) ?? false))
+            .toList();
+      }
+    });
+  }
+  
+  /// Seleciona um fármaco e preenche os campos
+  void _selectMedication(Medication medication) {
+    setState(() {
+      _selectedMedication = medication;
+      _showMedicationDropdown = false;
+      _medicationSearchController.text = medication.name;
+      
+      // NÃO preenche a dose automaticamente - deixa o usuário escolher
+      // Apenas atualiza a validação
+      _updateLiveCalculation();
+    });
+    
+    // Mostra informações do fármaco selecionado
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              '${medication.name} selecionado',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'Faixa de dose recomendada: ${medication.minDose}-${medication.maxDose} ${medication.unit}',
+              style: const TextStyle(fontSize: 12),
+            ),
+            if (medication.tradeName != null)
+              Text(
+                'Nome comercial: ${medication.tradeName}',
+                style: const TextStyle(fontSize: 12),
+              ),
+          ],
+        ),
+        duration: const Duration(seconds: 4),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
+  }
+  
+  /// Limpa seleção de fármaco
+  void _clearMedicationSelection() {
+    setState(() {
+      _selectedMedication = null;
+      _medicationSearchController.clear();
+      _filteredMedications = _medications;
+    });
   }
   
   /// Converte dose para mcg/kg
@@ -162,8 +269,19 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
   
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () {
+        // Fecha o dropdown quando clicar fora
+        if (_showMedicationDropdown) {
+          setState(() {
+            _showMedicationDropdown = false;
+          });
+        }
+        // Remove o foco dos campos de texto
+        FocusScope.of(context).unfocus();
+      },
+      child: Scaffold(
+        appBar: AppBar(
         title: const Text('Calculadora de Doses'),
         actions: [
           // Botão para o conversor de unidades
@@ -241,6 +359,214 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
               
               const SizedBox(height: 24),
               
+              // Seleção de Fármaco (Opcional)
+              Card(
+                color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.medication_outlined,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Referência de Fármaco (Opcional)',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.primary,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Selecione um fármaco do bulário para visualizar a faixa de dose '
+                        'recomendada. Você mantém total controle sobre os valores inseridos.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      
+                      // Campo de busca de fármaco
+                      TextFormField(
+                        controller: _medicationSearchController,
+                        decoration: InputDecoration(
+                          labelText: 'Buscar Fármaco',
+                          hintText: 'Digite o nome do fármaco',
+                          border: const OutlineInputBorder(),
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: _selectedMedication != null
+                              ? IconButton(
+                                  icon: const Icon(Icons.clear),
+                                  onPressed: _clearMedicationSelection,
+                                  tooltip: 'Limpar seleção',
+                                )
+                              : null,
+                        ),
+                        onChanged: _filterMedications,
+                        onTap: () {
+                          setState(() {
+                            _showMedicationDropdown = true;
+                          });
+                        },
+                      ),
+                      
+                      // Lista de sugestões
+                      if (_showMedicationDropdown && _filteredMedications.isNotEmpty)
+                        Container(
+                          margin: const EdgeInsets.only(top: 8),
+                          constraints: const BoxConstraints(maxHeight: 200),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.outline,
+                            ),
+                            borderRadius: BorderRadius.circular(8),
+                            color: Theme.of(context).colorScheme.surface,
+                          ),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: _filteredMedications.length,
+                            itemBuilder: (context, index) {
+                              final medication = _filteredMedications[index];
+                              return ListTile(
+                                dense: true,
+                                leading: Icon(
+                                  Icons.medication,
+                                  color: Theme.of(context).colorScheme.primary,
+                                  size: 20,
+                                ),
+                                title: Text(
+                                  medication.name,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                                subtitle: Text(
+                                  '${medication.minDose}-${medication.maxDose} ${medication.unit}',
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                                onTap: () => _selectMedication(medication),
+                              );
+                            },
+                          ),
+                        ),
+                      
+                      // Informações do fármaco selecionado
+                      if (_selectedMedication != null) ...[
+                        const SizedBox(height: 12),
+                        Container(
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.check_circle,
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      _selectedMedication!.name,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Classe: ${_selectedMedication!.category}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                              if (_selectedMedication!.tradeName != null)
+                                Text(
+                                  'Nome comercial: ${_selectedMedication!.tradeName}',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                  ),
+                                ),
+                              const SizedBox(height: 8),
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.analytics_outlined,
+                                      size: 16,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      'Faixa de dose: ${_selectedMedication!.minDose}-${_selectedMedication!.maxDose} ${_selectedMedication!.unit}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      
+                      // Indicador de carregamento
+                      if (_isLoadingMedications)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 12),
+                          child: Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Carregando fármacos...',
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              
+              const SizedBox(height: 24),
+              
               // Campo Peso
               TextFormField(
                 controller: _weightController,
@@ -308,12 +634,12 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
                         DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
+                        DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
                       ],
                       onChanged: (value) {
                         setState(() {
-                          _doseUnit = value ?? 'mcg/kg';
+                          _doseUnit = value ?? 'mg/kg';
                           _updateLiveCalculation();
                         });
                       },
@@ -364,12 +690,12 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                         border: OutlineInputBorder(),
                       ),
                       items: const [
-                        DropdownMenuItem(value: 'mcg/ml', child: Text('mcg/ml')),
                         DropdownMenuItem(value: 'mg/ml', child: Text('mg/ml')),
+                        DropdownMenuItem(value: 'mcg/ml', child: Text('mcg/ml')),
                       ],
                       onChanged: (value) {
                         setState(() {
-                          _concentrationUnit = value ?? 'mcg/ml';
+                          _concentrationUnit = value ?? 'mg/ml';
                           _updateLiveCalculation();
                         });
                       },
@@ -402,7 +728,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
               const SizedBox(height: 24),
               
               // Resultado do Cálculo
-              if (_calculatedVolume != null)
+              if (_calculatedVolume != null) ...[
                 Card(
                   elevation: 4,
                   color: Theme.of(context).colorScheme.tertiaryContainer,
@@ -432,6 +758,129 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                     ),
                   ),
                 ),
+                
+                // Validação de dose segura (se fármaco selecionado)
+                if (_selectedMedication != null && _weightController.text.isNotEmpty)
+                  Builder(
+                    builder: (context) {
+                      final weight = double.tryParse(_weightController.text.replaceAll(',', '.'));
+                      final dose = double.tryParse(_doseController.text.replaceAll(',', '.'));
+                      
+                      if (weight != null && dose != null) {
+                        final doseInMg = _doseUnit == 'mcg/kg' ? dose / 1000 : dose;
+                        final totalDose = doseInMg * weight;
+                        final safeRange = _selectedMedication!.getSafeDoseRange(weight);
+                        final minSafeDose = safeRange['min']!;
+                        final maxSafeDose = safeRange['max']!;
+                        
+                        // Converte para mesma unidade do medicamento
+                        final medUnitInMg = _selectedMedication!.unit.toLowerCase().contains('mcg') ? 1000 : 1;
+                        final minSafeDoseConverted = minSafeDose / medUnitInMg;
+                        final maxSafeDoseConverted = maxSafeDose / medUnitInMg;
+                        final totalDoseConverted = totalDose * medUnitInMg;
+                        
+                        final isSafe = totalDoseConverted >= minSafeDoseConverted && 
+                                      totalDoseConverted <= maxSafeDoseConverted;
+                        final isBelowMin = totalDoseConverted < minSafeDoseConverted;
+                        
+                        return Card(
+                          elevation: 2,
+                          color: Theme.of(context).colorScheme.surfaceVariant,
+                          child: Padding(
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.info_outline,
+                                      color: Theme.of(context).colorScheme.primary,
+                                      size: 20,
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Referência de Dose',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Dose mínima: ${_selectedMedication!.minDose} ${_selectedMedication!.unit}',
+                                  style: const TextStyle(fontSize: 12),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  'Dose máxima: ${_selectedMedication!.maxDose} ${_selectedMedication!.unit}',
+                                  style: const TextStyle(fontSize: 12),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Para ${weight}kg: ${minSafeDoseConverted.toStringAsFixed(2)}-${maxSafeDoseConverted.toStringAsFixed(2)} ${_selectedMedication!.unit}',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 8),
+                                // Indicador visual discreto
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: isSafe 
+                                            ? Colors.green.withOpacity(0.2)
+                                            : (isBelowMin 
+                                                ? Colors.orange.withOpacity(0.2)
+                                                : Colors.red.withOpacity(0.2)),
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isSafe ? Icons.check_circle_outline : Icons.info_outline,
+                                            size: 14,
+                                            color: isSafe 
+                                                ? Colors.green.shade700
+                                                : (isBelowMin ? Colors.orange.shade700 : Colors.red.shade700),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            isSafe 
+                                                ? 'Dentro da faixa'
+                                                : (isBelowMin ? 'Abaixo da faixa' : 'Acima da faixa'),
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: isSafe 
+                                                  ? Colors.green.shade700
+                                                  : (isBelowMin ? Colors.orange.shade700 : Colors.red.shade700),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+              ],
               
               const SizedBox(height: 24),
               
@@ -490,6 +939,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
             ],
           ),
         ),
+      ),
       ),
     );
   }

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
-import '../rcp/rcp_page.dart';
-import '../dose_calculator/dose_calculator_page.dart';
-import '../ficha_anestesica/ficha_anestesica_page.dart';
 import '../pre_op_checklist/pre_op_checklist_page.dart';
-import '../drug_guide/drug_guide_page.dart';
 import '../../core/widgets/modern_widgets.dart';
 import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
 import '../unit_converter/unit_converter_page.dart';
@@ -13,8 +9,8 @@ import '../transfusion/transfusion_page.dart';
 import '../apgar/apgar_page.dart';
 import '../consent_form/consent_form_page.dart';
 
-/// Tela que exibe todas as funcionalidades disponíveis no app GDAV
-/// Organizada por categorias para facilitar a navegação
+/// Tela que exibe ferramentas adicionais do app GDAV
+/// Exclui as que já estão na navegação inferior para evitar duplicação
 class AllFeaturesPage extends StatelessWidget {
   const AllFeaturesPage({super.key});
 
@@ -29,7 +25,7 @@ class AllFeaturesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Todas as Funcionalidades'),
+        title: const Text('Ferramentas Adicionais'),
         centerTitle: true,
       ),
       body: GridView.count(
@@ -39,23 +35,7 @@ class AllFeaturesPage extends StatelessWidget {
         mainAxisSpacing: 16,
         childAspectRatio: 1.2,
         children: [
-          // === EMERGÊNCIA ===
-          CategoryCard(
-            icon: Icons.monitor_heart,
-            title: 'RCP Coach',
-            subtitle: 'Assistente de RCP',
-            iconColor: AppColors.error,
-            onTap: () => _navigateTo(context, const RcpPage()),
-          ),
-
-          // === CALCULADORAS ===
-          CategoryCard(
-            icon: Icons.calculate,
-            title: 'Calculadora Doses',
-            subtitle: 'Medicamentos',
-            iconColor: AppColors.categoryOrange,
-            onTap: () => _navigateTo(context, const DoseCalculatorPage()),
-          ),
+          // === CALCULADORAS ESPECÍFICAS ===
           CategoryCard(
             icon: Icons.water_drop_outlined,
             title: 'Fluidoterapia',
@@ -96,13 +76,6 @@ class AllFeaturesPage extends StatelessWidget {
 
           // === DOCUMENTAÇÃO ===
           CategoryCard(
-            icon: Icons.article_outlined,
-            title: 'Ficha Anestésica',
-            subtitle: 'Registro digital',
-            iconColor: AppColors.primaryTeal,
-            onTap: () => _navigateTo(context, const FichaAnestesicaPage()),
-          ),
-          CategoryCard(
             icon: Icons.assignment_outlined,
             title: 'Termo Consentimento',
             subtitle: 'Autorização PDF',
@@ -117,15 +90,6 @@ class AllFeaturesPage extends StatelessWidget {
             subtitle: 'Pré-operatório',
             iconColor: AppColors.categoryGreen,
             onTap: () => _navigateTo(context, const PreOpChecklistPage()),
-          ),
-
-          // === REFERÊNCIA ===
-          CategoryCard(
-            icon: Icons.medication_outlined,
-            title: 'Guia de Fármacos',
-            subtitle: 'Bulário completo',
-            iconColor: AppColors.categoryBlue,
-            onTap: () => _navigateTo(context, const DrugGuidePage()),
           ),
         ],
       ),

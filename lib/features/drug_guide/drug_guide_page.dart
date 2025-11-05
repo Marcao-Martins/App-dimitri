@@ -324,19 +324,6 @@ class MedicationDetailPage extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text(medication.name),
-        actions: [
-          if (medication.link != null && medication.link!.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.open_in_browser),
-              tooltip: 'Ver online',
-              onPressed: () {
-                // TODO: Abrir link no navegador
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Link: ${medication.link}')),
-                );
-              },
-            ),
-        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(AppConstants.defaultPadding),
