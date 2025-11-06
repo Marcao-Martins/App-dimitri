@@ -97,6 +97,11 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
     notifyListeners();
   }
 
+  /// Pausa pública — exposta para widgets que queiram pausar o controlador
+  void pauseTimer() {
+    _pause();
+  }
+
   /// Reinicia tudo
   void reset() {
     _pause();

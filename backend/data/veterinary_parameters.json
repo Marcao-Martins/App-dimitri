@@ -1,0 +1,1389 @@
+[
+  {
+    "species": "dog",
+    "parameter_name": "Frequência cardíaca (FC)",
+    "parameter_value": "70-220 bpm (cães)\n70-180 bpm (raças toy)\n70-160 bpm (raças standard)\n60-140 bpm (raças grandes)",
+    "comments": "As bradiarritmias são comuns após a administração de agonistas α2-adrenérgicos.\nAs bradiarritmias são comuns em cães braquicefálicos e cavalos em repouso.\nNão é comum observar FCs próximas ao limite inferior em gatos conscientes.",
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025.",
+      "Lee JA, Drobatz KJ. Historical and physical parameters as predictors of severe hyperkalemia in male cats with urethral obstruction. Journal of Veterinary Emergency and Critical Care. 2006 Jun;16(2):104–11."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Frequência cardíaca (FC)",
+    "parameter_value": "120-240 bpm",
+    "comments": "As bradiarritmias são comuns após a administração de agonistas α2-adrenérgicos.\nAs bradiarritmias são comuns em cães braquicefálicos e cavalos em repouso.\nNão é comum observar FCs próximas ao limite inferior em gatos conscientes.",
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025.",
+      "Lee JA, Drobatz KJ. Historical and physical parameters as predictors of severe hyperkalemia in male cats with urethral obstruction. Journal of Veterinary Emergency and Critical Care. 2006 Jun;16(2):104–11."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Frequência cardíaca (FC)",
+    "parameter_value": "28-40 bpm",
+    "comments": "As bradiarritmias são comuns após a administração de agonistas α2-adrenérgicos.\nAs bradiarritmias são comuns em cães braquicefálicos e cavalos em repouso.\nNão é comum observar FCs próximas ao limite inferior em gatos conscientes.",
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025.",
+      "Lee JA, Drobatz KJ. Historical and physical parameters as predictors of severe hyperkalemia in male cats with urethral obstruction. Journal of Veterinary Emergency and Critical Care. 2006 Jun;16(2):104–11."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Pressão arterial sistólica (PAS)",
+    "parameter_value": "100-160 mmHg",
+    "comments": "Considera-se como pré-hipertenso o animal cuja PAS é 140-159 mmHg.\nPode ser subestimada pelo método Doppler em mais de 20 mmHg em cães anestesiados.",
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025.",
+      "Ambrósio AM, Fantoni DT. Manual de anestesia veterinária: procedimentos e condutas. São Paulo: Manole; 2024.",
+      "Garofalo NA, Teixeira Neto FJ, Alvaides RK, de Oliveira FA, Pignaton W, Pinheiro RT. Agreement between direct, oscillometric and Doppler ultrasound blood pressures using three different cuff positions in anesthetized dogs. Vet Anaesth Analg. 2012 Jul;39(4):324-34."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Pressão arterial média (PAM)",
+    "parameter_value": "65-120 mmHg",
+    "comments": "A PAM pode ser estimada pela fórmula: PAM = PAD + (PAS - PAD) / 3, apesar de o cálculo correto envolver uma integral da área sob curva da pressão.\nO intervalo de concordância para o método oscilométrico é de -17 a 13 mmHg em cães anestesiados.\nMesmo períodos curtos de hipotensão estão associados a lesão renal aguda e miocárdica em humanos.\nA PAM deve ser mantida acima de 70 mmHg para a adequada perfusão muscular em cavalos em decúbito.",
+    "references": [
+      "Ambrósio AM, Fantoni DT. Manual de anestesia veterinária: procedimentos e condutas. São Paulo: Manole; 2024.",
+      "Garofalo NA, Teixeira Neto FJ, Alvaides RK, de Oliveira FA, Pignaton W, Pinheiro RT. Agreement between direct, oscillometric and Doppler ultrasound blood pressures using three different cuff positions in anesthetized dogs. Vet Anaesth Analg. 2012 Jul;39(4):324-34.",
+      "Walsh M, Devereaux PJ, Garg AX, Kurz A, Turan A, Rodseth RN et al. Relationship between intraoperative mean arterial pressure and clinical outcomes after noncardiac surgery: toward an empirical definition of hypotension. Anesthesiology. 2013 Sep;119(3):507-15.",
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Pressão arterial diastólica (PAD)",
+    "parameter_value": "60-100 mmHg",
+    "comments": "Pressão de perfusão coronariana (PPC) = PAD - pressão diastólica final do ventrículo esquerdo (PDFVE)",
+    "references": [
+      "Ambrósio AM, Fantoni DT. Manual de anestesia veterinária: procedimentos e condutas. São Paulo: Manole; 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Pressão venosa central (PVC)",
+    "parameter_value": "Até 7-10 cmH2O, geralmente 0-5 cmH2O",
+    "comments": "Fator de conversão: 1 mmHg = 1,36 cmH2O\nPara cada 10 cm que o transdutor está posicionado abaixo/acima do átrio direito, a pressão invasiva aumenta/diminui em 7,4 mmHg.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Pressão venosa central (PVC)",
+    "parameter_value": "15-25 cmH2O (decúbito lateral)\n5-10 cmH2O (decúbito dorsal)\n5-6 cmH2O (pônei normovolêmico)",
+    "comments": "Fator de conversão: 1 mmHg = 1,36 cmH2O\nPara cada 10 cm que o transdutor está posicionado abaixo/acima do átrio direito, a pressão invasiva aumenta/diminui em 7,4 mmHg.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Volume sistólico (VS)",
+    "parameter_value": "1,6-1,9 ml/batimento/kg",
+    "comments": null,
+    "references": [
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Volume sistólico (VS)",
+    "parameter_value": "0,9-1 ml/batimento/kg",
+    "comments": null,
+    "references": [
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Volume sistólico (VS)",
+    "parameter_value": "2,6-3 ml/batimento/kg",
+    "comments": null,
+    "references": [
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Índice cardíaco (IC)",
+    "parameter_value": "190-230 ml/kg/min",
+    "comments": null,
+    "references": [
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Índice cardíaco (IC)",
+    "parameter_value": "160-180 ml/kg/min",
+    "comments": null,
+    "references": [
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Índice cardíaco (IC)",
+    "parameter_value": "115-135 ml/kg/min",
+    "comments": null,
+    "references": [
+      "Veterinary Anesthesia and Analgesia, The 6th Edition of Lumb and Jones. Reino Unido: Wiley, 2024."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Frequência respiratória (FR)",
+    "parameter_value": "12-36 rpm",
+    "comments": null,
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Frequência respiratória (FR)",
+    "parameter_value": "20-40 rpm",
+    "comments": null,
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Frequência respiratória (FR)",
+    "parameter_value": "12-20 rpm",
+    "comments": null,
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Volume corrente (Vt)",
+    "parameter_value": "13 ± 6 mL/kg (Beagle)\n18 ± 9 mL/kg (mesocefálico)\n25 ± 7 mL/kg (dolicocefálico)",
+    "comments": "O espaço morto fisiológico (Vdphys) é 7,2 ± 1,4 mL/kg no cão e 4,0 ± 0,3 mL/kg no gato.",
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023.",
+      "Girotto CH, Ospina-Argüelles DA, Teixeira-Neto FJ, Assis-Vieira PV, Martins ARC, Kerr C. Dead space volumes in cats and dogs with small body mass ventilated with a fixed tidal volume. Vet Anaesth Analg. 2024 Nov-Dec;51(6):585-593."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Volume corrente (Vt)",
+    "parameter_value": "14 ± 4 mL/kg",
+    "comments": "O espaço morto fisiológico (Vdphys) é 7,2 ± 1,4 mL/kg no cão e 4,0 ± 0,3 mL/kg no gato.",
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023.",
+      "Girotto CH, Ospina-Argüelles DA, Teixeira-Neto FJ, Assis-Vieira PV, Martins ARC, Kerr C. Dead space volumes in cats and dogs with small body mass ventilated with a fixed tidal volume. Vet Anaesth Analg. 2024 Nov-Dec;51(6):585-593."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Volume corrente (Vt)",
+    "parameter_value": "15 ± 2 mL/kg",
+    "comments": "O espaço morto fisiológico (Vdphys) é 7,2 ± 1,4 mL/kg no cão e 4,0 ± 0,3 mL/kg no gato.",
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023.",
+      "Girotto CH, Ospina-Argüelles DA, Teixeira-Neto FJ, Assis-Vieira PV, Martins ARC, Kerr C. Dead space volumes in cats and dogs with small body mass ventilated with a fixed tidal volume. Vet Anaesth Analg. 2024 Nov-Dec;51(6):585-593."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Saturação arterial de O2 (SpO2)",
+    "parameter_value": "A partir de 95% (FiO2 1,0)",
+    "comments": "A hipoxemia permissiva (88-92%) é tolerada em humanos sob ventilação mecânica prolongada.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Bailey K, Briley J, Duffee L, Duke-Novakovski T, Grubb T, Kruse-Elliott K et al. The American College of Veterinary Anesthesia and Analgesia Small Animal Anesthesia and Sedation Monitoring Guidelines 2025. Vet Anaesth Analg. 2025 Jul-Aug;52(4):377-385.",
+      "Panwar R, Hardie M, Bellomo R, Barrot L, Eastwood GM, Young PJ et al.; CLOSE Study Investigators; ANZICS Clinical Trials Group. Conservative versus Liberal Oxygenation Targets for Mechanically Ventilated Patients. A Pilot Multicenter Randomized Controlled Trial. Am J Respir Crit Care Med. 2016 Jan 1;193(1):43-51."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Saturação arterial de O2 (SpO2)",
+    "parameter_value": "Acima de 93%",
+    "comments": "A hipoxemia permissiva (88-92%) é tolerada em humanos sob ventilação mecânica prolongada.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Bailey K, Briley J, Duffee L, Duke-Novakovski T, Grubb T, Kruse-Elliott K et al. The American College of Veterinary Anesthesia and Analgesia Small Animal Anesthesia and Sedation Monitoring Guidelines 2025. Vet Anaesth Analg. 2025 Jul-Aug;52(4):377-385.",
+      "Panwar R, Hardie M, Bellomo R, Barrot L, Eastwood GM, Young PJ et al.; CLOSE Study Investigators; ANZICS Clinical Trials Group. Conservative versus Liberal Oxygenation Targets for Mechanically Ventilated Patients. A Pilot Multicenter Randomized Controlled Trial. Am J Respir Crit Care Med. 2016 Jan 1;193(1):43-51."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "CO2 expirado final (EtCO2)",
+    "parameter_value": "35-45 mmHg",
+    "comments": "O gradiente PaCO2-EtCO2 fisiológico geralmente é inferior a 5 mmHg em pequenos animais.\nNo equino em decúbito, o gradiente PaCO2-EtCO2 é 10-15 mmHg sob ventilação controlada e 25-30 mmHg sob ventilação espontânea.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Temperatura retal (TR)",
+    "parameter_value": "36,1-37,7 °C (jovens)\n37,5-39,2 °C (adultos)",
+    "comments": null,
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Temperatura retal (TR)",
+    "parameter_value": "38,0-39,5 (jovens)\n37,8-39,2 (adultos)",
+    "comments": null,
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Temperatura retal (TR)",
+    "parameter_value": "37,2-38,0 (jovens)\n37,5-38,5 (adultos)",
+    "comments": null,
+    "references": [
+      "Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Débito urinário (DU)",
+    "parameter_value": "1-2 mL/kg/h",
+    "comments": "Devem-se considerar outros fatores além da espécie, como a idade.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Glicemia",
+    "parameter_value": "76-119 mg/dL",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Glicemia",
+    "parameter_value": "60-120 mg/dL",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Glicemia",
+    "parameter_value": "89-112 mg/dL",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "pH arterial",
+    "parameter_value": "7,35-7,46",
+    "comments": null,
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "pH arterial",
+    "parameter_value": "7,31-7,46",
+    "comments": null,
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "pH arterial",
+    "parameter_value": "7,30-7,50",
+    "comments": null,
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Pressão arterial de O2 (PaO2)",
+    "parameter_value": "81-103 mmHg",
+    "comments": null,
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Pressão arterial de O2 (PaO2)",
+    "parameter_value": "95-118 mmHg",
+    "comments": null,
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Pressão arterial de O2 (PaO2)",
+    "parameter_value": "89-101 mmHg",
+    "comments": null,
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Pressão arterial de CO2 (PaCO2)",
+    "parameter_value": "31-43 mmHg",
+    "comments": "A hipercapnia permissiva (até 60 mmHg) é tolerada em algumas situações, como durante o desmame ventilatório.\nA hipocapnia permissiva (acima de 25 mmHg) é tolerada em algumas situações, como no manejo do trauma cranioencefálico.",
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023.",
+      "Bailey K, Briley J, Duffee L, Duke-Novakovski T, Grubb T, Kruse-Elliott K et al. The American College of Veterinary Anesthesia and Analgesia Small Animal Anesthesia and Sedation Monitoring Guidelines 2025. Vet Anaesth Analg. 2025 Jul-Aug;52(4):377-385.",
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Pressão arterial de CO2 (PaCO2)",
+    "parameter_value": "25-37 mmHg",
+    "comments": "A hipercapnia permissiva (até 60 mmHg) é tolerada em algumas situações, como durante o desmame ventilatório.\nA hipocapnia permissiva (acima de 25 mmHg) é tolerada em algumas situações, como no manejo do trauma cranioencefálico.",
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023.",
+      "Bailey K, Briley J, Duffee L, Duke-Novakovski T, Grubb T, Kruse-Elliott K et al. The American College of Veterinary Anesthesia and Analgesia Small Animal Anesthesia and Sedation Monitoring Guidelines 2025. Vet Anaesth Analg. 2025 Jul-Aug;52(4):377-385.",
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Pressão arterial de CO2 (PaCO2)",
+    "parameter_value": "33-50 mmHg",
+    "comments": "A hipercapnia permissiva (até 60 mmHg) é tolerada em algumas situações, como durante o desmame ventilatório.\nA hipocapnia permissiva (acima de 25 mmHg) é tolerada em algumas situações, como no manejo do trauma cranioencefálico.",
+    "references": [
+      "Fantoni DT, Ambrósio AM. Ventilação mecânica em medicina veterinária. São Paulo: Manole; 2023.",
+      "Bailey K, Briley J, Duffee L, Duke-Novakovski T, Grubb T, Kruse-Elliott K et al. The American College of Veterinary Anesthesia and Analgesia Small Animal Anesthesia and Sedation Monitoring Guidelines 2025. Vet Anaesth Analg. 2025 Jul-Aug;52(4):377-385.",
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Bicarbonato arterial (HCO3-)",
+    "parameter_value": "19-23 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Bicarbonato arterial (HCO3-)",
+    "parameter_value": "17-21 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Bicarbonato arterial (HCO3-)",
+    "parameter_value": "21-29 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Base excess (BE)",
+    "parameter_value": "-5 a 0 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Base excess (BE)",
+    "parameter_value": "0 a +8 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Sódio (Na+)",
+    "parameter_value": "140-150 (146) mEq/L",
+    "comments": "O uso de heparina de sódio pode superestimar o Na+, sendo preferível a heparina de lítio.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Sódio (Na+)",
+    "parameter_value": "150-160 (156) mEq/L",
+    "comments": "O uso de heparina de sódio pode superestimar o Na+, sendo preferível a heparina de lítio.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Sódio (Na+)",
+    "parameter_value": "130-146 mEq/L",
+    "comments": "O uso de heparina de sódio pode superestimar o Na+, sendo preferível a heparina de lítio.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Potássio (K+)",
+    "parameter_value": "4,0-5,5 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Potássio (K+)",
+    "parameter_value": "2,7-4,8 mEq/L",
+    "comments": null,
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Cálcio ionizado (iCa)",
+    "parameter_value": "1,2-1,5 mmol/L",
+    "comments": "O iCa no plasma heparinizado ou no sangue total é normalmente menor que o iCa sérico.\nPor ser um cátion bivalente, o valor em mEq/l é o dobro do valor em mmol/L.\nO valor em mg/dL é aproximadamente o quádruplo do valor em mmol/L.",
+    "references": [
+      "Coady M, Fletcher DJ, Goggs R. Severity of Ionized Hypercalcemia and Hypocalcemia Is Associated With Etiology in Dogs and Cats. Front Vet Sci. 2019 Aug 22;6:276.",
+      "van der Kolk JH, Nachreiner RF, Refsal KR, Brouillet D, Wensing T. Heparinised blood ionised calcium concentrations in horses with colic or diarrhoea compared to normal subjects. Equine Vet J. 2002 Jul;34(5):528-31."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Cálcio ionizado (iCa)",
+    "parameter_value": "1,1-1,4 mmol/L",
+    "comments": "O iCa no plasma heparinizado ou no sangue total é normalmente menor que o iCa sérico.\nPor ser um cátion bivalente, o valor em mEq/l é o dobro do valor em mmol/L.\nO valor em mg/dL é aproximadamente o quádruplo do valor em mmol/L.",
+    "references": [
+      "Coady M, Fletcher DJ, Goggs R. Severity of Ionized Hypercalcemia and Hypocalcemia Is Associated With Etiology in Dogs and Cats. Front Vet Sci. 2019 Aug 22;6:276.",
+      "van der Kolk JH, Nachreiner RF, Refsal KR, Brouillet D, Wensing T. Heparinised blood ionised calcium concentrations in horses with colic or diarrhoea compared to normal subjects. Equine Vet J. 2002 Jul;34(5):528-31."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Cálcio ionizado (iCa)",
+    "parameter_value": "1,45-1,75 mmol/L",
+    "comments": "O iCa no plasma heparinizado ou no sangue total é normalmente menor que o iCa sérico.\nPor ser um cátion bivalente, o valor em mEq/l é o dobro do valor em mmol/L.\nO valor em mg/dL é aproximadamente o quádruplo do valor em mmol/L.",
+    "references": [
+      "Coady M, Fletcher DJ, Goggs R. Severity of Ionized Hypercalcemia and Hypocalcemia Is Associated With Etiology in Dogs and Cats. Front Vet Sci. 2019 Aug 22;6:276.",
+      "van der Kolk JH, Nachreiner RF, Refsal KR, Brouillet D, Wensing T. Heparinised blood ionised calcium concentrations in horses with colic or diarrhoea compared to normal subjects. Equine Vet J. 2002 Jul;34(5):528-31."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Cloreto (Cl-)",
+    "parameter_value": "107-113 mEq/L",
+    "comments": "Cloreto corrigido pela água livre = [Cl-]mensurado * [Na+]espécie / [Na+]mensurado.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Cloreto (Cl-)",
+    "parameter_value": "117-123 mEq/L",
+    "comments": "Cloreto corrigido pela água livre = [Cl-]mensurado * [Na+]espécie / [Na+]mensurado.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Cloreto (Cl-)",
+    "parameter_value": "95-110 mEq/L",
+    "comments": "Cloreto corrigido pela água livre = [Cl-]mensurado * [Na+]espécie / [Na+]mensurado.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Anion gap (AG)",
+    "parameter_value": "Até 24 mEq/L",
+    "comments": "AG ajustada pela concentração de albumina = AG + 0,42 * (3,8 - [Alb]) em cães e AG + 0,41 * (3,3 - [Alb]) em gatos.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Anion gap (AG)",
+    "parameter_value": "Até 31 mEq/L",
+    "comments": "AG ajustada pela concentração de albumina = AG + 0,42 * (3,8 - [Alb]) em cães e AG + 0,41 * (3,3 - [Alb]) em gatos.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Anion gap (AG)",
+    "parameter_value": "Até 16 mEq/L",
+    "comments": "AG ajustada pela concentração de albumina = AG + 0,42 * (3,8 - [Alb]) em cães e AG + 0,41 * (3,3 - [Alb]) em gatos.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Lactato (Lac-)",
+    "parameter_value": "Até 2,5 mmol/L",
+    "comments": "O prognóstico deve ser baseado na depuração de lactato, e não em um valor único.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Lactato (Lac-)",
+    "parameter_value": "Até 1,3 mmol/L",
+    "comments": "O prognóstico deve ser baseado na depuração de lactato, e não em um valor único.",
+    "references": [
+      "Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018.",
+      "Morais HA, DiBartola SP. Advances in Fluid, Electrolyte, and Acid-base Disorders, An Issue of Veterinary Clinics of North America: Small Animal Practice. Estados Unidos: Elsevier; 2017."
+    ],
+    "category": "Metabólico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Hemácias",
+    "parameter_value": "4,95-7,87 * 10^6/mcL",
+    "comments": "O Ht pode ser estimado pela fórmula: Hb * 3.\nCães galgos e cavalos em treinamento podem ter hemácias, Hb e Ht significativamente maiores.",
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Hemácias",
+    "parameter_value": "5-10 * 10^6/mcL",
+    "comments": "O Ht pode ser estimado pela fórmula: Hb * 3.\nCães galgos e cavalos em treinamento podem ter hemácias, Hb e Ht significativamente maiores.",
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Hemácias",
+    "parameter_value": "6-10,4 * 10^6/mcL",
+    "comments": "O Ht pode ser estimado pela fórmula: Hb * 3.\nCães galgos e cavalos em treinamento podem ter hemácias, Hb e Ht significativamente maiores.",
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Concentração de hemoglobina (Hb)",
+    "parameter_value": "11,9-18,9 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Concentração de hemoglobina (Hb)",
+    "parameter_value": "9,8-15,4 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Concentração de hemoglobina (Hb)",
+    "parameter_value": "10,1-16,1 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Hematócrito (Ht) ou Volume globular (VG)",
+    "parameter_value": "35-57%",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Hematócrito (Ht) ou Volume globular (VG)",
+    "parameter_value": "30-45%",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Hematócrito (Ht) ou Volume globular (VG)",
+    "parameter_value": "27-43%",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Proteínas totais (PT), plasma",
+    "parameter_value": "6-7,5 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Proteínas totais (PT), plasma",
+    "parameter_value": "6-7,5 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Proteínas totais (PT), plasma",
+    "parameter_value": "6-8,5 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Proteínas totais (PT), soro",
+    "parameter_value": "5,4-7,5 g/dL",
+    "comments": "PT = Alb + Globulinas",
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Proteínas totais (PT), soro",
+    "parameter_value": "6-7,9 g/dL",
+    "comments": "PT = Alb + Globulinas",
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Proteínas totais (PT), soro",
+    "parameter_value": "5,6-7,6 g/dL",
+    "comments": "PT = Alb + Globulinas",
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Albumina (Alb)",
+    "parameter_value": "2,3-3,1 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Albumina (Alb)",
+    "parameter_value": "2,8-3,9 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Albumina (Alb)",
+    "parameter_value": "2,6-4,1 g/dL",
+    "comments": null,
+    "references": [
+      "Latimer KS, Duncan JR. Duncan and Prasse's Veterinary Laboratory Medicine: Clinical Pathology. Índia: Wiley; 2011."
+    ],
+    "category": "Hematológico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Índice de entrega de O2 (DO2)",
+    "parameter_value": "20-35 mL/kg/min",
+    "comments": "DO2  = IC * CaO2\nO DO2 crítico para cães se situa entre 3 e 11 mL/kg/min.\nO DO2 diminui com uma maior concentração expirada de sevoflurano e aumenta com um estímulo nociceptivo em gatos.\nO consumo de O2 (V̇O2) médio é de 1,78-2,32 mL/kg/min em cavalos anestesiados em diferentes decúbitos.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Peterson NW, Moses L. Oxygen delivery. Compend Contin Educ Vet. 2011 Jan;33(1):E5.",
+      "Pypendop BH, Ilkiw JE. Hemodynamic effects of sevoflurane in cats. Am J Vet Res. 2004 Jan;65(1):20-5.",
+      "Gorenberg EB, Slack J, Stefanovski D, Theiss D, Hopster K. Dobutamine improves haemodynamics and oxygen delivery in standing and isoflurane-anaesthetised horses. Equine Vet J. 2025 Nov;57(6):1677-1689.",
+      "Wetmore LA, Derksen FJ, Blaze CA, Eyster GE. Mixed venous oxygen tension as an estimate of cardiac output in anesthetized horses. Am J Vet Res. 1987 Jun;48(6):971-6."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Índice de entrega de O2 (DO2)",
+    "parameter_value": "33,57 ± 2,61 mL/min (anestesiado)",
+    "comments": "DO2  = IC * CaO2\nO DO2 crítico para cães se situa entre 3 e 11 mL/kg/min.\nO DO2 diminui com uma maior concentração expirada de sevoflurano e aumenta com um estímulo nociceptivo em gatos.\nO consumo de O2 (V̇O2) médio é de 1,78-2,32 mL/kg/min em cavalos anestesiados em diferentes decúbitos.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Peterson NW, Moses L. Oxygen delivery. Compend Contin Educ Vet. 2011 Jan;33(1):E5.",
+      "Pypendop BH, Ilkiw JE. Hemodynamic effects of sevoflurane in cats. Am J Vet Res. 2004 Jan;65(1):20-5.",
+      "Gorenberg EB, Slack J, Stefanovski D, Theiss D, Hopster K. Dobutamine improves haemodynamics and oxygen delivery in standing and isoflurane-anaesthetised horses. Equine Vet J. 2025 Nov;57(6):1677-1689.",
+      "Wetmore LA, Derksen FJ, Blaze CA, Eyster GE. Mixed venous oxygen tension as an estimate of cardiac output in anesthetized horses. Am J Vet Res. 1987 Jun;48(6):971-6."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Índice de entrega de O2 (DO2)",
+    "parameter_value": "4606 mL/min",
+    "comments": "DO2  = IC * CaO2\nO DO2 crítico para cães se situa entre 3 e 11 mL/kg/min.\nO DO2 diminui com uma maior concentração expirada de sevoflurano e aumenta com um estímulo nociceptivo em gatos.\nO consumo de O2 (V̇O2) médio é de 1,78-2,32 mL/kg/min em cavalos anestesiados em diferentes decúbitos.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Peterson NW, Moses L. Oxygen delivery. Compend Contin Educ Vet. 2011 Jan;33(1):E5.",
+      "Pypendop BH, Ilkiw JE. Hemodynamic effects of sevoflurane in cats. Am J Vet Res. 2004 Jan;65(1):20-5.",
+      "Gorenberg EB, Slack J, Stefanovski D, Theiss D, Hopster K. Dobutamine improves haemodynamics and oxygen delivery in standing and isoflurane-anaesthetised horses. Equine Vet J. 2025 Nov;57(6):1677-1689.",
+      "Wetmore LA, Derksen FJ, Blaze CA, Eyster GE. Mixed venous oxygen tension as an estimate of cardiac output in anesthetized horses. Am J Vet Res. 1987 Jun;48(6):971-6."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "CaO2",
+    "parameter_value": "19-21 mL/dL",
+    "comments": null,
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "CaO2",
+    "parameter_value": "-",
+    "comments": null,
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "CaO2",
+    "parameter_value": "28,9 + 0,36 mL/dL (exercício)",
+    "comments": null,
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "P(A-a)O2",
+    "parameter_value": "Até 15 mmHg (FiO2 0,21)",
+    "comments": "PAO2 (mmHg) = FiO2 * (PB - PH2O) - (PaCO2 / 0,8)",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "P(A-a)O2",
+    "parameter_value": "-",
+    "comments": "PAO2 (mmHg) = FiO2 * (PB - PH2O) - (PaCO2 / 0,8)",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "P(A-a)O2",
+    "parameter_value": "-",
+    "comments": "PAO2 (mmHg) = FiO2 * (PB - PH2O) - (PaCO2 / 0,8)",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Razão PaO2:FiO2",
+    "parameter_value": ">300",
+    "comments": null,
+    "references": [
+      "Balakrishnan A, Silverstein DC, Bedenice D, Bersenas A, Bourgeois JP, Carroll CL et al. Acute Respiratory Distress Syndrome in Veterinary Medicine-The ARDSVet Definitions. J Vet Emerg Crit Care (San Antonio). 2025 Jul-Aug;35(4):327-338."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Razão SpO2/FiO2",
+    "parameter_value": ">150-315",
+    "comments": "Não é um parâmetro válido com valores de SpO2 superiores a 97%.",
+    "references": [
+      "Balakrishnan A, Silverstein DC, Bedenice D, Bersenas A, Bourgeois JP, Carroll CL et al. Acute Respiratory Distress Syndrome in Veterinary Medicine-The ARDSVet Definitions. J Vet Emerg Crit Care (San Antonio). 2025 Jul-Aug;35(4):327-338."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Complacência dinâmica (Cdyn)",
+    "parameter_value": "8,845 + (0,895 * PV) mL/cmH2O",
+    "comments": "A grande variação na Cdyn limita o desenvolvimento de um único intervalo de referência em cães.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Complacência dinâmica (Cdyn)",
+    "parameter_value": "-",
+    "comments": "A grande variação na Cdyn limita o desenvolvimento de um único intervalo de referência em cães.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Complacência dinâmica (Cdyn)",
+    "parameter_value": "-",
+    "comments": "A grande variação na Cdyn limita o desenvolvimento de um único intervalo de referência em cães.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Resistência de vias aéreas (Raw)",
+    "parameter_value": "6,965 - (0,0966 * PV) cmH2O/L/s",
+    "comments": "A Raw é inversamente proporcional ao diâmetro da via aérea.",
+    "references": [
+      "Bradbrook CA, Clark L, Dugdale AH, Burford J, Mosing M. Measurement of respiratory system compliance and respiratory system resistance in healthy dogs undergoing general anaesthesia for elective orthopaedic procedures. Vet Anaesth Analg. 2013 Jul;40(4):382-9.",
+      "Epstein A, Godfrey S, Bar-Yishay E, Putilov A, Bark H. Non-invasive measurement of total respiratory compliance and resistance in cats. Respir Physiol Neurobiol. 2007 May 14;156(2):179-86.",
+      "Young SS, Tesarowski D. Respiratory mechanics of horses measured by conventional and forced oscillation techniques. J Appl Physiol (1985). 1994 Jun;76(6):2467-72."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Resistência de vias aéreas (Raw)",
+    "parameter_value": "33,7-43,6 (38,7) cmH2O/L/s",
+    "comments": "A Raw é inversamente proporcional ao diâmetro da via aérea.",
+    "references": [
+      "Bradbrook CA, Clark L, Dugdale AH, Burford J, Mosing M. Measurement of respiratory system compliance and respiratory system resistance in healthy dogs undergoing general anaesthesia for elective orthopaedic procedures. Vet Anaesth Analg. 2013 Jul;40(4):382-9.",
+      "Epstein A, Godfrey S, Bar-Yishay E, Putilov A, Bark H. Non-invasive measurement of total respiratory compliance and resistance in cats. Respir Physiol Neurobiol. 2007 May 14;156(2):179-86.",
+      "Young SS, Tesarowski D. Respiratory mechanics of horses measured by conventional and forced oscillation techniques. J Appl Physiol (1985). 1994 Jun;76(6):2467-72."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Resistência de vias aéreas (Raw)",
+    "parameter_value": "1 ± 0,3 cmH2O/L/s",
+    "comments": "A Raw é inversamente proporcional ao diâmetro da via aérea.",
+    "references": [
+      "Bradbrook CA, Clark L, Dugdale AH, Burford J, Mosing M. Measurement of respiratory system compliance and respiratory system resistance in healthy dogs undergoing general anaesthesia for elective orthopaedic procedures. Vet Anaesth Analg. 2013 Jul;40(4):382-9.",
+      "Epstein A, Godfrey S, Bar-Yishay E, Putilov A, Bark H. Non-invasive measurement of total respiratory compliance and resistance in cats. Respir Physiol Neurobiol. 2007 May 14;156(2):179-86.",
+      "Young SS, Tesarowski D. Respiratory mechanics of horses measured by conventional and forced oscillation techniques. J Appl Physiol (1985). 1994 Jun;76(6):2467-72."
+    ],
+    "category": "Respiratório"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Equação de shunt (Qs/Qt)",
+    "parameter_value": "Até 5%",
+    "comments": "Qs/Qt = (CcO2 - CaO2) / (CcO2 - CmvO2)",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Nyman G, Hedenstierna G. Ventilation-perfusion relationships in the anaesthetised horse. Equine Vet J. 1989 Jul;21(4):274-81."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Equação de shunt (Qs/Qt)",
+    "parameter_value": "-",
+    "comments": "Qs/Qt = (CcO2 - CaO2) / (CcO2 - CmvO2)",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Nyman G, Hedenstierna G. Ventilation-perfusion relationships in the anaesthetised horse. Equine Vet J. 1989 Jul;21(4):274-81."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Equação de shunt (Qs/Qt)",
+    "parameter_value": "Até 3% (estação)\n>30% (decúbito dorsal)",
+    "comments": "Qs/Qt = (CcO2 - CaO2) / (CcO2 - CmvO2)",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Nyman G, Hedenstierna G. Ventilation-perfusion relationships in the anaesthetised horse. Equine Vet J. 1989 Jul;21(4):274-81."
+    ],
+    "category": "Cardiovascular"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Fração de encurtamento (SF)",
+    "parameter_value": "≥25%",
+    "comments": "Os parâmetros ecocardiográficos apresentam ampla variação (p. ex. raça, idade) e devem ser consultados em outras fontes para mais detalhes.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Fração de encurtamento (SF)",
+    "parameter_value": "20-50%",
+    "comments": "Os parâmetros ecocardiográficos apresentam ampla variação (p. ex. raça, idade) e devem ser consultados em outras fontes para mais detalhes.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Fração de encurtamento (SF)",
+    "parameter_value": "37,26 ± 3,8%",
+    "comments": "Os parâmetros ecocardiográficos apresentam ampla variação (p. ex. raça, idade) e devem ser consultados em outras fontes para mais detalhes.",
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Fração de ejeção (EF)",
+    "parameter_value": "47-81%",
+    "comments": null,
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Boon JA. Two-Dimensional and M-Mode Echocardiography for the Small Animal Practitioner. Alemanha: Wiley; 2016."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Fração de ejeção (EF)",
+    "parameter_value": "70,9-87,2%",
+    "comments": null,
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Boon JA. Two-Dimensional and M-Mode Echocardiography for the Small Animal Practitioner. Alemanha: Wiley; 2016."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Fração de ejeção (EF)",
+    "parameter_value": "-",
+    "comments": null,
+    "references": [
+      "Silverstein DC, Hopper K. Small Animal Critical Care Medicine. Estados Unidos: Elsevier; 2022.",
+      "Boon JA. Two-Dimensional and M-Mode Echocardiography for the Small Animal Practitioner. Alemanha: Wiley; 2016."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Razão átrio esquerdo-aorta (LA:Ao)",
+    "parameter_value": "<1,6",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Boon JA. Two-Dimensional and M-Mode Echocardiography for the Small Animal Practitioner. Alemanha: Wiley; 2016.",
+      "Keene BW, Atkins CE, Bonagura JD, Fox PR, Häggström J, Fuentes VL et al. ACVIM consensus guidelines for the diagnosis and treatment of myxomatous mitral valve disease in dogs. J Vet Intern Med. 2019 May;33(3):1127-1140."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Razão átrio esquerdo-aorta (LA:Ao)",
+    "parameter_value": "<1,6",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Boon JA. Two-Dimensional and M-Mode Echocardiography for the Small Animal Practitioner. Alemanha: Wiley; 2016.",
+      "Keene BW, Atkins CE, Bonagura JD, Fox PR, Häggström J, Fuentes VL et al. ACVIM consensus guidelines for the diagnosis and treatment of myxomatous mitral valve disease in dogs. J Vet Intern Med. 2019 May;33(3):1127-1140."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Razão átrio esquerdo-aorta (LA:Ao)",
+    "parameter_value": "1,4 ± 0,1",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Boon JA. Two-Dimensional and M-Mode Echocardiography for the Small Animal Practitioner. Alemanha: Wiley; 2016.",
+      "Keene BW, Atkins CE, Bonagura JD, Fox PR, Häggström J, Fuentes VL et al. ACVIM consensus guidelines for the diagnosis and treatment of myxomatous mitral valve disease in dogs. J Vet Intern Med. 2019 May;33(3):1127-1140."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Tempo de relaxamento isovolumétrico (TRIV)",
+    "parameter_value": "31-73 milissegundos",
+    "comments": null,
+    "references": [
+      "Boon JA. Doppler Echocardiography for the Small Animal Practitioner. Reino Unido: Wiley; 2022."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Tempo de relaxamento isovolumétrico (TRIV)",
+    "parameter_value": "43 ± 9 milissegundos",
+    "comments": null,
+    "references": [
+      "Boon JA. Doppler Echocardiography for the Small Animal Practitioner. Reino Unido: Wiley; 2022."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Tempo de relaxamento isovolumétrico (TRIV)",
+    "parameter_value": "-",
+    "comments": null,
+    "references": [
+      "Boon JA. Doppler Echocardiography for the Small Animal Practitioner. Reino Unido: Wiley; 2022."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "E/A",
+    "parameter_value": "0,92-2,72",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Boon JA. Doppler Echocardiography for the Small Animal Practitioner. Reino Unido: Wiley; 2022."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "E/A",
+    "parameter_value": "1,5 ± 0,3",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Boon JA. Doppler Echocardiography for the Small Animal Practitioner. Reino Unido: Wiley; 2022."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "E/A",
+    "parameter_value": "0,953-3,56",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Boon JA. Doppler Echocardiography for the Small Animal Practitioner. Reino Unido: Wiley; 2022."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Diâmetro diastólico final do ventrículo esquerdo (LVEDd)",
+    "parameter_value": "<1,7 cm (normalizado)",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Keene BW, Atkins CE, Bonagura JD, Fox PR, Häggström J, Fuentes VL et al. ACVIM consensus guidelines for the diagnosis and treatment of myxomatous mitral valve disease in dogs. J Vet Intern Med. 2019 May;33(3):1127-1140.",
+      "Yang VK, Freeman LM, Rush JE. Comparisons of morphometric measurements and serum insulin-like growth factor concentration in healthy cats and cats with hypertrophic cardiomyopathy. Am J Vet Res. 2008 Aug;69(8):1061-6."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Diâmetro diastólico final do ventrículo esquerdo (LVEDd)",
+    "parameter_value": "1,25-1,65 cm",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Keene BW, Atkins CE, Bonagura JD, Fox PR, Häggström J, Fuentes VL et al. ACVIM consensus guidelines for the diagnosis and treatment of myxomatous mitral valve disease in dogs. J Vet Intern Med. 2019 May;33(3):1127-1140.",
+      "Yang VK, Freeman LM, Rush JE. Comparisons of morphometric measurements and serum insulin-like growth factor concentration in healthy cats and cats with hypertrophic cardiomyopathy. Am J Vet Res. 2008 Aug;69(8):1061-6."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Diâmetro diastólico final do ventrículo esquerdo (LVEDd)",
+    "parameter_value": "11,47 ± 0,85 cm",
+    "comments": null,
+    "references": [
+      "Boon JA. Veterinary Echocardiography. Reino Unido: Wiley; 2011.",
+      "Keene BW, Atkins CE, Bonagura JD, Fox PR, Häggström J, Fuentes VL et al. ACVIM consensus guidelines for the diagnosis and treatment of myxomatous mitral valve disease in dogs. J Vet Intern Med. 2019 May;33(3):1127-1140.",
+      "Yang VK, Freeman LM, Rush JE. Comparisons of morphometric measurements and serum insulin-like growth factor concentration in healthy cats and cats with hypertrophic cardiomyopathy. Am J Vet Res. 2008 Aug;69(8):1061-6."
+    ],
+    "category": "Ecocardiográfico"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Índice de colapsabilidade da veia cava caudal (CVC-CI)",
+    "parameter_value": "≤27%",
+    "comments": "Ao contrário de outros índices dinâmicos de fluidorresponsividade, tem validade durante a ventilação espontânea.\nO diâmetro da veia cava caudal é um melhor preditor de fluidorresponsividade que o CVC-CI em gatos.",
+    "references": [
+      "Donati PA, Guevara JM, Ardiles V, Guillemi EC, Londoño L, Dubin A. Caudal vena cava collapsibility index as a tool to predict fluid responsiveness in dogs. J Vet Emerg Crit Care (San Antonio). 2020 Nov;30(6):677-686.",
+      "Donati PA, Tunesi M, Araos J. Caudal vena cava measurements and fluid responsiveness in hospitalized cats with compromised hemodynamics and tissue hypoperfusion. J Vet Emerg Crit Care (San Antonio). 2023 Jan;33(1):29-37.",
+      "Scala E, Durie I, Gommeren K, Saegerman C, van Galen G. Ultrasonographic Assessment of Caudal Vena Cava Collapsibility Index, Caudal Vena Cava-to-Aorta, and Femoral Vein-to-Artery Ratios in Healthy Sedated Adult Horses. Animals (Basel). 2025 Sep 28;15(19):2837.",
+      "Tuplin MC, Romero AE, Boysen SR. Influence of the Respiratory Cycle on Caudal Vena Cava Diameter Measured by Sonography in Healthy Foals: A Pilot Study. J Vet Intern Med. 2017 Sep;31(5):1556-1562."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Índice de colapsabilidade da veia cava caudal (CVC-CI)",
+    "parameter_value": "≤31%",
+    "comments": "Ao contrário de outros índices dinâmicos de fluidorresponsividade, tem validade durante a ventilação espontânea.\nO diâmetro da veia cava caudal é um melhor preditor de fluidorresponsividade que o CVC-CI em gatos.",
+    "references": [
+      "Donati PA, Guevara JM, Ardiles V, Guillemi EC, Londoño L, Dubin A. Caudal vena cava collapsibility index as a tool to predict fluid responsiveness in dogs. J Vet Emerg Crit Care (San Antonio). 2020 Nov;30(6):677-686.",
+      "Donati PA, Tunesi M, Araos J. Caudal vena cava measurements and fluid responsiveness in hospitalized cats with compromised hemodynamics and tissue hypoperfusion. J Vet Emerg Crit Care (San Antonio). 2023 Jan;33(1):29-37.",
+      "Scala E, Durie I, Gommeren K, Saegerman C, van Galen G. Ultrasonographic Assessment of Caudal Vena Cava Collapsibility Index, Caudal Vena Cava-to-Aorta, and Femoral Vein-to-Artery Ratios in Healthy Sedated Adult Horses. Animals (Basel). 2025 Sep 28;15(19):2837.",
+      "Tuplin MC, Romero AE, Boysen SR. Influence of the Respiratory Cycle on Caudal Vena Cava Diameter Measured by Sonography in Healthy Foals: A Pilot Study. J Vet Intern Med. 2017 Sep;31(5):1556-1562."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Índice de colapsabilidade da veia cava caudal (CVC-CI)",
+    "parameter_value": "30-36% (sedados)\n26 ± 10% (potros em estação)",
+    "comments": "Ao contrário de outros índices dinâmicos de fluidorresponsividade, tem validade durante a ventilação espontânea.\nO diâmetro da veia cava caudal é um melhor preditor de fluidorresponsividade que o CVC-CI em gatos.",
+    "references": [
+      "Donati PA, Guevara JM, Ardiles V, Guillemi EC, Londoño L, Dubin A. Caudal vena cava collapsibility index as a tool to predict fluid responsiveness in dogs. J Vet Emerg Crit Care (San Antonio). 2020 Nov;30(6):677-686.",
+      "Donati PA, Tunesi M, Araos J. Caudal vena cava measurements and fluid responsiveness in hospitalized cats with compromised hemodynamics and tissue hypoperfusion. J Vet Emerg Crit Care (San Antonio). 2023 Jan;33(1):29-37.",
+      "Scala E, Durie I, Gommeren K, Saegerman C, van Galen G. Ultrasonographic Assessment of Caudal Vena Cava Collapsibility Index, Caudal Vena Cava-to-Aorta, and Femoral Vein-to-Artery Ratios in Healthy Sedated Adult Horses. Animals (Basel). 2025 Sep 28;15(19):2837.",
+      "Tuplin MC, Romero AE, Boysen SR. Influence of the Respiratory Cycle on Caudal Vena Cava Diameter Measured by Sonography in Healthy Foals: A Pilot Study. J Vet Intern Med. 2017 Sep;31(5):1556-1562."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Variação da pressão de pulso (PPV)",
+    "parameter_value": "≤7-16% (≤13%)",
+    "comments": "A concordância demonstrou ser baixa e diminuir ao longo da anestesia em cavalos.",
+    "references": [
+      "Araos J, Kenny JS, Rousseau-Blass F, Pang DS. Dynamic prediction of fluid responsiveness during positive pressure ventilation: a review of the physiology underlying heart-lung interactions and a critical interpretation. Vet Anaesth Analg. 2020 Jan;47(1):3-14.",
+      "Fielding CL, Stolba DN. Pulse pressure variation and systolic pressure variation in horses undergoing general anesthesia. J Vet Emerg Crit Care (San Antonio). 2012 Jun;22(3):372-5."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Variação da pressão de pulso (PPV)",
+    "parameter_value": "-",
+    "comments": "A concordância demonstrou ser baixa e diminuir ao longo da anestesia em cavalos.",
+    "references": [
+      "Araos J, Kenny JS, Rousseau-Blass F, Pang DS. Dynamic prediction of fluid responsiveness during positive pressure ventilation: a review of the physiology underlying heart-lung interactions and a critical interpretation. Vet Anaesth Analg. 2020 Jan;47(1):3-14.",
+      "Fielding CL, Stolba DN. Pulse pressure variation and systolic pressure variation in horses undergoing general anesthesia. J Vet Emerg Crit Care (San Antonio). 2012 Jun;22(3):372-5."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Variação da pressão de pulso (PPV)",
+    "parameter_value": "7,9-33,8% (15,6%) a 10,7 ± 7,2%",
+    "comments": "A concordância demonstrou ser baixa e diminuir ao longo da anestesia em cavalos.",
+    "references": [
+      "Araos J, Kenny JS, Rousseau-Blass F, Pang DS. Dynamic prediction of fluid responsiveness during positive pressure ventilation: a review of the physiology underlying heart-lung interactions and a critical interpretation. Vet Anaesth Analg. 2020 Jan;47(1):3-14.",
+      "Fielding CL, Stolba DN. Pulse pressure variation and systolic pressure variation in horses undergoing general anesthesia. J Vet Emerg Crit Care (San Antonio). 2012 Jun;22(3):372-5."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Índice de variabilidade pletismográfica (PVI)",
+    "parameter_value": "≤11-14%",
+    "comments": "Limitado em situações de perfusão reduzida, pois requer no mínimo 1% do índice de perfusão (IP) para produzir um valor confiável.",
+    "references": [
+      "Skouropoulou D, Lacitignola L, Di Bella C, Stabile M, Acquafredda C, Brienza N, Grasso S, Crovace A, Iarussi F, Staffieri F. Intraoperative Assessment of Fluid Responsiveness in Normotensive Dogs under Isoflurane Anaesthesia. Vet Sci. 2021 Feb 11;8(2):26.",
+      "Boysen SR, Gommeren K. Assessment of Volume Status and Fluid Responsiveness in Small Animals. Front Vet Sci. 2021 May 28;8:630643."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Índice de variabilidade pletismográfica (PVI)",
+    "parameter_value": "-",
+    "comments": "Limitado em situações de perfusão reduzida, pois requer no mínimo 1% do índice de perfusão (IP) para produzir um valor confiável.",
+    "references": [
+      "Skouropoulou D, Lacitignola L, Di Bella C, Stabile M, Acquafredda C, Brienza N, Grasso S, Crovace A, Iarussi F, Staffieri F. Intraoperative Assessment of Fluid Responsiveness in Normotensive Dogs under Isoflurane Anaesthesia. Vet Sci. 2021 Feb 11;8(2):26.",
+      "Boysen SR, Gommeren K. Assessment of Volume Status and Fluid Responsiveness in Small Animals. Front Vet Sci. 2021 May 28;8:630643."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Índice de variabilidade pletismográfica (PVI)",
+    "parameter_value": "-",
+    "comments": "Limitado em situações de perfusão reduzida, pois requer no mínimo 1% do índice de perfusão (IP) para produzir um valor confiável.",
+    "references": [
+      "Skouropoulou D, Lacitignola L, Di Bella C, Stabile M, Acquafredda C, Brienza N, Grasso S, Crovace A, Iarussi F, Staffieri F. Intraoperative Assessment of Fluid Responsiveness in Normotensive Dogs under Isoflurane Anaesthesia. Vet Sci. 2021 Feb 11;8(2):26.",
+      "Boysen SR, Gommeren K. Assessment of Volume Status and Fluid Responsiveness in Small Animals. Front Vet Sci. 2021 May 28;8:630643."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "dog",
+    "parameter_name": "Variação da pressão sistólica (SPV)",
+    "parameter_value": "≤4,1-4,5% ou ≤4 mmHg",
+    "comments": "Inferior ao PPV e deltaPleth como preditor da fluidorresponsividade.\nA concordância demonstrou ser baixa e diminuir ao longo da anestesia em cavalos.",
+    "references": [
+      "Fielding CL, Stolba DN. Pulse pressure variation and systolic pressure variation in horses undergoing general anesthesia. J Vet Emerg Crit Care (San Antonio). 2012 Jun;22(3):372-5.",
+      "Skouropoulou D, Lacitignola L, Di Bella C, Stabile M, Acquafredda C, Brienza N, Grasso S, Crovace A, Iarussi F, Staffieri F. Intraoperative Assessment of Fluid Responsiveness in Normotensive Dogs under Isoflurane Anaesthesia. Vet Sci. 2021 Feb 11;8(2):26."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "cat",
+    "parameter_name": "Variação da pressão sistólica (SPV)",
+    "parameter_value": "-",
+    "comments": "Inferior ao PPV e deltaPleth como preditor da fluidorresponsividade.\nA concordância demonstrou ser baixa e diminuir ao longo da anestesia em cavalos.",
+    "references": [
+      "Fielding CL, Stolba DN. Pulse pressure variation and systolic pressure variation in horses undergoing general anesthesia. J Vet Emerg Crit Care (San Antonio). 2012 Jun;22(3):372-5.",
+      "Skouropoulou D, Lacitignola L, Di Bella C, Stabile M, Acquafredda C, Brienza N, Grasso S, Crovace A, Iarussi F, Staffieri F. Intraoperative Assessment of Fluid Responsiveness in Normotensive Dogs under Isoflurane Anaesthesia. Vet Sci. 2021 Feb 11;8(2):26."
+    ],
+    "category": "Índices Dinâmicos"
+  },
+  {
+    "species": "horse",
+    "parameter_name": "Variação da pressão sistólica (SPV)",
+    "parameter_value": "10,3 ± 2,6% a 7,3 ± 3,3%",
+    "comments": "Inferior ao PPV e deltaPleth como preditor da fluidorresponsividade.\nA concordância demonstrou ser baixa e diminuir ao longo da anestesia em cavalos.",
+    "references": [
+      "Fielding CL, Stolba DN. Pulse pressure variation and systolic pressure variation in horses undergoing general anesthesia. J Vet Emerg Crit Care (San Antonio). 2012 Jun;22(3):372-5.",
+      "Skouropoulou D, Lacitignola L, Di Bella C, Stabile M, Acquafredda C, Brienza N, Grasso S, Crovace A, Iarussi F, Staffieri F. Intraoperative Assessment of Fluid Responsiveness in Normotensive Dogs under Isoflurane Anaesthesia. Vet Sci. 2021 Feb 11;8(2):26."
+    ],
+    "category": "Índices Dinâmicos"
+  }
+]

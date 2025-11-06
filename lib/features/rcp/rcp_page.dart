@@ -6,13 +6,39 @@ import 'widgets/control_buttons.dart';
 
 /// Página principal do RCP Coach
 /// Timer de 2 minutos com metrônomo para compressões torácicas
-class RcpPage extends StatelessWidget {
+class RcpPage extends StatefulWidget {
   const RcpPage({super.key});
 
   @override
+  State<RcpPage> createState() => _RcpPageState();
+}
+
+class _RcpPageState extends State<RcpPage> {
+  late final RcpController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = RcpController();
+  }
+
+  @override
+  void deactivate() {
+    // Quando a página deixa de estar ativa (navegação para outra aba/rota), pausar
+    _controller.pauseTimer();
+    super.deactivate();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => RcpController(),
+    return ChangeNotifierProvider.value(
+      value: _controller,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('RCP'),

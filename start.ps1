@@ -146,7 +146,7 @@ if (-not $SkipBackend) {
     
     while ($retryCount -lt $maxRetries -and -not $backendReady) {
         try {
-            $response = Invoke-WebRequest -Uri "http://localhost:$BackendPort/api/v1/farmacos" -TimeoutSec 2 -ErrorAction SilentlyContinue
+            $response = Invoke-WebRequest -Uri "http://localhost:$BackendPort/" -TimeoutSec 2 -ErrorAction SilentlyContinue
             if ($response.StatusCode -eq 200) {
                 $backendReady = $true
                 Write-Success "Backend online em http://localhost:$BackendPort"

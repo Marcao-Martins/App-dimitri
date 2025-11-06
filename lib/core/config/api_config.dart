@@ -1,33 +1,45 @@
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+
 /// Configuração central da API
 class ApiConfig {
-  // URL base da API - será configurada automaticamente pelo script
-  static String _baseUrl = 'http://localhost:8080';
-  
-  /// Obtém a URL base atual
-  static String get baseUrl => _baseUrl;
-  
-  /// Define a URL base (útil para diferentes ambientes)
-  static void setBaseUrl(String url) {
-    _baseUrl = url.endsWith('/') ? url.substring(0, url.length - 1) : url;
+  // URL base da API - configurada dinamicamente
+  static String get baseUrl {
+    if (kIsWeb) {
+      // Em web, o navegador lida com localhost
+      return 'http://localhost:8080';
+    } else if (Platform.isAndroid) {
+      // Emulador Android: use 10.0.2.2 para acessar localhost da máquina host
+      // Dispositivo físico Android: você precisará usar o IP da sua máquina na rede local
+      // Ex: 'http://192.168.1.100:8080'
+      return 'http://10.0.2.2:8080';
+    } else if (Platform.isIOS) {
+      // iOS Simulator: localhost funciona
+      // Dispositivo físico iOS: você precisará usar o IP da sua máquina na rede local
+      return 'http://localhost:8080';
+    } else {
+      // Para desktop (Windows, Linux, macOS)
+      return 'http://localhost:8080';
+    }
   }
   
   /// Endpoints da API
   static const String apiVersion = '/api/v1';
   
   // Auth endpoints
-  static String get loginEndpoint => '$_baseUrl$apiVersion/auth/login';
-  static String get registerEndpoint => '$_baseUrl$apiVersion/auth/register';
-  static String get validateTokenEndpoint => '$_baseUrl$apiVersion/auth/validate';
+  static String get loginEndpoint => '$baseUrl$apiVersion/auth/login';
+  static String get registerEndpoint => '$baseUrl$apiVersion/auth/register';
+  static String get validateTokenEndpoint => '$baseUrl$apiVersion/auth/validate';
   
   // Farmacos endpoints
-  static String get farmacosEndpoint => '$_baseUrl$apiVersion/farmacos';
+  static String get farmacosEndpoint => '$baseUrl$apiVersion/farmacos';
   static String farmacosSearchEndpoint(String query) => 
-      '$_baseUrl$apiVersion/farmacos/search?q=$query';
+      '$baseUrl$apiVersion/farmacos/search?q=$query';
   static String farmacosBySpeciesEndpoint(String species) => 
-      '$_baseUrl$apiVersion/farmacos/species/$species';
+      '$baseUrl$apiVersion/farmacos/species/$species';
   
   // Admin farmacos endpoints
-  static String get adminFarmacosEndpoint => '$_baseUrl$apiVersion/admin/farmacos';
+  static String get adminFarmacosEndpoint => '$baseUrl$apiVersion/admin/farmacos';
   
   /// Timeout padrão para requisições
   static const Duration requestTimeout = Duration(seconds: 30);

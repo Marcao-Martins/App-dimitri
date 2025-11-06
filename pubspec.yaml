@@ -50,6 +50,7 @@ flutter:
   # Ícones e assets (adicionar conforme necessário)
   assets:
     - assets/sounds/
+    - Tabela_parâmetros.csv
 
   # Fontes customizadas (opcional)
   # fonts:
