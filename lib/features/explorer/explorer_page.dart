@@ -11,6 +11,7 @@ import '../fluidotherapy/fluidotherapy_page.dart';
 import '../transfusion/transfusion_page.dart';
 import '../apgar/apgar_page.dart';
 import '../consent_form/consent_form_page.dart';
+import '../parametros_guide/parametros_guide_page.dart';
 
 /// Tela Home - Início
 /// Design moderno e minimalista com acesso rápido a todas as funcionalidades
@@ -116,6 +117,13 @@ class _ExplorerPageState extends State<ExplorerPage> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
+                    // Novo ícone para o Guia de Parâmetros
+                    LibraryIconButton(
+                      icon: Icons.monitor_heart_outlined,
+                      label: 'Parâmetros',
+                      color: AppColors.categoryOrange,
+                      onTap: () => _navigateTo(const ParametrosGuidePage()),
+                    ),
                     // Novo ícone para a Calculadora de Autonomia de O2
                     LibraryIconButton(
                       icon: Icons.air,
@@ -192,6 +200,13 @@ class _ExplorerPageState extends State<ExplorerPage> {
                     subtitle: 'Guia de fármacos',
                     iconColor: AppColors.primaryTeal,
                     onTap: () => _navigateTo(const DrugGuidePage()),
+                  ),
+                  CategoryCard(
+                    icon: Icons.monitor_heart_outlined,
+                    title: 'Parâmetros',
+                    subtitle: 'Valores de referência',
+                    iconColor: AppColors.categoryOrange,
+                    onTap: () => _navigateTo(const ParametrosGuidePage()),
                   ),
                   CategoryCard(
                     icon: Icons.water_drop_outlined,

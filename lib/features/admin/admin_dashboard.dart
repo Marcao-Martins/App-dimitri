@@ -9,6 +9,7 @@ import '../../core/constants/app_constants.dart';
 import '../../core/widgets/custom_card.dart';
 import 'edit_medication_page.dart';
 import 'add_medication_page.dart';
+import 'admin_parameters_page.dart';
 
 /// Dashboard Administrativo para gerenciar o bulário de fármacos
 class AdminDashboard extends StatefulWidget {
@@ -152,6 +153,30 @@ class _AdminDashboardState extends State<AdminDashboard> {
       appBar: AppBar(
         title: const Text('Painel Administrativo'),
         actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (value == 'parameters') {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminParametersPage(),
+                  ),
+                );
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: 'parameters',
+                child: Row(
+                  children: [
+                    Icon(Icons.monitor_heart, size: 20),
+                    SizedBox(width: 12),
+                    Text('Gerenciar Parâmetros'),
+                  ],
+                ),
+              ),
+            ],
+          ),
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Atualizar',
