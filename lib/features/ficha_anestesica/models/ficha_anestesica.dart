@@ -16,6 +16,9 @@ class FichaAnestesica {
   List<FarmacoIntraoperatorio> farmacosIntraoperatorios;
   List<Medicacao> analgesiaPosOperatoria;
   
+  /// Imagens anexadas à ficha (caminhos dos arquivos)
+  List<String> imagePaths;
+  
   /// Tempo decorrido do procedimento em segundos
   int procedureTimeSeconds;
   
@@ -33,6 +36,7 @@ class FichaAnestesica {
     List<Intercorrencia>? intercorrencias,
     List<FarmacoIntraoperatorio>? farmacosIntraoperatorios,
     List<Medicacao>? analgesiaPosOperatoria,
+    List<String>? imagePaths,
     this.procedureTimeSeconds = 0,
     this.timerWasRunning = false,
   })  : preAnestesica = preAnestesica ?? [],
@@ -43,7 +47,8 @@ class FichaAnestesica {
         parametros = parametros ?? [],
         intercorrencias = intercorrencias ?? [],
         farmacosIntraoperatorios = farmacosIntraoperatorios ?? [],
-        analgesiaPosOperatoria = analgesiaPosOperatoria ?? [];
+        analgesiaPosOperatoria = analgesiaPosOperatoria ?? [],
+        imagePaths = imagePaths ?? [];
 
   Map<String, dynamic> toJson() => {
         'paciente': paciente.toJson(),
@@ -56,6 +61,7 @@ class FichaAnestesica {
         'intercorrencias': intercorrencias.map((e) => e.toJson()).toList(),
         'farmacosIntraoperatorios': farmacosIntraoperatorios.map((e) => e.toJson()).toList(),
         'analgesiaPosOperatoria': analgesiaPosOperatoria.map((e) => e.toJson()).toList(),
+        'imagePaths': imagePaths,
         'procedureTimeSeconds': procedureTimeSeconds,
         'timerWasRunning': timerWasRunning,
       };
@@ -71,6 +77,7 @@ class FichaAnestesica {
         intercorrencias: (json['intercorrencias'] as List?)?.map((e) => Intercorrencia.fromJson(e as Map<String, dynamic>)).toList(),
         farmacosIntraoperatorios: (json['farmacosIntraoperatorios'] as List?)?.map((e) => FarmacoIntraoperatorio.fromJson(e as Map<String, dynamic>)).toList(),
         analgesiaPosOperatoria: (json['analgesiaPosOperatoria'] as List?)?.map((e) => Medicacao.fromJson(e as Map<String, dynamic>)).toList(),
+        imagePaths: (json['imagePaths'] as List?)?.map((e) => e as String).toList() ?? [],
         procedureTimeSeconds: json['procedureTimeSeconds'] as int? ?? 0,
         timerWasRunning: json['timerWasRunning'] as bool? ?? false,
       );

@@ -379,5 +379,26 @@ class FichaProvider extends ChangeNotifier {
     
     return '${minutos}:${segundos.toString().padLeft(2, '0')}';
   }
+  
+  // ========== GERENCIAMENTO DE IMAGENS ==========
+  
+  /// Adiciona uma imagem à ficha atual
+  void addImage(String imagePath) {
+    if (_current == null) return;
+    
+    _current!.imagePaths.add(imagePath);
+    notifyListeners();
+  }
+  
+  /// Remove uma imagem da ficha atual
+  void removeImage(String imagePath) {
+    if (_current == null) return;
+    
+    _current!.imagePaths.remove(imagePath);
+    notifyListeners();
+  }
+  
+  /// Obtém lista de imagens da ficha atual
+  List<String> get currentImagePaths => _current?.imagePaths ?? [];
 }
 

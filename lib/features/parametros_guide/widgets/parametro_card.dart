@@ -58,7 +58,7 @@ class ParametroCard extends StatelessWidget {
               label: 'Gato',
               value: parametro.gato,
               icon: Icons.pets,
-              color: theme.colorScheme.secondary,
+              color: Colors.cyan.shade700, // Cor azul-ciano para diferenciar do laranja
               highlighted: selectedSpecies == Species.gato,
             ),
             const SizedBox(height: 8),

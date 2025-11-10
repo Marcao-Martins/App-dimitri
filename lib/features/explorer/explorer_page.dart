@@ -152,7 +152,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
                     LibraryIconButton(
                       icon: Icons.article_outlined, // Ícone de prancheta/documento
                       label: 'Ficha Anestésica',
-                      color: AppColors.primaryTeal, // Cor principal para destaque
+                      color: AppColors.categoryIndigo, // Cor índigo para diferenciar
                       onTap: () => _navigateTo(const FichaAnestesicaPage()),
                     ),
                     LibraryIconButton(

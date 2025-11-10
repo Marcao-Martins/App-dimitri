@@ -7,6 +7,7 @@ import '../unit_converter/unit_converter_page.dart';
 import '../fluidotherapy/fluidotherapy_page.dart';
 import '../transfusion/transfusion_page.dart';
 import '../apgar/apgar_page.dart';
+import '../apple_score/apple_score_page.dart';
 import '../consent_form/consent_form_page.dart';
 
 /// Tela que exibe ferramentas adicionais do app GDAV
@@ -72,6 +73,13 @@ class AllFeaturesPage extends StatelessWidget {
             subtitle: 'Neonatos',
             iconColor: AppColors.categoryPink,
             onTap: () => _navigateTo(context, const ApgarPage()),
+          ),
+          CategoryCard(
+            icon: Icons.medical_services_outlined,
+            title: 'APPLE Score',
+            subtitle: 'Avaliação de dor',
+            iconColor: Colors.orange.shade700,
+            onTap: () => _navigateTo(context, const AppleScorePage()),
           ),
 
           // === DOCUMENTAÇÃO ===

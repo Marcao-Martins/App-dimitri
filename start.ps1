@@ -52,8 +52,8 @@ if (-not $SkipFrontend) {
     }
 }
 
-# Verificar Dart Frog CLI
-$dartFrogPath = "C:\Users\gerso\AppData\Local\Pub\Cache\bin\dart_frog.bat"
+# Verificar Dart Frog CLI - usar caminho dinâmico
+$dartFrogPath = Join-Path $env:LOCALAPPDATA "Pub\Cache\bin\dart_frog.bat"
 if (-not $SkipBackend) {
     Write-Info "Verificando Dart Frog CLI..."
     try {

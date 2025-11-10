@@ -45,5 +45,12 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<!-- Permissões para câmera e galeria -->
+	<key>NSCameraUsageDescription</key>
+	<string>O app precisa acessar a câmera para tirar fotos e anexar à ficha anestésica.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>O app precisa acessar a galeria para selecionar imagens e anexar à ficha anestésica.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>O app precisa salvar imagens capturadas pela câmera.</string>
 </dict>
 </plist>

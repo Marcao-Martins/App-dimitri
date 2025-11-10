@@ -7,6 +7,7 @@ import 'widgets/monitoring_table.dart';
 import 'widgets/charts_widget.dart';
 import 'widgets/procedure_timer_widget.dart';
 import 'widgets/monitoring_alarm_widget.dart';
+import 'widgets/image_attachment_widget.dart';
 import 'pdf/pdf_service.dart';
 
 class FichaAnestesicaPage extends StatefulWidget {
@@ -277,6 +278,19 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.analgesiaPosOperatoria,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.analgesiaPosOperatoria, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.analgesiaPosOperatoria, i),
+          ),
+          const SizedBox(height: 16),
+
+          // Seção de Imagens
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: ImageAttachmentWidget(
+                imagePaths: provider.currentImagePaths,
+                onImageAdded: (path) => provider.addImage(path),
+                onImageRemoved: (path) => provider.removeImage(path),
+              ),
+            ),
           ),
         ],
       ),
