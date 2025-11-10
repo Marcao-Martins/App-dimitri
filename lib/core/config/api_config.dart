@@ -9,13 +9,24 @@ class ApiConfig {
       // Em web, o navegador lida com localhost
       return 'http://localhost:8080';
     } else if (Platform.isAndroid) {
-      // Emulador Android: use 10.0.2.2 para acessar localhost da máquina host
-      // Dispositivo físico Android: você precisará usar o IP da sua máquina na rede local
-      // Ex: 'http://192.168.1.100:8080'
-      return 'http://10.0.2.2:8080';
+      // DISPOSITIVO FÍSICO Android - usando IP da rede local
+      // Certifique-se que:
+      // 1. Seu celular e computador estão na mesma rede Wi-Fi
+      // 2. O backend está rodando em http://localhost:8080
+      // 3. O firewall do Windows permite conexões na porta 8080
+      return 'http://172.20.10.4:8080'; // <-- IP LOCAL CORRETO (Wi-Fi)
+      
+      // Para EMULADOR Android, use esta linha:
+      // return 'http://10.0.2.2:8080';
     } else if (Platform.isIOS) {
       // iOS Simulator: localhost funciona
-      // Dispositivo físico iOS: você precisará usar o IP da sua máquina na rede local
+      // 
+      // IMPORTANTE: Para dispositivo físico iOS:
+      // 1. Encontre o IP da sua máquina na rede local
+      // 2. Substitua abaixo por: 'http://SEU_IP_LOCAL:8080'
+      // 3. Certifique-se que o backend está rodando e acessível na rede
+      // 4. Ambos (dispositivo e Mac) devem estar na mesma rede Wi-Fi
+      // Exemplo: return 'http://192.168.1.100:8080';
       return 'http://localhost:8080';
     } else {
       // Para desktop (Windows, Linux, macOS)
@@ -41,8 +52,8 @@ class ApiConfig {
   // Admin farmacos endpoints
   static String get adminFarmacosEndpoint => '$baseUrl$apiVersion/admin/farmacos';
   
-  /// Timeout padrão para requisições
-  static const Duration requestTimeout = Duration(seconds: 30);
+  /// Timeout padrão para requisições (aumentado para dispositivos físicos)
+  static const Duration requestTimeout = Duration(seconds: 60);
   
   /// Headers padrão
   static Map<String, String> get defaultHeaders => {

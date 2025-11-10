@@ -13,7 +13,7 @@ class ParametrosGuidePage extends StatelessWidget {
       create: (_) => ParametrosController(),
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('GUIA DE PARÂMETROS'),
+          title: const Text('Guia de Parâmetros'),
           elevation: 0,
           actions: [
             Consumer<ParametrosController>(

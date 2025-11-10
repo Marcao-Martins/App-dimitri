@@ -53,10 +53,11 @@ if (-not $SkipFrontend) {
 }
 
 # Verificar Dart Frog CLI
+$dartFrogPath = "C:\Users\gerso\AppData\Local\Pub\Cache\bin\dart_frog.bat"
 if (-not $SkipBackend) {
     Write-Info "Verificando Dart Frog CLI..."
     try {
-        $dartFrogVersion = dart_frog --version 2>&1 | Out-String
+        $dartFrogVersion = & $dartFrogPath --version 2>&1 | Out-String
         Write-Success "Dart Frog encontrado: $($dartFrogVersion.Trim())"
     } catch {
         Write-Warning "Dart Frog não encontrado. Instalando..."
@@ -126,42 +127,51 @@ if (-not $SkipBackend) {
             dart run build/bin/server.dart
         } -ArgumentList $backendPath, $BackendPort
     } else {
-        Write-Info "Modo: DESENVOLVIMENTO"
-        $backendJob = Start-Job -ScriptBlock {
-            param($path, $port)
-            Set-Location $path
-            $env:PORT = $port
-            dart_frog dev --port $port
-        } -ArgumentList $backendPath, $BackendPort
+        Write-Info "Modo: DESENVOLVIMENTO (aceitando conexões na rede local)"
+        # Usar Start-Process para iniciar em nova janela
+        $backendProcess = Start-Process pwsh -ArgumentList @(
+            "-NoExit",
+            "-Command",
+            "cd '$backendPath'; & '$dartFrogPath' dev --port $BackendPort --hostname 0.0.0.0"
+        ) -PassThru -WindowStyle Minimized
+        
+        # Salvar o ID do processo para poder parar depois
+        $global:BackendProcessId = $backendProcess.Id
+        Write-Info "Backend iniciado em processo separado (PID: $($backendProcess.Id))"
     }
     
     # Aguardar backend iniciar
     Write-Info "Aguardando backend iniciar..."
-    Start-Sleep -Seconds 5
+    Start-Sleep -Seconds 10
     
     # Testar conexão
-    $maxRetries = 10
+    $maxRetries = 15
     $retryCount = 0
     $backendReady = $false
     
     while ($retryCount -lt $maxRetries -and -not $backendReady) {
         try {
-            $response = Invoke-WebRequest -Uri "http://localhost:$BackendPort/" -TimeoutSec 2 -ErrorAction SilentlyContinue
+            $response = Invoke-WebRequest -Uri "http://localhost:$BackendPort/" -TimeoutSec 3 -ErrorAction SilentlyContinue
             if ($response.StatusCode -eq 200) {
                 $backendReady = $true
                 Write-Success "Backend online em http://localhost:$BackendPort"
+                Write-Success "Backend acessível na rede em http://172.20.10.4:$BackendPort"
             }
         } catch {
             $retryCount++
             Write-Info "Tentativa $retryCount/$maxRetries..."
-            Start-Sleep -Seconds 2
+            Start-Sleep -Seconds 3
         }
     }
     
     if (-not $backendReady) {
         Write-Error "Backend não respondeu após $maxRetries tentativas"
-        Stop-Job $backendJob
-        Remove-Job $backendJob
+        if ($ProductionMode -and $backendJob) {
+            Stop-Job $backendJob
+            Remove-Job $backendJob
+        } elseif ($global:BackendProcessId) {
+            Stop-Process -Id $global:BackendProcessId -Force -ErrorAction SilentlyContinue
+        }
         exit 1
     }
     

@@ -74,7 +74,7 @@ class ChecklistPdfService {
                     pw.Container(
                       padding: const pw.EdgeInsets.all(8),
                       decoration: pw.BoxDecoration(
-                        color: PdfColors.blue50,
+                        color: PdfColors.orange50,
                         borderRadius: pw.BorderRadius.circular(8),
                       ),
                       child: pw.Column(
@@ -85,7 +85,7 @@ class ChecklistPdfService {
                             style: pw.TextStyle(
                               fontSize: 10,
                               fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.blue800,
+                              color: PdfColors.orange800,
                             ),
                           ),
                           pw.Text(
@@ -93,7 +93,7 @@ class ChecklistPdfService {
                             style: pw.TextStyle(
                               fontSize: 18,
                               fontWeight: pw.FontWeight.bold,
-                              color: PdfColors.blue800,
+                              color: PdfColors.orange800,
                             ),
                           ),
                           pw.Text(
@@ -271,7 +271,7 @@ class ChecklistPdfService {
           style: pw.TextStyle(
             fontSize: 14,
             fontWeight: pw.FontWeight.bold,
-            color: PdfColors.blue800,
+            color: PdfColors.orange800,
           ),
         ),
         pw.SizedBox(height: 8),

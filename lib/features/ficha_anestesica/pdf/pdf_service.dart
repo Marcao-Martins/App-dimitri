@@ -333,7 +333,7 @@ class PdfService {
               params,
               [
                 ChartLine('PAS', (p) => p.pas?.toDouble(), PdfColors.red700),
-                ChartLine('PAD', (p) => p.pad?.toDouble(), PdfColors.blue700),
+                ChartLine('PAD', (p) => p.pad?.toDouble(), PdfColors.orange700),
                 ChartLine('PAM', (p) => p.pam?.toDouble(), PdfColors.green700),
               ],
               0,
@@ -757,7 +757,7 @@ class PdfService {
           style: pw.TextStyle(
             fontSize: 14,
             fontWeight: pw.FontWeight.bold,
-            color: PdfColors.blue800,
+            color: PdfColors.orange800,
           ),
         ),
         pw.SizedBox(height: 8),
@@ -868,7 +868,7 @@ class PdfService {
           style: pw.TextStyle(
             fontSize: 14,
             fontWeight: pw.FontWeight.bold,
-            color: PdfColors.blue800,
+            color: PdfColors.orange800,
           ),
         ),
         pw.SizedBox(height: 8),

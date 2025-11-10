@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 /// Design System moderno e minimalista para profissionais veterinários
 class AppColors {
   // ============================================================================
-  // COR PRINCIPAL DE ACENTO - Verde-azulado profissional (Teal)
+  // COR PRINCIPAL DE ACENTO - Laranja profissional
   // ============================================================================
-  static const Color primaryTeal = Color(0xFF00ACC1); // Teal brilhante
-  static const Color primaryTealDark = Color(0xFF00838F); // Teal escuro
-  static const Color primaryTealLight = Color(0xFF4DD0E1); // Teal claro
+  static const Color primaryTeal = Color(0xFFFF9800); // Laranja
+  static const Color primaryTealDark = Color(0xFFF57C00); // Laranja escuro
+  static const Color primaryTealLight = Color(0xFFFFB74D); // Laranja claro
   
   // ============================================================================
   // CORES CATEGORIAIS - Para ícones de biblioteca e categorias
@@ -26,7 +26,7 @@ class AppColors {
   static const Color success = Color(0xFF4CAF50); // Verde
   static const Color warning = Color(0xFFFF9800); // Laranja
   static const Color error = Color(0xFFF44336); // Vermelho
-  static const Color info = Color(0xFF00ACC1); // Teal
+  static const Color info = Color(0xFFFF9800); // Laranja
   
   // ============================================================================
   // CORES DE FUNDO - Branco predominante com alto contraste
@@ -62,7 +62,7 @@ class AppColors {
   // ============================================================================
   // CORES DE NAVEGAÇÃO - Para Bottom Navigation Bar
   // ============================================================================
-  static const Color navActive = Color(0xFF00ACC1); // Teal (aba ativa)
+  static const Color navActive = Color(0xFFFF9800); // Laranja (aba ativa)
   static const Color navInactive = Color(0xFF9E9E9E); // Cinza (aba inativa)
   static const Color navBackground = Color(0xFFFFFFFF); // Branco
   
@@ -78,10 +78,10 @@ class AppColors {
   // ============================================================================
   // CORES DE TAGS/ETIQUETAS - Para classificação de medicamentos
   // ============================================================================
-  static const Color tagVet = Color(0xFF00ACC1); // Teal - Uso veterinário
+  static const Color tagVet = Color(0xFFFF9800); // Laranja - Uso veterinário
   static const Color tagHuman = Color(0xFF2196F3); // Azul - Uso humano
   static const Color tagPA = Color(0xFF9C27B0); // Roxo - Princípio Ativo
-  static const Color tagControlled = Color(0xFFFF9800); // Laranja - Controlado
+  static const Color tagControlled = Color(0xFFFF5722); // Vermelho-laranja - Controlado
   
   // ============================================================================
   // CORES ANTIGAS (Mantidas para compatibilidade - será removido gradualmente)

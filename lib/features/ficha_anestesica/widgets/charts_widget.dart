@@ -194,7 +194,7 @@ class ChartsWidget extends StatelessWidget {
             LineChartBarData(
               spots: _toSpots(padList),
               isCurved: true,
-              color: Colors.blue.shade700,
+              color: Colors.orange.shade700,
               barWidth: 2,
               dotData: FlDotData(show: true),
             ),
@@ -219,7 +219,7 @@ class ChartsWidget extends StatelessWidget {
             LineChartBarData(
               spots: _toSpots(frList),
               isCurved: true,
-              color: Colors.blue,
+              color: Colors.orange,
               barWidth: 3,
               dotData: FlDotData(show: true),
             ),

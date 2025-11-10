@@ -19,7 +19,7 @@ class AppTheme {
       primaryColor: AppColors.primaryTeal,
       scaffoldBackgroundColor: AppColors.backgroundPrimary,
       
-      // Color Scheme - Teal como cor principal
+      // Color Scheme - Laranja como cor principal
       colorScheme: const ColorScheme.light(
         primary: AppColors.primaryTeal,
         secondary: AppColors.categoryOrange,

@@ -235,10 +235,10 @@ class _ExplorerPageState extends State<ExplorerPage> {
             
             const SliverToBoxAdapter(child: SizedBox(height: 32)),
             
-            // Seção: Recentes
+            // Seção: Mural
             SliverToBoxAdapter(
               child: SectionHeader(
-                title: 'Recentes',
+                title: 'Mural',
                 actionText: 'Limpar',
                 onActionTap: () {
                   // TODO: Limpar histórico
@@ -246,7 +246,7 @@ class _ExplorerPageState extends State<ExplorerPage> {
               ),
             ),
             
-            // Lista de itens recentes
+            // Lista do Mural (vazia por enquanto)
             SliverToBoxAdapter(
                 child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -261,42 +261,16 @@ class _ExplorerPageState extends State<ExplorerPage> {
                     ),
                   ],
                 ),
-                child: Column(
-                  children: [
-                    MedicationListItem(
-                      icon: Icons.medication,
-                      iconColor: AppColors.primaryTeal,
-                      title: 'Propofol',
-                      subtitle: 'Anestésico intravenoso',
-                      tag: 'VET',
-                      tagColor: AppColors.tagVet,
-                      onTap: () {
-                        // TODO: Abrir detalhes do medicamento
-                      },
+                child: Padding(
+                  padding: const EdgeInsets.all(32.0),
+                  child: Center(
+                    child: Text(
+                      'Mural vazio',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
                     ),
-                    MedicationListItem(
-                      icon: Icons.medication,
-                      iconColor: AppColors.categoryOrange,
-                      title: 'Tramadol',
-                      subtitle: 'Cloridrato - Analgésico opioide',
-                      tag: 'PA',
-                      tagColor: AppColors.tagPA,
-                      onTap: () {
-                        // TODO: Abrir detalhes do medicamento
-                      },
-                    ),
-                    MedicationListItem(
-                      icon: Icons.medication,
-                      iconColor: AppColors.categoryPurple,
-                      title: 'Lidocaína',
-                      subtitle: 'Anestésico local',
-                      tag: 'HUM',
-                      tagColor: AppColors.tagHuman,
-                      onTap: () {
-                        // TODO: Abrir detalhes do medicamento
-                      },
-                    ),
-                  ],
+                  ),
                 ),
               ),
             ),
