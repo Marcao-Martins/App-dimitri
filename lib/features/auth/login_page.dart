@@ -102,11 +102,22 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Logo e título
-                      Icon(
-                        Icons.medical_services_outlined,
-                        size: 80,
-                        color: colorScheme.primary,
+                      // Logo GDAV
+                      Center(
+                        child: Image.asset(
+                          'assets/images/gdav_logo.png',
+                          width: 200,
+                          height: 200,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            // Fallback para ícone se a imagem não carregar
+                            return Icon(
+                              Icons.medical_services_outlined,
+                              size: 80,
+                              color: colorScheme.primary,
+                            );
+                          },
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Text(

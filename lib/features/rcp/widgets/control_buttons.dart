@@ -75,7 +75,7 @@ class ControlButtons extends StatelessWidget {
 
             // Botão Reset
             _SecondaryButton(
-              icon: Icons.refresh,
+              icon: Icons.restart_alt,
               label: 'Reiniciar',
               onPressed: onReset,
               color: Colors.grey,

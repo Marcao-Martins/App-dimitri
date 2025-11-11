@@ -43,6 +43,9 @@ dependencies:
   # Imagens
   image_picker: ^1.0.7
   permission_handler: ^11.3.0
+  
+  # URL Launcher (abrir links externos)
+  url_launcher: ^6.2.5
 
 dev_dependencies:
   flutter_test:
@@ -55,6 +58,7 @@ flutter:
   # Ícones e assets (adicionar conforme necessário)
   assets:
     - assets/sounds/
+    - assets/images/
     - Tabela_parâmetros.csv
 
   # Fontes customizadas (opcional)

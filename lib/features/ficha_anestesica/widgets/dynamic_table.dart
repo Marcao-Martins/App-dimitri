@@ -66,7 +66,7 @@ class DynamicTable extends StatelessWidget {
                   title: const Text('Hora'),
                   subtitle: Text(
                       '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}'),
-                  trailing: const Icon(Icons.access_time),
+                  trailing: const Icon(Icons.schedule),
                   onTap: () async {
                     final picked = await showTimePicker(
                       context: context,

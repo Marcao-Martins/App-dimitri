@@ -117,7 +117,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
                     child: ListTile(
                       title: const Text('Data'),
                       subtitle: Text(_data != null ? '${_data!.day}/${_data!.month}/${_data!.year}' : 'Selecionar'),
-                      trailing: const Icon(Icons.calendar_today),
+                      trailing: const Icon(Icons.event),
                       onTap: () async {
                         final picked = await showDatePicker(
                           context: context,

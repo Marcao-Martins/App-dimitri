@@ -552,7 +552,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 ListTile(
                   title: const Text('Hora'),
                   subtitle: Text(_formatDateTime(selectedTime)),
-                  trailing: const Icon(Icons.access_time),
+                  trailing: const Icon(Icons.schedule),
                   onTap: () async {
                     final time = await showTimePicker(
                       context: context,
@@ -679,7 +679,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 ListTile(
                   title: const Text('Hora'),
                   subtitle: Text(_formatDateTime(selectedTime)),
-                  trailing: const Icon(Icons.access_time),
+                  trailing: const Icon(Icons.schedule),
                   onTap: () async {
                     final time = await showTimePicker(
                       context: context,

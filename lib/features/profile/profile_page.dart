@@ -143,10 +143,11 @@ class ProfilePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Foto de perfil (placeholder)
+          // Logo GDAV como foto de perfil
           Container(
             width: 100,
             height: 100,
+            padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: Colors.white,
@@ -158,10 +159,19 @@ class ProfilePage extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(
-              Icons.person,
-              size: 50,
-              color: AppColors.primaryTeal,
+            child: ClipOval(
+              child: Image.asset(
+                'assets/images/gdav_logo.png',
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  // Fallback para ícone se a imagem não carregar
+                  return Icon(
+                    Icons.person,
+                    size: 50,
+                    color: AppColors.primaryTeal,
+                  );
+                },
+              ),
             ),
           ),
           

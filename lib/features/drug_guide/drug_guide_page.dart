@@ -223,20 +223,22 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
               : Column(
                   children: [
                     // Barra de Busca e Filtro
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                      child: Column(
-                        children: [
-                          ModernSearchBar(
-                            controller: _searchController,
-                            hintText: AppStrings.searchDrug,
-                            onChanged: (value) {}, // Listener já faz o trabalho
-                          ),
-                          const SizedBox(height: 12),
-                          // Dropdown de Filtro por Classe - SEM LABEL e com opções dinâmicas
-                          DropdownButtonFormField<String>(
-                            value: _selectedFilter,
-                            items: _filters.map((String value) {
+                    SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
+                        child: Column(
+                          children: [
+                            ModernSearchBar(
+                              controller: _searchController,
+                              hintText: AppStrings.searchDrug,
+                              onChanged: (value) {}, // Listener já faz o trabalho
+                            ),
+                            const SizedBox(height: 12),
+                            // Dropdown de Filtro por Classe - SEM LABEL e com opções dinâmicas
+                            DropdownButtonFormField<String>(
+                              value: _selectedFilter,
+                              items: _filters.map((String value) {
                               return DropdownMenuItem<String>(
                                 value: value,
                                 child: Text(value),
@@ -258,6 +260,7 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
                           ),
                         ],
                       ),
+                    ),
                     ),
 
                     // Lista de Medicamentos
@@ -710,7 +713,7 @@ class MedicationDetailPage extends StatelessWidget {
           children: [
             Row(
               children: [
-                Icon(Icons.library_books_outlined, color: AppColors.info),
+                Icon(Icons.menu_book_outlined, color: AppColors.info),
                 const SizedBox(width: AppConstants.smallPadding),
                 Text(
                   'Referências Bibliográficas',

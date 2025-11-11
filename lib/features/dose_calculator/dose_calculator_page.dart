@@ -370,7 +370,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                       Row(
                         children: [
                           Icon(
-                            Icons.medication_outlined,
+                            Icons.medical_services_outlined,
                             color: Theme.of(context).colorScheme.primary,
                           ),
                           const SizedBox(width: 8),
@@ -625,13 +625,14 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
+                  SizedBox(
+                    width: 120,
                     child: DropdownButtonFormField<String>(
                       value: _doseUnit,
                       decoration: const InputDecoration(
                         labelText: 'Unidade',
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       ),
                       items: const [
                         DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
@@ -681,13 +682,14 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Expanded(
-                    flex: 2,
+                  SizedBox(
+                    width: 120,
                     child: DropdownButtonFormField<String>(
                       value: _concentrationUnit,
                       decoration: const InputDecoration(
                         labelText: 'Unidade',
                         border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
                       ),
                       items: const [
                         DropdownMenuItem(value: 'mg/ml', child: Text('mg/ml')),
