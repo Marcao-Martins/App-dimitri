@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../parametros_guide/models/parametro.dart';
+import '../../services/admin_parameter_service.dart';
 import '../../core/constants/app_colors.dart';
 import '../../core/constants/app_constants.dart';
 import '../../core/widgets/custom_card.dart';
@@ -58,16 +59,24 @@ class _EditParameterPageState extends State<EditParameterPage> {
     setState(() => _isLoading = true);
     
     try {
-      // TODO: Implementar atualização via API quando disponível
-      // Por enquanto, apenas mostrar sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Funcionalidade de edição será implementada em breve'),
-          backgroundColor: AppColors.warning,
-        ),
-      );
+      final data = {
+        'nome': _nomeController.text,
+        'cao': _caoController.text,
+        'gato': _gatoController.text,
+        'cavalo': _cavaloController.text,
+        'comentarios': _comentariosController.text,
+        'referencias': _referenciasController.text,
+      };
+      
+      await AdminParameterService.updateParameter(widget.parameter.nome, data);
       
       if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Parâmetro atualizado com sucesso!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
         Navigator.pop(context, true);
       }
     } catch (e) {

@@ -52,6 +52,9 @@ class ApiConfig {
   // Admin farmacos endpoints
   static String get adminFarmacosEndpoint => '$baseUrl$apiVersion/admin/farmacos';
   
+  // Admin parametros endpoints
+  static String get adminParametrosEndpoint => '$baseUrl$apiVersion/admin/parametros';
+  
   /// Timeout padrão para requisições (aumentado para dispositivos físicos)
   static const Duration requestTimeout = Duration(seconds: 60);
   

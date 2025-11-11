@@ -1,5 +1,8 @@
 import 'package:flutter/services.dart';
+import 'dart:convert';
 import '../features/parametros_guide/models/parametro.dart';
+import '../core/config/api_config.dart';
+import 'api_service.dart';
 
 /// Serviço administrativo para gerenciar parâmetros veterinários
 class AdminParameterService {
@@ -58,6 +61,46 @@ class AdminParameterService {
   static Future<void> saveParametersToCSV(List<Parametro> parameters) async {
     // TODO: Implementar persistência em banco de dados
     throw UnimplementedError('Salvar parâmetros ainda não implementado');
+  }
+  
+  /// Atualiza um parâmetro existente via API
+  static Future<Parametro> updateParameter(
+    String nome,
+    Map<String, dynamic> data,
+  ) async {
+    try {
+      final response = await ApiService.put(
+        '${ApiConfig.adminParametrosEndpoint}/$nome',
+        body: data,
+      );
+
+      if (response.statusCode == 200) {
+        final responseData = json.decode(response.body);
+        final parameterData = responseData['data'] as Map<String, dynamic>;
+        
+        // Criar Parametro a partir dos dados retornados
+        return Parametro(
+          nome: parameterData['nome'] as String,
+          cao: parameterData['cao'] as String,
+          gato: parameterData['gato'] as String,
+          cavalo: parameterData['cavalo'] as String,
+          comentarios: parameterData['comentarios'] as String? ?? '',
+          referencias: parameterData['referencias'] as String? ?? '',
+        );
+      } else if (response.statusCode == 401) {
+        throw Exception('Não autorizado. Faça login novamente.');
+      } else if (response.statusCode == 403) {
+        throw Exception('Acesso negado. Apenas administradores podem atualizar parâmetros.');
+      } else if (response.statusCode == 404) {
+        throw Exception('Parâmetro não encontrado.');
+      } else {
+        final error = json.decode(response.body);
+        throw Exception(error['message'] ?? 'Erro ao atualizar parâmetro');
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('Erro ao atualizar parâmetro: $e');
+    }
   }
   
   /// Deleta um parâmetro (stub para futura implementação)
