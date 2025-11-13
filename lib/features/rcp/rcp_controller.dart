@@ -23,9 +23,58 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
   // Wake Lock (tela sempre ligada)
   bool _isWakeLockEnabled = false;
 
+  // Peso do animal para cálculo de volumes de fármacos (kg)
+  double? _weightKg;
+
+  // Volumes calculados (ml)
+  double _atropineVolumeMl = 0.0;
+  double _adrenalineVolumeMl = 0.0;
+
   RcpController() {
     WidgetsBinding.instance.addObserver(this);
     _setupAudio();
+  }
+
+  // Getters for weight and computed volumes
+  double? get weightKg => _weightKg;
+  double get atropineVolumeMl => _atropineVolumeMl;
+  double get adrenalineVolumeMl => _adrenalineVolumeMl;
+
+  /// Define o peso (aceita null para limpar) e recalcula volumes
+  void setWeightKg(double? kg) {
+    _weightKg = kg;
+    _recalculateVolumes();
+    notifyListeners();
+  }
+
+  /// Recebe string do campo de texto (ex: '3.5' ou '3,5') e atualiza o peso
+  void setWeightFromString(String value) {
+    final cleaned = value.replaceAll(',', '.').trim();
+    final parsed = double.tryParse(cleaned);
+    setWeightKg(parsed);
+  }
+
+  void _recalculateVolumes() {
+    // Doses padrão
+    const double atropineDoseMgPerKg = 0.04; // mg/kg
+    const double adrenalineDoseMgPerKg = 0.1; // mg/kg
+
+    // Concentrações
+    const double atropineConcentrationMgPerMl = 10.0; // 10 mg/ml
+    const double adrenalineConcentrationMgPerMl = 1.0; // 1 mg/ml
+
+    if (_weightKg == null || _weightKg! <= 0) {
+      _atropineVolumeMl = 0.0;
+      _adrenalineVolumeMl = 0.0;
+      return;
+    }
+
+    final w = _weightKg!;
+    final atropineTotalMg = w * atropineDoseMgPerKg;
+    final adrenalineTotalMg = w * adrenalineDoseMgPerKg;
+
+    _atropineVolumeMl = atropineTotalMg / atropineConcentrationMgPerMl;
+    _adrenalineVolumeMl = adrenalineTotalMg / adrenalineConcentrationMgPerMl;
   }
 
   // Getters

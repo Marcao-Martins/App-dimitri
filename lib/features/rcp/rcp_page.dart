@@ -184,45 +184,93 @@ class _RcpPageState extends State<RcpPage> {
                   color: Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
+          // Peso do animal + volumes calculados
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.medication,
-                size: 14,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withOpacity(0.7),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Atropina (0,04mg/kg)',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 11,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+              // Peso (entrada)
+              SizedBox(
+                width: 160,
+                child: TextField(
+                  keyboardType:
+                      const TextInputType.numberWithOptions(decimal: true),
+                  decoration: InputDecoration(
+                    labelText: 'Peso (kg)',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(6),
                     ),
+                    isDense: true,
+                    suffixText: 'kg',
+                  ),
+                  onChanged: (v) {
+                    // Update controller weight
+                    final controller =
+                        Provider.of<RcpController>(context, listen: false);
+                    controller.setWeightFromString(v);
+                  },
+                ),
               ),
-            ],
-          ),
-          const SizedBox(height: 2),
-          Row(
-            children: [
-              Icon(
-                Icons.medication,
-                size: 14,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withOpacity(0.7),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                'Adrenalina (0,1mg/kg)',
+              const SizedBox(width: 12),
+              // Volumes calculados
+              Expanded(
+                child: Consumer<RcpController>(
+                  builder: (context, controller, child) {
+                    final atv = controller.atropineVolumeMl;
+                    final adv = controller.adrenalineVolumeMl;
+                    String fmt(double v) => v <= 0
+                        ? '-'
+                        : v.toStringAsFixed(v < 1 ? 2 : 2);
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.medication,
+                              size: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withOpacity(0.7),
+                            ),
+                            const SizedBox(width: 6),
+                            Text('Atropina (0,04mg/kg) - Volume: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(fontSize: 11)),
+              Text('${fmt(atv)} ml (Atropina 1%)',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      fontSize: 11,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
+                  fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.medication,
+                              size: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withOpacity(0.7),
+                            ),
+                            const SizedBox(width: 6),
+                            Text('Adrenalina (0,1mg/kg) - Volume: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(fontSize: 11)),
+                            Text('${fmt(adv)} ml',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
               ),
             ],
           ),
