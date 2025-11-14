@@ -6,6 +6,7 @@ import '../dose_calculator/oxygen_autonomy_calculator_page.dart';
 import '../unit_converter/unit_converter_page.dart';
 import '../fluidotherapy/fluidotherapy_page.dart';
 import '../transfusion/transfusion_page.dart';
+import '../unesp_cat_pain/unesp_cat_pain_page.dart';
 import '../apgar/apgar_page.dart';
 import '../consent_form/consent_form_page.dart';
 import '../apple_full/apple_full_page.dart';
@@ -51,6 +52,15 @@ class AllFeaturesPage extends StatelessWidget {
             subtitle: 'Volume sanguíneo',
             iconColor: AppColors.error,
             onTap: () => _navigateTo(context, const TransfusionPage()),
+          ),
+          // UFEPS - Escala UNESP-Botucatu para dor em gatos
+          CategoryCard(
+            imageAsset: 'assets/images/unesp_cat_icon.png',
+            icon: Icons.pets,
+            title: 'Escore de dor em felinos - UNESP',
+            subtitle: 'Escala UNESP-Botucatu (UFEPS)',
+            iconColor: AppColors.error,
+            onTap: () => _navigateTo(context, const UnespCatPainPage()),
           ),
           CategoryCard(
             icon: Icons.air,

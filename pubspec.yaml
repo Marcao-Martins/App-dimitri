@@ -35,6 +35,7 @@ dependencies:
   # Charts
   fl_chart: ^1.1.1
   audioplayers: ^6.5.1
+  flutter_svg: ^2.0.6
   
   # Wakelock (manter tela sempre ligada)
   wakelock_plus: ^1.2.8

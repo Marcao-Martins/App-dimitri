@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../constants/app_colors.dart';
 
 /// Widgets modernos para o novo Design System
@@ -81,7 +82,8 @@ class LibraryIconButton extends StatelessWidget {
 // ============================================================================
 
 class CategoryCard extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? imageAsset; // caminho para asset de imagem (opcional)
   final String title;
   final String? subtitle;
   final Color? backgroundColor;
@@ -90,7 +92,8 @@ class CategoryCard extends StatelessWidget {
   
   const CategoryCard({
     super.key,
-    required this.icon,
+    this.icon,
+    this.imageAsset,
     required this.title,
     this.subtitle,
     this.backgroundColor,
@@ -120,7 +123,7 @@ class CategoryCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Ícone
+            // Ícone ou imagem
             Container(
               width: 56,
               height: 56,
@@ -128,11 +131,25 @@ class CategoryCard extends StatelessWidget {
                 color: (iconColor ?? AppColors.primaryTeal).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Icon(
-                icon,
-                color: iconColor ?? AppColors.primaryTeal,
-                size: 28,
-              ),
+              child: imageAsset != null
+                  ? Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: imageAsset!.toLowerCase().endsWith('.svg')
+                          ? SvgPicture.asset(
+                              imageAsset!,
+                              color: iconColor ?? AppColors.primaryTeal,
+                              fit: BoxFit.contain,
+                            )
+                          : Image.asset(
+                              imageAsset!,
+                              fit: BoxFit.contain,
+                            ),
+                    )
+                  : Icon(
+                      icon ?? Icons.widgets,
+                      color: iconColor ?? AppColors.primaryTeal,
+                      size: 28,
+                    ),
             ),
             const SizedBox(height: 12),
             // Título
