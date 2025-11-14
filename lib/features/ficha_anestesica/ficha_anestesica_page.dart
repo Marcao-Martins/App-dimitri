@@ -232,6 +232,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.preAnestesica,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.preAnestesica, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.preAnestesica, i),
+            onUpdate: (i, med) => provider.updateMedicacaoIn(provider.current!.preAnestesica, i, med),
           ),
           const SizedBox(height: 12),
 
@@ -241,6 +242,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.antimicrobianos,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.antimicrobianos, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.antimicrobianos, i),
+            onUpdate: (i, med) => provider.updateMedicacaoIn(provider.current!.antimicrobianos, i, med),
           ),
           const SizedBox(height: 12),
 
@@ -250,6 +252,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.inducao,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.inducao, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.inducao, i),
+            onUpdate: (i, med) => provider.updateMedicacaoIn(provider.current!.inducao, i, med),
           ),
           const SizedBox(height: 12),
 
@@ -259,6 +262,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.manutencao,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.manutencao, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.manutencao, i),
+            onUpdate: (i, med) => provider.updateMedicacaoIn(provider.current!.manutencao, i, med),
           ),
           const SizedBox(height: 12),
 
@@ -269,6 +273,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.locorregional, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.locorregional, i),
             showTecnicaField: true,
+            onUpdate: (i, med) => provider.updateMedicacaoIn(provider.current!.locorregional, i, med),
           ),
           const SizedBox(height: 12),
 
@@ -278,6 +283,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             items: provider.current!.analgesiaPosOperatoria,
             onAdd: (med) => provider.addMedicacaoTo(provider.current!.analgesiaPosOperatoria, med),
             onRemove: (i) => provider.removeMedicacaoFrom(provider.current!.analgesiaPosOperatoria, i),
+            onUpdate: (i, med) => provider.updateMedicacaoIn(provider.current!.analgesiaPosOperatoria, i, med),
           ),
           const SizedBox(height: 16),
 
@@ -601,7 +607,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
   Future<void> _showAddFarmacoIntraDialog(BuildContext context, FichaProvider provider) async {
     final nomeController = TextEditingController();
     final doseController = TextEditingController();
-    String unidade = 'mg';
+  String unidade = 'mg/kg';
     String via = 'IV';
     DateTime selectedTime = DateTime.now();
 
@@ -639,19 +645,19 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                     const SizedBox(width: 8),
                     Expanded(
                       child: DropdownButtonFormField<String>(
-                        value: unidade,
+                        initialValue: unidade,
                         decoration: const InputDecoration(
                           labelText: 'Unidade',
                           border: OutlineInputBorder(),
                         ),
                         items: const [
-                          DropdownMenuItem(value: 'mg', child: Text('mg')),
+                          DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
+                          DropdownMenuItem(value: 'ml/kg', child: Text('ml/kg')),
+                          DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
                           DropdownMenuItem(value: 'ml', child: Text('ml')),
-                          DropdownMenuItem(value: 'mcg', child: Text('mcg')),
-                          DropdownMenuItem(value: 'UI', child: Text('UI')),
                         ],
                         onChanged: (value) {
-                          setState(() => unidade = value ?? 'mg');
+                          setState(() => unidade = value ?? 'mg/kg');
                         },
                       ),
                     ),

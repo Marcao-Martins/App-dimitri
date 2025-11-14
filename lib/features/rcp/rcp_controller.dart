@@ -29,6 +29,7 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
   // Volumes calculados (ml)
   double _atropineVolumeMl = 0.0;
   double _adrenalineVolumeMl = 0.0;
+  double _lidocaineVolumeMl = 0.0;
 
   RcpController() {
     WidgetsBinding.instance.addObserver(this);
@@ -39,6 +40,7 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
   double? get weightKg => _weightKg;
   double get atropineVolumeMl => _atropineVolumeMl;
   double get adrenalineVolumeMl => _adrenalineVolumeMl;
+  double get lidocaineVolumeMl => _lidocaineVolumeMl;
 
   /// Define o peso (aceita null para limpar) e recalcula volumes
   void setWeightKg(double? kg) {
@@ -57,15 +59,18 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
   void _recalculateVolumes() {
     // Doses padrão
     const double atropineDoseMgPerKg = 0.04; // mg/kg
-    const double adrenalineDoseMgPerKg = 0.1; // mg/kg
+    const double adrenalineDoseMgPerKg = 0.01; // mg/kg (ajustada conforme solicitado)
+    const double lidocaineDoseMgPerKg = 2.0; // mg/kg
 
     // Concentrações
     const double atropineConcentrationMgPerMl = 10.0; // 10 mg/ml
     const double adrenalineConcentrationMgPerMl = 1.0; // 1 mg/ml
+    const double lidocaineConcentrationMgPerMl = 20.0; // 20 mg/ml (apenas para cálculo)
 
     if (_weightKg == null || _weightKg! <= 0) {
       _atropineVolumeMl = 0.0;
       _adrenalineVolumeMl = 0.0;
+      _lidocaineVolumeMl = 0.0;
       return;
     }
 
@@ -75,6 +80,8 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
 
     _atropineVolumeMl = atropineTotalMg / atropineConcentrationMgPerMl;
     _adrenalineVolumeMl = adrenalineTotalMg / adrenalineConcentrationMgPerMl;
+    final lidocaineTotalMg = w * lidocaineDoseMgPerKg;
+    _lidocaineVolumeMl = lidocaineTotalMg / lidocaineConcentrationMgPerMl;
   }
 
   // Getters

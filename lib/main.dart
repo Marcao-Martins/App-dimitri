@@ -11,6 +11,7 @@ import 'features/rcp/rcp_page.dart';
 import 'features/ficha_anestesica/ficha_anestesica_page.dart';
 import 'features/ficha_anestesica/ficha_provider.dart';
 import 'features/ficha_anestesica/services/storage_service.dart';
+import 'features/apple/apple_storage_service.dart';
 import 'features/drug_guide/drug_guide_page.dart';
 import 'features/admin/admin_dashboard.dart';
 import 'features/profile/profile_page.dart';
@@ -25,6 +26,7 @@ void main() async {
   
   // Inicializar serviços
   await StorageService.init();
+  await AppleStorageService.init();
   
   // Inicializar autenticação
   final authService = AuthService();

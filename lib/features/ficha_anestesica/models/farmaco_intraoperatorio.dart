@@ -25,7 +25,7 @@ class FarmacoIntraoperatorio {
       FarmacoIntraoperatorio(
         nome: json['nome'] ?? '',
         dose: (json['dose'] as num?)?.toDouble() ?? 0.0,
-        unidade: json['unidade'] ?? 'mg',
+        unidade: json['unidade'] ?? 'mg/kg',
         via: json['via'] ?? '',
         hora: DateTime.parse(json['hora']),
       );

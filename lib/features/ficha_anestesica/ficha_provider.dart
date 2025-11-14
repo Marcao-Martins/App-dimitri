@@ -153,6 +153,13 @@ class FichaProvider extends ChangeNotifier {
     }
   }
 
+  /// Atualiza uma medicação existente na lista (usado pelo DynamicTable ao editar)
+  void updateMedicacaoIn(List<Medicacao> list, int index, Medicacao updated) {
+    if (index < 0 || index >= list.length) return;
+    list[index] = updated;
+    notifyListeners();
+  }
+
   void addIntercorrencia(String descricao, DateTime momento, String gravidade) {
     if (_current == null) return;
     

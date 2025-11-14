@@ -7,8 +7,9 @@ import '../unit_converter/unit_converter_page.dart';
 import '../fluidotherapy/fluidotherapy_page.dart';
 import '../transfusion/transfusion_page.dart';
 import '../apgar/apgar_page.dart';
-import '../apple_score/apple_score_page.dart';
 import '../consent_form/consent_form_page.dart';
+import '../apple_full/apple_full_page.dart';
+import '../apple_fast/apple_fast_page.dart';
 
 /// Tela que exibe ferramentas adicionais do app GDAV
 /// Exclui as que já estão na navegação inferior para evitar duplicação
@@ -74,12 +75,20 @@ class AllFeaturesPage extends StatelessWidget {
             iconColor: AppColors.categoryPink,
             onTap: () => _navigateTo(context, const ApgarPage()),
           ),
+          // APPLE Score tool removed
           CategoryCard(
-            icon: Icons.medical_services_outlined,
-            title: 'APPLE Score',
-            subtitle: 'Avaliação de dor',
-            iconColor: Colors.orange.shade700,
-            onTap: () => _navigateTo(context, const AppleScorePage()),
+            icon: Icons.analytics_outlined,
+            title: 'APPLE Full',
+            subtitle: 'Score completo (10 variáveis)',
+            iconColor: AppColors.categoryOrange,
+            onTap: () => _navigateTo(context, const AppleFullPage()),
+          ),
+          CategoryCard(
+            icon: Icons.speed_outlined,
+            title: 'APPLE Fast',
+            subtitle: 'Versão rápida (5 variáveis)',
+            iconColor: AppColors.categoryOrange,
+            onTap: () => _navigateTo(context, const AppleFastPage()),
           ),
 
           // === DOCUMENTAÇÃO ===

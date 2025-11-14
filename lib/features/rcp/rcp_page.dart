@@ -218,6 +218,7 @@ class _RcpPageState extends State<RcpPage> {
                   builder: (context, controller, child) {
                     final atv = controller.atropineVolumeMl;
                     final adv = controller.adrenalineVolumeMl;
+                    final lidv = controller.lidocaineVolumeMl;
                     String fmt(double v) => v <= 0
                         ? '-'
                         : v.toStringAsFixed(v < 1 ? 2 : 2);
@@ -257,12 +258,34 @@ class _RcpPageState extends State<RcpPage> {
                                   .withOpacity(0.7),
                             ),
                             const SizedBox(width: 6),
-                            Text('Adrenalina (0,1mg/kg) - Volume: ',
+                            Text('Adrenalina (0,01mg/kg) - Volume: ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
                                     ?.copyWith(fontSize: 11)),
                             Text('${fmt(adv)} ml',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontSize: 11, fontWeight: FontWeight.bold)),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.medication,
+                              size: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withOpacity(0.7),
+                            ),
+                            const SizedBox(width: 6),
+                            Text('Lidocaína (2mg/kg) - Volume: ',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.copyWith(fontSize: 11)),
+                            Text('${fmt(lidv)} ml',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                     fontSize: 11, fontWeight: FontWeight.bold)),
                           ],

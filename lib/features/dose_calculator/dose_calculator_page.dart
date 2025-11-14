@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'oxygen_autonomy_calculator_page.dart';
 import '../unit_converter/unit_converter_page.dart';
+import '../fluidotherapy/fluidotherapy_page.dart';
+import '../transfusion/transfusion_page.dart';
 import '../../models/medication.dart';
 import '../../services/medication_service.dart';
 
@@ -310,6 +312,32 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
             },
             tooltip: 'Autonomia do Cilindro de O₂',
           ),
+          // Botão para a calculadora de Fluidoterapia
+          IconButton(
+            icon: const Icon(Icons.water_drop),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const FluidotherapyPage(),
+                ),
+              );
+            },
+            tooltip: 'Calculadora de Fluidoterapia',
+          ),
+          // Botão para a calculadora de Transfusão
+          IconButton(
+            icon: const Icon(Icons.bloodtype),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TransfusionPage(),
+                ),
+              );
+            },
+            tooltip: 'Calculadora de Transfusão Sanguínea',
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -319,44 +347,6 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Aviso importante
-              Card(
-                color: Theme.of(context).colorScheme.surfaceVariant,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.warning_amber, color: Theme.of(context).colorScheme.onSurfaceVariant),
-                          const SizedBox(width: 8),
-                          Text(
-                            'AVISO IMPORTANTE',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurfaceVariant,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Esta calculadora é uma ferramenta auxiliar. Sempre consulte bulas, '
-                        'protocolos institucionais e utilize seu julgamento clínico. '
-                        'O uso responsável e a verificação das doses são essenciais para '
-                        'a segurança do paciente.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              
               const SizedBox(height: 24),
               
               // Seleção de Fármaco (Opcional)
@@ -883,6 +873,44 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                     },
                   ),
               ],
+              const SizedBox(height: 16),
+              // Aviso importante (moved para a parte inferior da página)
+              Card(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.warning_amber, color: Theme.of(context).colorScheme.onSurfaceVariant),
+                          const SizedBox(width: 8),
+                          Text(
+                            'AVISO IMPORTANTE',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.onSurfaceVariant,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Esta calculadora é uma ferramenta auxiliar. Sempre consulte bulas, '
+                        'protocolos institucionais e utilize seu julgamento clínico. '
+                        'O uso responsável e a verificação das doses são essenciais para '
+                        'a segurança do paciente.',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
               
               const SizedBox(height: 24),
               

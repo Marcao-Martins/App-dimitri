@@ -224,6 +224,7 @@ class PdfService {
             style: pw.TextStyle(fontSize: 12, fontWeight: pw.FontWeight.bold),
           ),
           pw.SizedBox(height: 8),
+          // For locorregional, show Volume instead of Via
           pw.Table.fromTextArray(
             headerStyle: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
             cellStyle: const pw.TextStyle(fontSize: 9),
@@ -235,11 +236,15 @@ class PdfService {
               2: pw.Alignment.center,
               3: pw.Alignment.center,
             },
-            headers: ['Fármaco', 'Dose', 'Via', 'Hora'],
+            headers: title.toUpperCase().contains('LOCORREGIONAL')
+                ? ['Fármaco', 'Dose', 'Volume (ml)', 'Hora']
+                : ['Fármaco', 'Dose', 'Via', 'Hora'],
             data: meds.map((m) => [
               m.nome,
               m.dose ?? '-',
-              m.via ?? '-',
+              title.toUpperCase().contains('LOCORREGIONAL')
+                  ? (m.volume != null ? m.volume!.toStringAsFixed(2) : '-')
+                  : (m.via ?? '-'),
               m.hora != null ? '${m.hora!.hour}:${m.hora!.minute.toString().padLeft(2, '0')}' : '-',
             ]).toList(),
           ),

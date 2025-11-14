@@ -24,6 +24,7 @@ class DynamicTable extends StatelessWidget {
     final nomeController = TextEditingController();
     final doseController = TextEditingController();
     final viaController = TextEditingController();
+    final volumeController = TextEditingController();
     final tecnicaController = TextEditingController(); // Controller for the new field
     TimeOfDay selectedTime = TimeOfDay.now();
 
@@ -57,10 +58,18 @@ class DynamicTable extends StatelessWidget {
                   decoration: const InputDecoration(labelText: 'Dose'),
                 ),
                 const SizedBox(height: 8),
-                TextField(
-                  controller: viaController,
-                  decoration: const InputDecoration(labelText: 'Via'),
-                ),
+                // If showTecnicaField is true (locorregional), we don't show 'Via' and instead show 'Volume (ml)'
+                if (showTecnicaField) 
+                  TextField(
+                    controller: volumeController,
+                    decoration: const InputDecoration(labelText: 'Volume (ml)'),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  )
+                else
+                  TextField(
+                    controller: viaController,
+                    decoration: const InputDecoration(labelText: 'Via'),
+                  ),
                 const SizedBox(height: 8),
                 ListTile(
                   title: const Text('Hora'),
@@ -94,6 +103,7 @@ class DynamicTable extends StatelessWidget {
                   return;
                 }
 
+                // falling through to shared creation below
                 final now = DateTime.now();
                 final hora = DateTime(
                   now.year,
@@ -106,7 +116,8 @@ class DynamicTable extends StatelessWidget {
                 final med = Medicacao(
                   nome: nomeController.text.trim(),
                   dose: doseController.text.trim(),
-                  via: viaController.text.trim(),
+                  via: showTecnicaField ? null : viaController.text.trim(),
+                  volume: showTecnicaField ? parsedVolumeFrom(volumeController.text) : null,
                   hora: hora,
                   tecnica: showTecnicaField ? tecnicaController.text.trim() : null,
                 );
@@ -115,6 +126,103 @@ class DynamicTable extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: const Text('Adicionar'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  double? parsedVolumeFrom(String text) {
+    if (text.trim().isEmpty) return null;
+    return double.tryParse(text.replaceAll(',', '.'));
+  }
+
+  /// Mostra diálogo de edição para uma medicação existente
+  void _showEditDialog(BuildContext context, Medicacao existing, int index) {
+    final nomeController = TextEditingController(text: existing.nome);
+    final doseController = TextEditingController(text: existing.dose ?? '');
+    final viaController = TextEditingController(text: existing.via ?? '');
+    final tecnicaController = TextEditingController(text: existing.tecnica ?? '');
+    final volumeController = TextEditingController(text: existing.volume != null ? existing.volume.toString() : '');
+    TimeOfDay selectedTime = existing.hora != null ? TimeOfDay.fromDateTime(existing.hora!) : TimeOfDay.now();
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Editar $title'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (showTecnicaField) ...[
+                  TextField(
+                    controller: tecnicaController,
+                    decoration: const InputDecoration(
+                      labelText: 'Técnica',
+                      hintText: 'Ex: Bloqueio epidural, etc.',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+                TextField(
+                  controller: nomeController,
+                  decoration: const InputDecoration(labelText: 'Fármaco *'),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: doseController,
+                  decoration: const InputDecoration(labelText: 'Dose'),
+                ),
+                const SizedBox(height: 8),
+                if (showTecnicaField)
+                  TextField(
+                    controller: volumeController,
+                    decoration: const InputDecoration(labelText: 'Volume (ml)'),
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  )
+                else
+                  TextField(
+                    controller: viaController,
+                    decoration: const InputDecoration(labelText: 'Via'),
+                  ),
+                const SizedBox(height: 8),
+                ListTile(
+                  title: const Text('Hora'),
+                  subtitle: Text('${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}'),
+                  trailing: const Icon(Icons.schedule),
+                  onTap: () async {
+                    final picked = await showTimePicker(context: context, initialTime: selectedTime);
+                    if (picked != null) setState(() => selectedTime = picked);
+                  },
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancelar')),
+            ElevatedButton(
+              onPressed: () {
+                if (nomeController.text.trim().isEmpty) return;
+
+                final now = DateTime.now();
+                final hora = DateTime(now.year, now.month, now.day, selectedTime.hour, selectedTime.minute);
+                final parsedVolume = parsedVolumeFrom(volumeController.text);
+
+                final updated = Medicacao(
+                  nome: nomeController.text.trim(),
+                  dose: doseController.text.trim(),
+                  via: showTecnicaField ? null : viaController.text.trim(),
+                  volume: showTecnicaField ? parsedVolume : null,
+                  hora: hora,
+                  tecnica: showTecnicaField ? tecnicaController.text.trim() : null,
+                );
+
+                if (onUpdate != null) onUpdate!(index, updated);
+                Navigator.pop(context);
+              },
+              child: const Text('Salvar'),
             ),
           ],
         ),
@@ -171,14 +279,25 @@ class DynamicTable extends StatelessWidget {
                             Text('Técnica: ${m.tecnica}'),
                           if (m.dose != null && m.dose!.isNotEmpty) Text('Dose: ${m.dose}'),
                           if (m.via != null && m.via!.isNotEmpty) Text('Via: ${m.via}'),
+                          if (m.volume != null) Text('Volume: ${m.volume} ml'),
                           if (m.hora != null)
                             Text(
                                 'Hora: ${m.hora!.hour.toString().padLeft(2, '0')}:${m.hora!.minute.toString().padLeft(2, '0')}'),
                         ],
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline, color: Colors.red),
-                        onPressed: () => onRemove(i),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (onUpdate != null)
+                            IconButton(
+                              icon: const Icon(Icons.edit_outlined, color: Colors.blue),
+                              onPressed: () => _showEditDialog(context, m, i),
+                            ),
+                          IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.red),
+                            onPressed: () => onRemove(i),
+                          ),
+                        ],
                       ),
                     ),
                   );
