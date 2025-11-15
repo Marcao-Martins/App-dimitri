@@ -14,20 +14,17 @@ class ApgarPage extends StatefulWidget {
 }
 
 class _ApgarPageState extends State<ApgarPage> {
-  final _formKey = GlobalKey<FormState>();
-  
-  // Espécie selecionada
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   String? _selectedSpecies;
   SpeciesConfig? _speciesConfig;
-  
-  // Parâmetros (pontuação 0-2)
+
   int? _mucousMembraneScore;
   int? _heartRateScore;
   int? _irritabilityScore;
   int? _motilityScore;
   int? _respiratoryScore;
-  
-  // Resultado
+
   int? _totalScore;
   bool _showResult = false;
 
@@ -45,203 +42,210 @@ class _ApgarPageState extends State<ApgarPage> {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Informação inicial
-              Card(
-                color: Theme.of(context).colorScheme.primaryContainer,
-                child: Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: Row(
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: 16 + MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Informação inicial
+                Card(
+                  color: Theme.of(context).colorScheme.primaryContainer,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.pets,
+                          color: Theme.of(context).colorScheme.primary,
+                          size: 28,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Avalie o neonato nos primeiros 5 minutos de vida',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context).colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Seleção de espécie
+                SpeciesSelector(
+                  selectedSpecies: _selectedSpecies,
+                  onChanged: _onSpeciesChanged,
+                ),
+
+                // Parâmetros dependentes de espécie
+                if (_speciesConfig != null) ...[
+                  // 1. Cor das mucosas
+                  ParameterSelector(
+                    label: '1. Cor das Mucosas',
+                    helperText: 'Avalie a coloração das gengivas',
+                    options: ApgarParameters.mucousMembraneOptions,
+                    selectedScore: _mucousMembraneScore,
+                    onChanged: (value) {
+                      setState(() {
+                        _mucousMembraneScore = value;
+                        _showResult = false;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione a cor das mucosas';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // 2. Frequência cardíaca (dinâmico por espécie)
+                  ParameterSelector(
+                    label: '2. ${_speciesConfig!.heartRateLabel}',
+                    helperText: 'Ausculte o coração por 15 segundos',
+                    options: _speciesConfig!.heartRateOptions,
+                    selectedScore: _heartRateScore,
+                    onChanged: (value) {
+                      setState(() {
+                        _heartRateScore = value;
+                        _showResult = false;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione a frequência cardíaca';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // 3. Reflexo de irritabilidade
+                  ParameterSelector(
+                    label: '3. Reflexo de Irritabilidade',
+                    helperText: 'Estimule suavemente o filhote',
+                    options: ApgarParameters.irritabilityOptions,
+                    selectedScore: _irritabilityScore,
+                    onChanged: (value) {
+                      setState(() {
+                        _irritabilityScore = value;
+                        _showResult = false;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione o reflexo de irritabilidade';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // 4. Motilidade
+                  ParameterSelector(
+                    label: '4. Motilidade (Tônus Muscular)',
+                    helperText: 'Avalie o movimento dos membros',
+                    options: ApgarParameters.motilityOptions,
+                    selectedScore: _motilityScore,
+                    onChanged: (value) {
+                      setState(() {
+                        _motilityScore = value;
+                        _showResult = false;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione a motilidade';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  // 5. Esforços respiratórios (dinâmico por espécie)
+                  ParameterSelector(
+                    label: '5. ${_speciesConfig!.respiratoryLabel}',
+                    helperText: 'Observe a respiração por 15 segundos',
+                    options: _speciesConfig!.respiratoryOptions,
+                    selectedScore: _respiratoryScore,
+                    onChanged: (value) {
+                      setState(() {
+                        _respiratoryScore = value;
+                        _showResult = false;
+                      });
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Selecione o esforço respiratório';
+                      }
+                      return null;
+                    },
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Botões de ação
+                  Row(
                     children: [
-                      Icon(
-                        Icons.pets,
-                        color: Theme.of(context).colorScheme.primary,
-                        size: 28,
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: _calculateScore,
+                          icon: const Icon(Icons.calculate),
+                          label: const Text(
+                            'Calcular Escore',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF9800),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Expanded(
-                        child: Text(
-                          'Avalie o neonato nos primeiros 5 minutos de vida',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context).colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.w500,
+                        child: OutlinedButton.icon(
+                          onPressed: _clearForm,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text(
+                            'Limpar',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
-                ),
-              ),
-              const SizedBox(height: 24),
 
-              // Seleção de espécie
-              SpeciesSelector(
-                selectedSpecies: _selectedSpecies,
-                onChanged: _onSpeciesChanged,
-              ),
+                  const SizedBox(height: 24),
 
-              // Parâmetros dependentes de espécie
-              if (_speciesConfig != null) ...[
-                // 1. Cor das mucosas
-                ParameterSelector(
-                  label: '1. Cor das Mucosas',
-                  helperText: 'Avalie a coloração das gengivas',
-                  options: ApgarParameters.mucousMembraneOptions,
-                  selectedScore: _mucousMembraneScore,
-                  onChanged: (value) {
-                    setState(() {
-                      _mucousMembraneScore = value;
-                      _showResult = false;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione a cor das mucosas';
-                    }
-                    return null;
-                  },
-                ),
-
-                // 2. Frequência cardíaca (dinâmico por espécie)
-                ParameterSelector(
-                  label: '2. ${_speciesConfig!.heartRateLabel}',
-                  helperText: 'Ausculte o coração por 15 segundos',
-                  options: _speciesConfig!.heartRateOptions,
-                  selectedScore: _heartRateScore,
-                  onChanged: (value) {
-                    setState(() {
-                      _heartRateScore = value;
-                      _showResult = false;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione a frequência cardíaca';
-                    }
-                    return null;
-                  },
-                ),
-
-                // 3. Reflexo de irritabilidade
-                ParameterSelector(
-                  label: '3. Reflexo de Irritabilidade',
-                  helperText: 'Estimule suavemente o filhote',
-                  options: ApgarParameters.irritabilityOptions,
-                  selectedScore: _irritabilityScore,
-                  onChanged: (value) {
-                    setState(() {
-                      _irritabilityScore = value;
-                      _showResult = false;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione o reflexo de irritabilidade';
-                    }
-                    return null;
-                  },
-                ),
-
-                // 4. Motilidade
-                ParameterSelector(
-                  label: '4. Motilidade (Tônus Muscular)',
-                  helperText: 'Avalie o movimento dos membros',
-                  options: ApgarParameters.motilityOptions,
-                  selectedScore: _motilityScore,
-                  onChanged: (value) {
-                    setState(() {
-                      _motilityScore = value;
-                      _showResult = false;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione a motilidade';
-                    }
-                    return null;
-                  },
-                ),
-
-                // 5. Esforços respiratórios (dinâmico por espécie)
-                ParameterSelector(
-                  label: '5. ${_speciesConfig!.respiratoryLabel}',
-                  helperText: 'Observe a respiração por 15 segundos',
-                  options: _speciesConfig!.respiratoryOptions,
-                  selectedScore: _respiratoryScore,
-                  onChanged: (value) {
-                    setState(() {
-                      _respiratoryScore = value;
-                      _showResult = false;
-                    });
-                  },
-                  validator: (value) {
-                    if (value == null) {
-                      return 'Selecione o esforço respiratório';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                // Botões de ação
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: _calculateScore,
-                        icon: const Icon(Icons.calculate),
-                        label: const Text(
-                          'Calcular Escore',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFFFF9800),
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
+                  // Resultado
+                  if (_showResult && _totalScore != null)
+                    ScoreDisplay(
+                      totalScore: _totalScore!,
+                      showRecommendations: true,
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: _clearForm,
-                        icon: const Icon(Icons.refresh),
-                        label: const Text(
-                          'Limpar',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 24),
-
-                // Resultado
-                if (_showResult && _totalScore != null)
-                  ScoreDisplay(
-                    totalScore: _totalScore!,
-                    showRecommendations: true,
-                  ),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
@@ -283,14 +287,7 @@ class _ApgarPageState extends State<ApgarPage> {
         _showResult = true;
       });
 
-      // Scroll para o resultado
-      Future.delayed(const Duration(milliseconds: 300), () {
-        Scrollable.ensureVisible(
-          context,
-          duration: const Duration(milliseconds: 500),
-          curve: Curves.easeInOut,
-        );
-      });
+      // Scroll para o resultado (kept minimal)
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -412,3 +409,4 @@ class _ApgarPageState extends State<ApgarPage> {
     );
   }
 }
+

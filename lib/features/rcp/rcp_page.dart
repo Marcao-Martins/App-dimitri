@@ -258,7 +258,7 @@ class _RcpPageState extends State<RcpPage> {
                                   .withOpacity(0.7),
                             ),
                             const SizedBox(width: 6),
-                            Text('Adrenalina (0,01mg/kg) - Volume: ',
+                            Text('Adrenalina/Epinefrina (0,01mg/kg) - Volume: ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
