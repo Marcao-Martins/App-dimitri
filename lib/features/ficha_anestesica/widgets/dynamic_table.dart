@@ -242,10 +242,15 @@ class DynamicTable extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(title, style: Theme.of(context).textTheme.titleMedium),
-                TextButton.icon(
-                  onPressed: () => _showAddDialog(context),
-                  icon: const Icon(Icons.add),
-                  label: const Text('Adicionar'),
+                Flexible(
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: () => _showAddDialog(context),
+                      icon: const Icon(Icons.add),
+                      label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
+                    ),
+                  ),
                 ),
               ],
             ),

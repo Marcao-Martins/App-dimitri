@@ -313,31 +313,44 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
             color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.3),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Tempo de Procedimento: ${_formatTimerDuration(provider.current!.procedureTimeSeconds)}',
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '(Veja na aba Paciente & Medicações para controlar)',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.7),
-                      fontStyle: FontStyle.italic,
-                    ),
-                  ),
-                ],
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  return Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    runSpacing: 6,
+                    children: [
+                      Icon(
+                        Icons.timer_outlined,
+                        size: 20,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.65),
+                        child: Text(
+                          'Tempo de Procedimento: ${_formatTimerDuration(provider.current!.procedureTimeSeconds)}',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondaryContainer,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.9),
+                        child: Text(
+                          '(Veja na aba Paciente & Medicações para controlar)',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.7),
+                            fontStyle: FontStyle.italic,
+                          ),
+                          softWrap: true,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
@@ -382,10 +395,18 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                         'Intercorrências',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () => _showAddIntercorrenciaDialog(context, provider),
-                        icon: const Icon(Icons.add),
-                        label: const Text('Adicionar'),
+                      // botão responsivo para evitar overflow em telas pequenas
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 140),
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showAddIntercorrenciaDialog(context, provider),
+                          icon: const Icon(Icons.add, size: 16),
+                          label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 13),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -450,10 +471,17 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                         'Fármacos Intraoperatórios',
                         style: Theme.of(context).textTheme.titleLarge,
                       ),
-                      ElevatedButton.icon(
-                        onPressed: () => _showAddFarmacoIntraDialog(context, provider),
-                        icon: const Icon(Icons.add),
-                        label: const Text('Adicionar'),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(maxWidth: 140),
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showAddFarmacoIntraDialog(context, provider),
+                          icon: const Icon(Icons.add, size: 16),
+                          label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            textStyle: const TextStyle(fontSize: 13),
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -541,6 +569,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   value: gravidade,
+                  isExpanded: true,
                   decoration: const InputDecoration(
                     labelText: 'Gravidade',
                     border: OutlineInputBorder(),
@@ -645,6 +674,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                     const SizedBox(width: 8),
                     Expanded(
                       child: DropdownButtonFormField<String>(
+                        isExpanded: true,
                         initialValue: unidade,
                         decoration: const InputDecoration(
                           labelText: 'Unidade',
@@ -666,6 +696,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
                   value: via,
+                  isExpanded: true,
                   decoration: const InputDecoration(
                     labelText: 'Via de Administração',
                     border: OutlineInputBorder(),

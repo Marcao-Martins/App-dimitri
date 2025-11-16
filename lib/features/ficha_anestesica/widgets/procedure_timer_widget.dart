@@ -104,15 +104,18 @@ class ProcedureTimerWidget extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              child: Text(
-                _formatDuration(elapsedTime),
-                style: textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  fontFeatures: [const FontFeature.tabularFigures()],
-                  color: isRunning 
-                      ? colorScheme.primary 
-                      : colorScheme.onSurfaceVariant,
-                  letterSpacing: 2,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text(
+                  _formatDuration(elapsedTime),
+                  style: textTheme.displaySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontFeatures: [const FontFeature.tabularFigures()],
+                    color: isRunning 
+                        ? colorScheme.primary 
+                        : colorScheme.onSurfaceVariant,
+                    letterSpacing: 2,
+                  ),
                 ),
               ),
             ),

@@ -122,69 +122,16 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
     });
   }
 
-  /// Limpa todos os filtros
-  void _clearFilters() {
-    setState(() {
-      _searchController.clear();
-      _selectedFilter = 'Todos';
-      // A chamada a _filterMedications() é desnecessária aqui porque
-      // o listener do _searchController já fará isso.
-    });
-  }
-
-  /// Retorna a cor do ícone baseado na categoria
-  Color _getIconColor(String category) {
-    if (category.contains('Anestésico')) return AppColors.primaryTeal;
-    if (category.contains('Analgésico')) return AppColors.categoryOrange;
-    if (category.contains('Sedativo')) return AppColors.categoryPurple;
-    if (category.contains('Bloqueador')) return AppColors.categoryBlue;
-    return AppColors.categoryGreen;
-  }
-
-  /// Retorna a tag do medicamento
-  String _getTag(Medication med) {
-    if (med.category.contains('Controlado')) return 'CTRL';
-    if (med.isCompatibleWithSpecies('Canino') &&
-        med.isCompatibleWithSpecies('Felino')) return 'VET';
-    return 'PA';
-  }
-
-  /// Retorna a cor da tag
-  Color _getTagColor(String tag) {
-    switch (tag) {
-      case 'VET':
-        return AppColors.tagVet;
-      case 'CTRL':
-        return AppColors.tagControlled;
-      case 'PA':
-        return AppColors.tagPA;
-      default:
-        return AppColors.primaryTeal;
-    }
-  }
-
-  /// Exibe detalhes completos do medicamento
-  void _showMedicationDetails(Medication medication) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MedicationDetailPage(medication: medication),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Guia de Fármacos'),
         actions: [
-          // Botão de refresh
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _isLoading ? null : _refreshMedications,
             tooltip: 'Atualizar dados do servidor',
+            onPressed: _refreshMedications,
           ),
         ],
       ),
@@ -222,48 +169,91 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
                 )
               : Column(
                   children: [
-                    // Barra de Busca e Filtro
                     SafeArea(
                       bottom: false,
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(20, 16, 20, 12),
-                        child: Column(
-                          children: [
-                            ModernSearchBar(
-                              controller: _searchController,
-                              hintText: AppStrings.searchDrug,
-                              onChanged: (value) {}, // Listener já faz o trabalho
-                            ),
-                            const SizedBox(height: 12),
-                            // Dropdown de Filtro por Classe - SEM LABEL e com opções dinâmicas
-                            DropdownButtonFormField<String>(
-                              value: _selectedFilter,
-                              items: _filters.map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
+                        child: LayoutBuilder(
+                          builder: (context, constraints) {
+                            // stack vertically on narrow screens, row on wide screens
+                            if (constraints.maxWidth < 520) {
+                              return Column(
+                                children: [
+                                  ModernSearchBar(
+                                    controller: _searchController,
+                                    hintText: AppStrings.searchDrug,
+                                    onChanged: (v) {},
+                                  ),
+                                  const SizedBox(height: 12),
+                                  DropdownButtonFormField<String>(
+                                    value: _selectedFilter,
+                                    isExpanded: true,
+                                    items: _filters.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        _selectedFilter = newValue!;
+                                      });
+                                      _filterMedications();
+                                    },
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(Icons.filter_list),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               );
-                            }).toList(),
-                            onChanged: (newValue) {
-                              setState(() {
-                                _selectedFilter = newValue!;
-                              });
-                              _filterMedications();
-                            },
-                            decoration: InputDecoration(
-                              // labelText removido para um design mais limpo
-                              prefixIcon: const Icon(Icons.filter_list),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
-                          ),
-                        ],
+                            }
+
+                            return Row(
+                              children: [
+                                Expanded(
+                                  child: ModernSearchBar(
+                                    controller: _searchController,
+                                    hintText: AppStrings.searchDrug,
+                                    onChanged: (v) {},
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                ConstrainedBox(
+                                  constraints: const BoxConstraints(maxWidth: 260),
+                                  child: DropdownButtonFormField<String>(
+                                    value: _selectedFilter,
+                                    isExpanded: true,
+                                    items: _filters.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),
+                                    onChanged: (newValue) {
+                                      setState(() {
+                                        _selectedFilter = newValue!;
+                                      });
+                                      _filterMedications();
+                                    },
+                                    decoration: InputDecoration(
+                                      prefixIcon: const Icon(Icons.filter_list),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ),
-                    ),
 
-                    // Lista de Medicamentos
+                    // Lista
                     Expanded(
                       child: _filteredMedications.isEmpty
                           ? EmptyState(
@@ -308,6 +298,41 @@ class _DrugGuidePageState extends State<DrugGuidePage> {
                 ),
     );
   }
+
+  Color _getIconColor(String category) {
+    if (category.toLowerCase().contains('antib')) return AppColors.categoryOrange;
+    if (category.toLowerCase().contains('analg')) return AppColors.primaryTeal;
+    return AppColors.categoryBlue;
+  }
+
+  String _getTag(Medication med) {
+    // Simple tag: use first word of category uppercase
+    final parts = med.category.split(RegExp(r"\s+"));
+    return parts.isNotEmpty ? parts.first.toUpperCase() : '';
+  }
+
+  Color _getTagColor(String tag) {
+    if (tag == 'CTRL') return Colors.red;
+    if (tag == 'VET') return AppColors.primaryTeal;
+    return AppColors.categoryGreen;
+  }
+
+  void _clearFilters() {
+    _searchController.clear();
+    setState(() {
+      _selectedFilter = 'Todos';
+      _filteredMedications = _medications;
+    });
+  }
+
+  void _showMedicationDetails(Medication medication) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => MedicationDetailPage(medication: medication),
+      ),
+    );
+  }
+
 }
 
 /// Página de Detalhes do Medicamento - Layout Expandido

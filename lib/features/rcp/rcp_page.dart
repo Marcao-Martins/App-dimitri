@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'rcp_controller.dart';
 import 'widgets/circular_timer.dart';
 import 'widgets/control_buttons.dart';
+import '../../services/medication_service.dart';
 
 /// Página principal do RCP Coach
 /// Timer de 2 minutos com metrônomo para compressões torácicas
@@ -53,108 +54,153 @@ class _RcpPageState extends State<RcpPage> {
         ),
         body: Consumer<RcpController>(
           builder: (context, controller, child) {
-            return Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Ciclo e Fármacos lado a lado
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Tabela de Fármacos (esquerda/centro)
-                      Expanded(
-                        child: _buildDrugTable(context),
-                      ),
-                      const SizedBox(width: 8),
-                      // Cycle Counter Badge (direita)
-                      Chip(
-                        label: Text(
-                          'Ciclo: ${controller.cycleCount}',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        avatar: Icon(
-                          Icons.sync,
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        backgroundColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        padding: const EdgeInsets.all(12),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Status Message
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    decoration: BoxDecoration(
-                      color: controller.isRunning
-                          ? Theme.of(context).colorScheme.primaryContainer
-                          : Theme.of(context).colorScheme.surfaceVariant,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      children: [
-                        Icon(
-                          controller.isRunning
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: controller.isRunning
-                              ? Theme.of(context).colorScheme.primary
-                              : Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            controller.statusMessage,
-                            style:
-                                Theme.of(context).textTheme.bodyLarge?.copyWith(
-                                      fontWeight: FontWeight.w500,
-                                      color: controller.isRunning
-                                          ? Theme.of(context)
-                                              .colorScheme
-                                              .onPrimaryContainer
-                                          : Theme.of(context)
-                                              .colorScheme
-                                              .onSurfaceVariant,
+            return LayoutBuilder(
+              builder: (context, constraints) {
+                // Make the page scrollable on small screens / when the keyboard opens,
+                // while keeping existing Expanded widgets working by constraining the
+                // content to at least the viewport height.
+                return SingleChildScrollView(
+                  padding: const EdgeInsets.all(24.0),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          // Responsivo: exibe em linha quando houver espaço, empilha em coluna em telas estreitas
+                          LayoutBuilder(builder: (context, constraints) {
+                            if (constraints.maxWidth < 420) {
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _buildDrugTable(context),
+                                  const SizedBox(height: 8),
+                                  Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Chip(
+                                      label: Text(
+                                        'Ciclo: ${controller.cycleCount}',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(fontWeight: FontWeight.bold),
+                                      ),
+                                      avatar: Icon(
+                                        Icons.sync,
+                                        color: Theme.of(context).colorScheme.primary,
+                                      ),
+                                      backgroundColor:
+                                          Theme.of(context).colorScheme.primaryContainer,
+                                      padding: const EdgeInsets.all(12),
                                     ),
-                            textAlign: TextAlign.center,
+                                  ),
+                                ],
+                              );
+                            } else {
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  // Tabela de Fármacos (esquerda/centro)
+                                  Expanded(
+                                    child: _buildDrugTable(context),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  // Cycle Counter Badge (direita)
+                                  Chip(
+                                    label: Text(
+                                      'Ciclo: ${controller.cycleCount}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium
+                                          ?.copyWith(fontWeight: FontWeight.bold),
+                                    ),
+                                    avatar: Icon(
+                                      Icons.sync,
+                                      color: Theme.of(context).colorScheme.primary,
+                                    ),
+                                    backgroundColor:
+                                        Theme.of(context).colorScheme.primaryContainer,
+                                    padding: const EdgeInsets.all(12),
+                                  ),
+                                ],
+                              );
+                            }
+                          }),
+              
+                          const SizedBox(height: 16),
+              
+                          // Status Message
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: controller.isRunning
+                                  ? Theme.of(context).colorScheme.primaryContainer
+                                  : Theme.of(context).colorScheme.surfaceVariant,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  controller.isRunning
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: controller.isRunning
+                                      ? Theme.of(context).colorScheme.primary
+                                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Text(
+                                    controller.statusMessage,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
+                                          fontWeight: FontWeight.w500,
+                                          color: controller.isRunning
+                                              ? Theme.of(context)
+                                                  .colorScheme
+                                                  .onPrimaryContainer
+                                              : Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                        ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Circular Timer
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 32.0),
-                      child: CircularTimer(
-                        progress: controller.progress,
-                        secondsRemaining: controller.secondsRemaining,
+              
+                          // Circular Timer
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 32.0),
+                              child: CircularTimer(
+                                progress: controller.progress,
+                                secondsRemaining: controller.secondsRemaining,
+                              ),
+                            ),
+                          ),
+              
+                          // Control Buttons
+                          ControlButtons(
+                            isRunning: controller.isRunning,
+                            isWakeLockEnabled: controller.isWakeLockEnabled,
+                            onStartStop: controller.startStop,
+                            onReset: controller.reset,
+                            onToggleWakeLock: controller.toggleWakeLock,
+                          ),
+              
+                          const SizedBox(height: 16),
+                        ],
                       ),
                     ),
                   ),
-
-                  // Control Buttons
-                  ControlButtons(
-                    isRunning: controller.isRunning,
-                    isWakeLockEnabled: controller.isWakeLockEnabled,
-                    onStartStop: controller.startStop,
-                    onReset: controller.reset,
-                    onToggleWakeLock: controller.toggleWakeLock,
-                  ),
-
-                  const SizedBox(height: 16),
-                ],
-              ),
+                );
+              },
             );
           },
         ),
@@ -189,28 +235,35 @@ class _RcpPageState extends State<RcpPage> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Peso (entrada)
-              SizedBox(
-                width: 160,
-                child: TextField(
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  decoration: InputDecoration(
-                    labelText: 'Peso (kg)',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(6),
+                    // Peso (entrada) - tornar responsivo em telas estreitas
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        double fieldWidth = constraints.maxWidth < 360
+                            ? constraints.maxWidth
+                            : 160;
+                        return SizedBox(
+                          width: fieldWidth,
+                          child: TextField(
+                            keyboardType:
+                                const TextInputType.numberWithOptions(decimal: true),
+                            decoration: InputDecoration(
+                              labelText: 'Peso (kg)',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              isDense: true,
+                              suffixText: 'kg',
+                            ),
+                            onChanged: (v) {
+                              // Update controller weight
+                              final controller =
+                                  Provider.of<RcpController>(context, listen: false);
+                              controller.setWeightFromString(v);
+                            },
+                          ),
+                        );
+                      },
                     ),
-                    isDense: true,
-                    suffixText: 'kg',
-                  ),
-                  onChanged: (v) {
-                    // Update controller weight
-                    final controller =
-                        Provider.of<RcpController>(context, listen: false);
-                    controller.setWeightFromString(v);
-                  },
-                ),
-              ),
               const SizedBox(width: 12),
               // Volumes calculados
               Expanded(
@@ -226,6 +279,7 @@ class _RcpPageState extends State<RcpPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(
                               Icons.medication,
@@ -236,18 +290,29 @@ class _RcpPageState extends State<RcpPage> {
                                   .withOpacity(0.7),
                             ),
                             const SizedBox(width: 6),
-                            Text('Atropina (0,04mg/kg) - Volume: ',
+                            Expanded(
+                              child: Text(
+                                'Atropina (0,04mg/kg) - Volume: ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
-                                    ?.copyWith(fontSize: 11)),
-              Text('${fmt(atv)} ml (Atropina 1%)',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  fontSize: 11, fontWeight: FontWeight.bold)),
+                                    ?.copyWith(fontSize: 11),
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                '${fmt(atv)} ml (Atropina 1%)',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    fontSize: 11, fontWeight: FontWeight.bold),
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(
                               Icons.medication,
@@ -258,18 +323,29 @@ class _RcpPageState extends State<RcpPage> {
                                   .withOpacity(0.7),
                             ),
                             const SizedBox(width: 6),
-                            Text('Adrenalina/Epinefrina (0,01mg/kg) - Volume: ',
+                            Expanded(
+                              child: Text(
+                                'Adrenalina/Epinefrina (0,01mg/kg) - Volume: ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
-                                    ?.copyWith(fontSize: 11)),
-                            Text('${fmt(adv)} ml',
+                                    ?.copyWith(fontSize: 11),
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                '${fmt(adv)} ml',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontSize: 11, fontWeight: FontWeight.bold)),
+                                    fontSize: 11, fontWeight: FontWeight.bold),
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 6),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Icon(
                               Icons.medication,
@@ -280,16 +356,50 @@ class _RcpPageState extends State<RcpPage> {
                                   .withOpacity(0.7),
                             ),
                             const SizedBox(width: 6),
-                            Text('Lidocaína (2mg/kg) - Volume: ',
+                            Expanded(
+                              child: Text(
+                                'Lidocaína (2mg/kg) - Volume: ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
-                                    ?.copyWith(fontSize: 11)),
-                            Text('${fmt(lidv)} ml',
+                                    ?.copyWith(fontSize: 11),
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                '${fmt(lidv)} ml',
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontSize: 11, fontWeight: FontWeight.bold)),
+                                    fontSize: 11, fontWeight: FontWeight.bold),
+                                softWrap: true,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
                           ],
                         ),
+                        const SizedBox(height: 8),
+                        // Lista simples de fármacos carregados (se houver)
+                        Builder(builder: (context) {
+                          final meds = MedicationService.getAllMedications();
+                          if (meds.isEmpty) return const SizedBox();
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(height: 8),
+                              Text(
+                                'Fármacos disponíveis:',
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                              ),
+                              const SizedBox(height: 6),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 6,
+                                children: meds.map((m) => Chip(label: Text(m.name))).toList(),
+                              ),
+                            ],
+                          );
+                        }),
                       ],
                     );
                   },

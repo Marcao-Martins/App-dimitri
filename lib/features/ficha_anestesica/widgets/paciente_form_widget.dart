@@ -135,36 +135,71 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
               ),
               const SizedBox(height: 12),
 
-              // Espécie e Sexo
-              Row(
-                children: [
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _especie,
-                      decoration: const InputDecoration(
-                        labelText: 'Espécie *',
-                        border: OutlineInputBorder(),
+              // Espécie e Sexo (responsivo)
+              LayoutBuilder(builder: (context, constraints) {
+                if (constraints.maxWidth < 420) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: _especie,
+                        decoration: const InputDecoration(
+                          labelText: 'Espécie *',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: _especies.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                        onChanged: (value) => setState(() => _especie = value),
+                        validator: (value) => value == null ? 'Selecione a espécie' : null,
                       ),
-                      items: _especies.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                      onChanged: (value) => setState(() => _especie = value),
-                      validator: (value) => value == null ? 'Selecione a espécie' : null,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: DropdownButtonFormField<String>(
-                      value: _sexo,
-                      decoration: const InputDecoration(
-                        labelText: 'Sexo *',
-                        border: OutlineInputBorder(),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        isExpanded: true,
+                        value: _sexo,
+                        decoration: const InputDecoration(
+                          labelText: 'Sexo *',
+                          border: OutlineInputBorder(),
+                        ),
+                        items: _sexos.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                        onChanged: (value) => setState(() => _sexo = value),
+                        validator: (value) => value == null ? 'Selecione o sexo' : null,
                       ),
-                      items: _sexos.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                      onChanged: (value) => setState(() => _sexo = value),
-                      validator: (value) => value == null ? 'Selecione o sexo' : null,
-                    ),
-                  ),
-                ],
-              ),
+                    ],
+                  );
+                } else {
+                  return Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          value: _especie,
+                          decoration: const InputDecoration(
+                            labelText: 'Espécie *',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _especies.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                          onChanged: (value) => setState(() => _especie = value),
+                          validator: (value) => value == null ? 'Selecione a espécie' : null,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          isExpanded: true,
+                          value: _sexo,
+                          decoration: const InputDecoration(
+                            labelText: 'Sexo *',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _sexos.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+                          onChanged: (value) => setState(() => _sexo = value),
+                          validator: (value) => value == null ? 'Selecione o sexo' : null,
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }),
               const SizedBox(height: 12),
 
               // Peso e Idade
@@ -210,6 +245,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
 
               // ASA
               DropdownButtonFormField<String>(
+                isExpanded: true,
                 value: _asa,
                 decoration: const InputDecoration(
                   labelText: 'Classificação ASA *',

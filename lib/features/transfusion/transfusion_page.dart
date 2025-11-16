@@ -183,6 +183,7 @@ class _TransfusionPageState extends State<TransfusionPage> {
                         // Espécie
                         DropdownButtonFormField<String>(
                           value: _selectedSpecies,
+                          isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Espécie *',
                             prefixIcon: const Icon(Icons.pets),
@@ -242,6 +243,7 @@ class _TransfusionPageState extends State<TransfusionPage> {
                         // Fator de cálculo
                         DropdownButtonFormField<int>(
                           value: _selectedFactor,
+                          isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Fator de cálculo *',
                             prefixIcon: const Icon(Icons.calculate),

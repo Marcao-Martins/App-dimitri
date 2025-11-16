@@ -341,7 +341,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 16.0 + MediaQuery.of(context).viewInsets.bottom),
         child: Form(
           key: _formKey,
           child: Column(
@@ -584,117 +584,227 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
               
               const SizedBox(height: 16),
               
-              // Campo Dose com seletor de unidade
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: TextFormField(
-                      controller: _doseController,
-                      decoration: const InputDecoration(
-                        labelText: 'Dose *',
-                        hintText: 'digite a dose',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.medication),
+              // Campo Dose com seletor de unidade (responsivo)
+              LayoutBuilder(builder: (context, constraints) {
+                if (constraints.maxWidth < 480) {
+                  // Em telas estreitas empilhar os campos
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: _doseController,
+                        decoration: const InputDecoration(
+                          labelText: 'Dose *',
+                          hintText: 'digite a dose',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.medication),
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          final dose = double.tryParse(value.replaceAll(',', '.'));
+                          if (dose == null || dose <= 0) {
+                            return 'Digite uma dose válida';
+                          }
+                          return null;
+                        },
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
-                      ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Campo obrigatório';
-                        }
-                        final dose = double.tryParse(value.replaceAll(',', '.'));
-                        if (dose == null || dose <= 0) {
-                          return 'Digite uma dose válida';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 120,
-                    child: DropdownButtonFormField<String>(
-                      value: _doseUnit,
-                      decoration: const InputDecoration(
-                        labelText: 'Unidade',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        value: _doseUnit,
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Unidade',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
+                          DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _doseUnit = value ?? 'mg/kg';
+                            _updateLiveCalculation();
+                          });
+                        },
                       ),
-                      items: const [
-                        DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
-                        DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _doseUnit = value ?? 'mg/kg';
-                          _updateLiveCalculation();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                    ],
+                  );
+                } else {
+                  // Layout em linha para telas maiores
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: TextFormField(
+                          controller: _doseController,
+                          decoration: const InputDecoration(
+                            labelText: 'Dose *',
+                            hintText: 'digite a dose',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.medication),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Campo obrigatório';
+                            }
+                            final dose = double.tryParse(value.replaceAll(',', '.'));
+                            if (dose == null || dose <= 0) {
+                              return 'Digite uma dose válida';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        flex: 1,
+                        child: DropdownButtonFormField<String>(
+                          value: _doseUnit,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Unidade',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 'mg/kg', child: Text('mg/kg')),
+                            DropdownMenuItem(value: 'mcg/kg', child: Text('mcg/kg')),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _doseUnit = value ?? 'mg/kg';
+                              _updateLiveCalculation();
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }),
               
               const SizedBox(height: 16),
               
-              // Campo Concentração com seletor de unidade
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    flex: 3,
-                    child: TextFormField(
-                      controller: _concentrationController,
-                      decoration: const InputDecoration(
-                        labelText: 'Concentração *',
-                        hintText: 'digite a concentração',
-                        border: OutlineInputBorder(),
-                        prefixIcon: Icon(Icons.science),
+              // Campo Concentração com seletor de unidade (responsivo)
+              LayoutBuilder(builder: (context, constraints) {
+                if (constraints.maxWidth < 480) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      TextFormField(
+                        controller: _concentrationController,
+                        decoration: const InputDecoration(
+                          labelText: 'Concentração *',
+                          hintText: 'digite a concentração',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.science),
+                        ),
+                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Campo obrigatório';
+                          }
+                          final concentration = double.tryParse(value.replaceAll(',', '.'));
+                          if (concentration == null || concentration <= 0) {
+                            return 'Digite uma concentração válida';
+                          }
+                          return null;
+                        },
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
-                      ],
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Campo obrigatório';
-                        }
-                        final concentration = double.tryParse(value.replaceAll(',', '.'));
-                        if (concentration == null || concentration <= 0) {
-                          return 'Digite uma concentração válida';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  SizedBox(
-                    width: 120,
-                    child: DropdownButtonFormField<String>(
-                      value: _concentrationUnit,
-                      decoration: const InputDecoration(
-                        labelText: 'Unidade',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                      const SizedBox(height: 8),
+                      DropdownButtonFormField<String>(
+                        value: _concentrationUnit,
+                        isExpanded: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Unidade',
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 'mg/ml', child: Text('mg/ml')),
+                          DropdownMenuItem(value: 'mcg/ml', child: Text('mcg/ml')),
+                        ],
+                        onChanged: (value) {
+                          setState(() {
+                            _concentrationUnit = value ?? 'mg/ml';
+                            _updateLiveCalculation();
+                          });
+                        },
                       ),
-                      items: const [
-                        DropdownMenuItem(value: 'mg/ml', child: Text('mg/ml')),
-                        DropdownMenuItem(value: 'mcg/ml', child: Text('mcg/ml')),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _concentrationUnit = value ?? 'mg/ml';
-                          _updateLiveCalculation();
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                    ],
+                  );
+                } else {
+                  return Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: TextFormField(
+                          controller: _concentrationController,
+                          decoration: const InputDecoration(
+                            labelText: 'Concentração *',
+                            hintText: 'digite a concentração',
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.science),
+                          ),
+                          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,3}')),
+                          ],
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Campo obrigatório';
+                            }
+                            final concentration = double.tryParse(value.replaceAll(',', '.'));
+                            if (concentration == null || concentration <= 0) {
+                              return 'Digite uma concentração válida';
+                            }
+                            return null;
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        flex: 1,
+                        child: DropdownButtonFormField<String>(
+                          value: _concentrationUnit,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Unidade',
+                            border: OutlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+                          ),
+                          items: const [
+                            DropdownMenuItem(value: 'mg/ml', child: Text('mg/ml')),
+                            DropdownMenuItem(value: 'mcg/ml', child: Text('mcg/ml')),
+                          ],
+                          onChanged: (value) {
+                            setState(() {
+                              _concentrationUnit = value ?? 'mg/ml';
+                              _updateLiveCalculation();
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                }
+              }),
               
               const SizedBox(height: 24),
               
