@@ -36,7 +36,7 @@ class PdfService {
                   style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
                 ),
                 pw.Text(
-                  'GDAV - Grupo de Desenvolvimento em Anestesiologia Veterinária',
+                  'GDVet - Grupo de desenvolvimento veterinário',
                   style: const pw.TextStyle(fontSize: 10, color: PdfColors.grey700),
                 ),
                 pw.SizedBox(height: 8),
@@ -156,7 +156,7 @@ class PdfService {
 
           pw.SizedBox(height: 12),
           pw.Text(
-            'Documento gerado pelo aplicativo GDAV',
+            'Documento gerado pelo aplicativo GDVet',
             style: const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
             textAlign: pw.TextAlign.center,
           ),

@@ -102,7 +102,7 @@ class _LoginPageState extends State<LoginPage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      // Logo GDAV
+                      // Logo GDVet
                       Center(
                         child: Image.asset(
                           'assets/images/gdav_logo.png',

@@ -2,7 +2,7 @@
 
 ## 📋 Visão Geral
 
-O **Cronômetro de Procedimento** é um componente integrado à Ficha Anestésica do GDAV que permite o controle preciso do tempo cirúrgico/anestésico, com sincronização automática com todos os dados de monitorização.
+O **Cronômetro de Procedimento** é um componente integrado à Ficha Anestésica do GDVet que permite o controle preciso do tempo cirúrgico/anestésico, com sincronização automática com todos os dados de monitorização.
 
 ## ✨ Funcionalidades
 

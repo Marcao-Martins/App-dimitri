@@ -12,7 +12,7 @@ import '../consent_form/consent_form_page.dart';
 import '../apple_full/apple_full_page.dart';
 import '../apple_fast/apple_fast_page.dart';
 
-/// Tela que exibe ferramentas adicionais do app GDAV
+/// Tela que exibe ferramentas adicionais do app GDVet
 /// Exclui as que já estão na navegação inferior para evitar duplicação
 class AllFeaturesPage extends StatelessWidget {
   const AllFeaturesPage({super.key});

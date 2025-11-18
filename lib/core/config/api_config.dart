@@ -1,5 +1,5 @@
 import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
 
 /// Configuração central da API
 class ApiConfig {
@@ -9,15 +9,16 @@ class ApiConfig {
       // Em web, o navegador lida com localhost
       return 'http://localhost:8080';
     } else if (Platform.isAndroid) {
-      // DISPOSITIVO FÍSICO Android - usando IP da rede local
-      // Certifique-se que:
-      // 1. Seu celular e computador estão na mesma rede Wi-Fi
-      // 2. O backend está rodando em http://localhost:8080
-      // 3. O firewall do Windows permite conexões na porta 8080
-      return 'http://172.20.10.4:8080'; // <-- IP LOCAL CORRETO (Wi-Fi)
-      
-      // Para EMULADOR Android, use esta linha:
-      // return 'http://10.0.2.2:8080';
+      // Android:
+      // - Em modo debug usamos `localhost:8080` para funcionar com `adb reverse`
+      // - Em build release esperamos que o desenvolvedor configure o IP da
+      //   máquina na rede local (ex: http://192.168.x.y:8080)
+      if (kDebugMode) {
+        return 'http://localhost:8080'; // works with `adb reverse tcp:8080 tcp:8080`
+      }
+
+      // Release / production: use actual machine IP on the LAN (update as needed)
+      return 'http://172.20.10.4:8080'; // <-- replace with your PC LAN IP if needed
     } else if (Platform.isIOS) {
       // iOS Simulator: localhost funciona
       // 

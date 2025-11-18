@@ -63,7 +63,7 @@ class ChecklistPdfService {
                           ),
                         ),
                         pw.Text(
-                          'GDAV - Grupo de Desenvolvimento em Anestesiologia Veterinária',
+                          'GDVet - Grupo de desenvolvimento veterinário',
                           style: const pw.TextStyle(
                             fontSize: 10,
                             color: PdfColors.grey700,

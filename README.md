@@ -1,7 +1,7 @@
 
-# GDAV - Guia de Desenvolvimento em Anestesiologia Veterinária
+# GDVet - Guia de Desenvolvimento Veterinário
 
-Aplicativo mobile completo para auxiliar profissionais de anestesiologia veterinária, com backend API integrado.
+Aplicativo mobile completo para auxiliar profissionais veterinários, com backend API integrado.
 
 ## 🚀 Início Rápido
 
@@ -300,7 +300,7 @@ Este projeto é licenciado sob a **Licença MIT**.
 ```
 MIT License
 
-Copyright (c) 2025 GDAV
+Copyright (c) 2025 GDVet
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

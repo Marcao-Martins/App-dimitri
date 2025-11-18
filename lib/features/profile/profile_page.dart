@@ -143,7 +143,7 @@ class ProfilePage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Logo GDAV como foto de perfil
+          // Logo GDVet como foto de perfil
           Container(
             width: 100,
             height: 100,

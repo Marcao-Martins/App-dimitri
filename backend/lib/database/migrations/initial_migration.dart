@@ -21,7 +21,7 @@ Future<void> runInitialMigration(AppDatabase db) async {
     final repo = UserRepository(db);
     
     // Verifica se já existe usuário admin
-    final existingAdmin = await repo.getUserByEmail('admin@gdav.com');
+    final existingAdmin = await repo.getUserByEmail('admin@gdvet.com');
     
     if (existingAdmin == null) {
       print('👤 Criando usuário administrador padrão...');
@@ -31,13 +31,13 @@ Future<void> runInitialMigration(AppDatabase db) async {
       
       await repo.createUser(
         name: 'Administrador',
-        email: 'admin@gdav.com',
+        email: 'admin@gdvet.com',
         passwordHash: passwordHash,
         role: UserRole.administrator,
       );
       
       print('✅ Usuário administrador criado com sucesso!');
-      print('   Email: admin@gdav.com');
+      print('   Email: admin@gdvet.com');
       print('   Senha: admin123');
       print('   ⚠️  IMPORTANTE: Altere esta senha em produção!');
     } else {

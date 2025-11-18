@@ -1,5 +1,5 @@
 #!/usr/bin/env pwsh
-# Script de inicialização automática do GDAV
+# Script de inicialização automática do GDVet
 # Inicia backend Dart Frog e frontend Flutter
 
 param(
@@ -22,7 +22,7 @@ function Write-Step { param($msg) Write-Host "`n═══ $msg ═══" -Foreg
 # Banner
 Write-Host @"
 ╔════════════════════════════════════════════════╗
-║   GDAV - Startup Script                       ║
+║   GDVet - Startup Script                       ║
 ║   Backend: Dart Frog | Frontend: Flutter      ║
 ╚════════════════════════════════════════════════╝
 "@ -ForegroundColor Cyan
@@ -301,9 +301,9 @@ Endpoints disponíveis:
   • GET    /api/v1/auth/validate         - Validar token
 
 Criar administrador (execute no PowerShell):
-  curl -X POST http://localhost:$BackendPort/api/v1/auth/register ```
-  -H "Content-Type: application/json" ```
-  -d '{"email":"admin@gdav.com","password":"Admin@123"}'
+    curl -X POST http://localhost:$BackendPort/api/v1/auth/register ```
+    -H "Content-Type: application/json" ```
+    -d '{"email":"admin@gdvet.com","password":"Admin@123"}'
 
 Logs:
   • Backend: Veja os logs no job em execução

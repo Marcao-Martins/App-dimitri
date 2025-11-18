@@ -872,8 +872,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                       final dose = double.tryParse(_doseController.text.replaceAll(',', '.'));
                       
                       if (weight != null && dose != null) {
-                        final doseInMg = _doseUnit == 'mcg/kg' ? dose / 1000 : dose;
-                        final totalDose = doseInMg * weight;
+                        // Não calculamos o total da dose para o indicador; apenas exibimos as faixas numéricas
                         final safeRange = _selectedMedication!.getSafeDoseRange(weight);
                         final minSafeDose = safeRange['min']!;
                         final maxSafeDose = safeRange['max']!;
@@ -882,11 +881,9 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                         final medUnitInMg = _selectedMedication!.unit.toLowerCase().contains('mcg') ? 1000 : 1;
                         final minSafeDoseConverted = minSafeDose / medUnitInMg;
                         final maxSafeDoseConverted = maxSafeDose / medUnitInMg;
-                        final totalDoseConverted = totalDose * medUnitInMg;
+                        // totalDoseConverted não é necessário para exibição atualmente
                         
-                        final isSafe = totalDoseConverted >= minSafeDoseConverted && 
-                                      totalDoseConverted <= maxSafeDoseConverted;
-                        final isBelowMin = totalDoseConverted < minSafeDoseConverted;
+                        // Nota: indicador de status de faixa removido — apenas exibimos as faixas numéricas
                         
                         return Card(
                           elevation: 2,
@@ -940,47 +937,6 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                                   textAlign: TextAlign.center,
                                 ),
                                 const SizedBox(height: 8),
-                                // Indicador visual discreto
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: isSafe 
-                                            ? Colors.green.withOpacity(0.2)
-                                            : (isBelowMin 
-                                                ? Colors.orange.withOpacity(0.2)
-                                                : Colors.red.withOpacity(0.2)),
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            isSafe ? Icons.check_circle_outline : Icons.info_outline,
-                                            size: 14,
-                                            color: isSafe 
-                                                ? Colors.green.shade700
-                                                : (isBelowMin ? Colors.orange.shade700 : Colors.red.shade700),
-                                          ),
-                                          const SizedBox(width: 4),
-                                          Text(
-                                            isSafe 
-                                                ? 'Dentro da faixa'
-                                                : (isBelowMin ? 'Abaixo da faixa' : 'Acima da faixa'),
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: isSafe 
-                                                  ? Colors.green.shade700
-                                                  : (isBelowMin ? Colors.orange.shade700 : Colors.red.shade700),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
                               ],
                             ),
                           ),

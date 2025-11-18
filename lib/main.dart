@@ -19,7 +19,7 @@ import 'services/auth_service.dart';
 import 'services/medication_service.dart';
 import 'services/api_service.dart';
 
-/// Ponto de entrada do aplicativo GDAV
+/// Ponto de entrada do aplicativo GDVet
 /// Aplicativo desenvolvido para auxiliar anestesiologistas veterinários
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

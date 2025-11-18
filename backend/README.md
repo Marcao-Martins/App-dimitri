@@ -1,4 +1,4 @@
-# 🚀 Backend - GDAV Veterinário
+# 🚀 Backend - GDVet Veterinário
 
 Backend API REST desenvolvido com **Dart Frog** e **MySQL** para o sistema de gestão veterinária.
 
@@ -62,7 +62,7 @@ backend/
 
 **Opção A - Docker (Recomendado):**
 ```powershell
-docker run --name mysql-gdav -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:8.0
+docker run --name mysql-gdvet -e MYSQL_ROOT_PASSWORD=root -p 3306:3306 -d mysql:8.0
 ```
 
 **Opção B - Windows:**
@@ -124,7 +124,7 @@ O servidor estará disponível em: `http://localhost:8080`
 ## 🔑 Credenciais Padrão
 
 ```
-Email: admin@gdav.com
+Email: admin@gdvet.com
 Senha: admin123
 ```
 

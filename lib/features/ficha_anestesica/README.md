@@ -71,7 +71,7 @@ Gráficos interativos atualizados automaticamente:
 
 ### 5. Exportação PDF
 PDF profissional com:
-- Cabeçalho institucional (GDAV)
+- Cabeçalho institucional (GDVet)
 - Identificação completa do paciente
 - Todas as tabelas de medicação
 - Tabela de monitorização temporal
@@ -161,8 +161,8 @@ PDF profissional com:
 
 ## Suporte
 
-Para reportar bugs ou sugerir melhorias, entre em contato com o time GDAV.
+Para reportar bugs ou sugerir melhorias, entre em contato com o time GDVet.
 
 ---
 
-**GDAV - Grupo de Desenvolvimento em Anestesiologia Veterinária**
+**GDVet - Grupo de desenvolvimento veterinário**

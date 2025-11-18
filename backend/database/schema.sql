@@ -46,7 +46,7 @@ INSERT IGNORE INTO users (
 ) VALUES (
     UUID(), 
     'Administrador', 
-    'admin@gdav.com', 
+    'admin@gdvet.com', 
     '$2a$12$0VfROxd.TNzt/YmCcLvzRehpy3pCXca8QLLDrUDKHGp7wtrYX6.Xq',
     'administrator',
     'active',

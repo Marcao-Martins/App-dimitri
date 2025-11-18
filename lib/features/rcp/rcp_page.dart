@@ -267,6 +267,31 @@ class _RcpPageState extends State<RcpPage> {
                       },
                     ),
               const SizedBox(width: 12),
+              // Atropina dose selector
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Atropina concentração',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  const SizedBox(height: 6),
+                  Consumer<RcpController>(builder: (context, controller, child) {
+                    return DropdownButton<double>(
+                      value: controller.atropineConcentrationMgPerMl,
+                      items: const [
+                        DropdownMenuItem(value: 0.5, child: Text('0,5 mg/ml')),
+                        DropdownMenuItem(value: 0.25, child: Text('0,25 mg/ml')),
+                      ],
+                      onChanged: (v) {
+                        if (v != null) {
+                          controller.setAtropineConcentration(v);
+                        }
+                      },
+                    );
+                  }),
+                ],
+              ),
               // Volumes calculados
               Expanded(
                 child: Consumer<RcpController>(
@@ -294,22 +319,22 @@ class _RcpPageState extends State<RcpPage> {
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
-                                'Atropina (0,04mg/kg) - Volume: ',
+                                  'Atropina (0,04mg/kg) - Volume: ',
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodySmall
                                     ?.copyWith(fontSize: 11),
                               ),
                             ),
-                            Flexible(
-                              child: Text(
-                                '${fmt(atv)} ml (Atropina 1%)',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    fontSize: 11, fontWeight: FontWeight.bold),
-                                softWrap: true,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
+                                Flexible(
+                                  child: Text(
+                                    '${fmt(atv)} ml (${controller.atropineConcentrationMgPerMl.toString().replaceAll('.', ',')} mg/ml)',
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        fontSize: 11, fontWeight: FontWeight.bold),
+                                    softWrap: true,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
                           ],
                         ),
                         const SizedBox(height: 6),

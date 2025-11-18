@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Cores padrão do aplicativo GDAV (antes: VetAnesthesia Helper)
+/// Cores padrão do aplicativo GDVet (antes: VetAnesthesia Helper)
 /// Design System moderno e minimalista para profissionais veterinários
 class AppColors {
   // ============================================================================

@@ -36,6 +36,22 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
     _setupAudio();
   }
 
+  // Atropine: fixed therapeutic dose (mg/kg) and selectable concentration (mg/ml)
+  static const double _atropineDoseMgPerKg = 0.04; // fixed 0,04 mg/kg for RCP
+
+  // Concentração selecionável em mg/ml (p.ex. 0.5 mg/ml ou 0.25 mg/ml)
+  double _atropineConcentrationMgPerMl = 0.5; // default 0.5 mg/ml
+
+  double get atropineDoseMgPerKg => _atropineDoseMgPerKg;
+
+  double get atropineConcentrationMgPerMl => _atropineConcentrationMgPerMl;
+
+  void setAtropineConcentration(double mgPerMl) {
+    _atropineConcentrationMgPerMl = mgPerMl;
+    _recalculateVolumes();
+    notifyListeners();
+  }
+
   // Getters for weight and computed volumes
   double? get weightKg => _weightKg;
   double get atropineVolumeMl => _atropineVolumeMl;
@@ -58,12 +74,12 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
 
   void _recalculateVolumes() {
     // Doses padrão
-    const double atropineDoseMgPerKg = 0.04; // mg/kg
+    final double atropineDoseMgPerKg = _atropineDoseMgPerKg; // mg/kg (fixo)
     const double adrenalineDoseMgPerKg = 0.01; // mg/kg (ajustada conforme solicitado)
     const double lidocaineDoseMgPerKg = 2.0; // mg/kg
 
     // Concentrações
-    const double atropineConcentrationMgPerMl = 10.0; // 10 mg/ml
+    final double atropineConcentrationMgPerMl = _atropineConcentrationMgPerMl; // mg/ml selecionada
     const double adrenalineConcentrationMgPerMl = 1.0; // 1 mg/ml
     const double lidocaineConcentrationMgPerMl = 20.0; // 20 mg/ml (apenas para cálculo)
 
