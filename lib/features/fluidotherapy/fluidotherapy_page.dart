@@ -144,7 +144,7 @@ class _FluidotherapyPageState extends State<FluidotherapyPage> {
 
                         // Espécie
                         DropdownButtonFormField<String>(
-                          value: _selectedSpecies,
+                          initialValue: _selectedSpecies,
                           isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Espécie *',
@@ -208,7 +208,7 @@ class _FluidotherapyPageState extends State<FluidotherapyPage> {
 
                         // Desidratação
                         DropdownButtonFormField<bool>(
-                          value: _hasDehydration,
+                          initialValue: _hasDehydration,
                           isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Desidratação *',

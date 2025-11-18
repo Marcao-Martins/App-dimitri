@@ -141,7 +141,9 @@ class _ExplorerPageState extends State<ExplorerPage> {
             SliverToBoxAdapter(
               child: Container(
                 height: 110,
-                padding: const EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                // give the horizontal list symmetric padding so the
+                // last item isn't clipped by the screen edge
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [

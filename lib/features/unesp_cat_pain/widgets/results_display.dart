@@ -23,38 +23,75 @@ class ResultsDisplay extends StatelessWidget {
             Text('Resultados', style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Subescala 1:'),
-                Text('$s1 / 12', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Expanded(child: Text('Subescala 1:')),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text('$s1 / 12', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Subescala 2:'),
-                Text('$s2 / 12', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Expanded(child: Text('Subescala 2:')),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text('$s2 / 12', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
               ],
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Subescala 3:'),
-                Text('$s3 / 6', style: const TextStyle(fontWeight: FontWeight.bold)),
+                Expanded(child: Text('Subescala 3:')),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text('$s3 / 6', style: const TextStyle(fontWeight: FontWeight.bold)),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Divider(color: Theme.of(context).colorScheme.outline),
             const SizedBox(height: 8),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Total:'),
-                Text('$total', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                Expanded(child: Text('Total:')),
+                const SizedBox(width: 8),
+                Flexible(
+                  fit: FlexFit.loose,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    alignment: Alignment.centerRight,
+                    child: Text('$total', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
-            Text('Recomendação: ${assessment.analgesicRecommendation}', style: const TextStyle(fontWeight: FontWeight.bold)),
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 20),
+              child: Text(
+                'Recomendação: ${assessment.analgesicRecommendation}',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+                softWrap: true,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
             const SizedBox(height: 8),
             if (total >= 8 || s1 >= 4 || s2 >= 3 || (s1 + s2) >= 7)
               Container(

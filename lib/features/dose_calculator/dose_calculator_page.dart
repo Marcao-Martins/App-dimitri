@@ -512,12 +512,15 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                                       color: Theme.of(context).colorScheme.primary,
                                     ),
                                     const SizedBox(width: 6),
-                                    Text(
-                                      'Faixa de dose: ${_selectedMedication!.minDose}-${_selectedMedication!.maxDose} ${_selectedMedication!.unit}',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                    Expanded(
+                                      child: Text(
+                                        'Faixa de dose: ${_selectedMedication!.minDose}-${_selectedMedication!.maxDose} ${_selectedMedication!.unit}',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).colorScheme.onPrimaryContainer,
+                                        ),
+                                        softWrap: true,
                                       ),
                                     ),
                                   ],
@@ -616,7 +619,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        value: _doseUnit,
+                        initialValue: _doseUnit,
                         isExpanded: true,
                         decoration: const InputDecoration(
                           labelText: 'Unidade',
@@ -671,7 +674,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                       Flexible(
                         flex: 1,
                         child: DropdownButtonFormField<String>(
-                          value: _doseUnit,
+                          initialValue: _doseUnit,
                           isExpanded: true,
                           decoration: const InputDecoration(
                             labelText: 'Unidade',
@@ -728,7 +731,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                       ),
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
-                        value: _concentrationUnit,
+                        initialValue: _concentrationUnit,
                         isExpanded: true,
                         decoration: const InputDecoration(
                           labelText: 'Unidade',
@@ -782,7 +785,7 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                       Flexible(
                         flex: 1,
                         child: DropdownButtonFormField<String>(
-                          value: _concentrationUnit,
+                          initialValue: _concentrationUnit,
                           isExpanded: true,
                           decoration: const InputDecoration(
                             labelText: 'Unidade',
@@ -901,12 +904,16 @@ class _DoseCalculatorPageState extends State<DoseCalculatorPage> {
                                       size: 20,
                                     ),
                                     const SizedBox(width: 8),
-                                    Text(
-                                      'Referência de Dose',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                    Flexible(
+                                      child: Text(
+                                        'Referência de Dose',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.bold,
+                                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                                        ),
+                                        softWrap: true,
+                                        textAlign: TextAlign.center,
                                       ),
                                     ),
                                   ],

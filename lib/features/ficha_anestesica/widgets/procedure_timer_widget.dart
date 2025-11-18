@@ -57,9 +57,9 @@ class ProcedureTimerWidget extends StatelessWidget {
 
     return Card(
       elevation: isRunning ? 4 : 1,
-      color: isRunning 
+        color: isRunning 
           ? colorScheme.primaryContainer 
-          : colorScheme.surfaceVariant,
+          : colorScheme.surfaceContainerHighest,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
@@ -70,7 +70,7 @@ class ProcedureTimerWidget extends StatelessWidget {
               children: [
                 Icon(
                   isRunning ? Icons.timer : Icons.timer_outlined,
-                  color: isRunning 
+                    color: isRunning 
                       ? colorScheme.primary 
                       : colorScheme.onSurfaceVariant,
                   size: 20,
@@ -97,10 +97,10 @@ class ProcedureTimerWidget extends StatelessWidget {
                     ? Colors.white
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
-                border: Border.all(
+                  border: Border.all(
                   color: isRunning 
                       ? colorScheme.primary 
-                      : colorScheme.outline.withOpacity(0.3),
+                      : colorScheme.outline.withAlpha((0.3 * 255).round()),
                   width: 2,
                 ),
               ),

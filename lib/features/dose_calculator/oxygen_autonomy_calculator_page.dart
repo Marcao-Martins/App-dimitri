@@ -190,7 +190,7 @@ class _OxygenAutonomyCalculatorPageState
               
               // Dropdown unidade de pressão
               DropdownButtonFormField<String>(
-                value: _pressureUnit,
+                initialValue: _pressureUnit,
                 decoration: const InputDecoration(
                   labelText: 'Unidade da pressão',
                   border: OutlineInputBorder(),

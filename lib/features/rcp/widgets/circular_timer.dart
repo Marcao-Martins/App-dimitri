@@ -22,8 +22,13 @@ class CircularTimer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 1,
+    return Container(
+      constraints: const BoxConstraints(
+        minWidth: 200,
+        minHeight: 200,
+        maxWidth: 400,
+        maxHeight: 400,
+      ),
       child: LayoutBuilder(
         builder: (context, constraints) {
           final size = constraints.maxWidth;

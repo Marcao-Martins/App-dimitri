@@ -32,7 +32,7 @@ class HematocritSelector extends StatelessWidget {
     );
 
     return DropdownButtonFormField<int>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),

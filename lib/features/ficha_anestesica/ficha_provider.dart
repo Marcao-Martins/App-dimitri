@@ -407,5 +407,42 @@ class FichaProvider extends ChangeNotifier {
   
   /// Obtém lista de imagens da ficha atual
   List<String> get currentImagePaths => _current?.imagePaths ?? [];
+
+  // ===== Manejo de Vias Aéreas =====
+  void setAirwayIntubation(String? value) {
+    if (_current == null) return;
+    _current!.airwayIntubation = value;
+    notifyListeners();
+  }
+
+  void setAirwayTubeSize(String? value) {
+    if (_current == null) return;
+    _current!.airwayTubeSize = value;
+    notifyListeners();
+  }
+
+  void setAirwayPreOxygenation(String? value) {
+    if (_current == null) return;
+    _current!.airwayPreOxygenation = value;
+    notifyListeners();
+  }
+
+  void setAirwayPeriglotticAnesthesia(String? value) {
+    if (_current == null) return;
+    _current!.airwayPeriglotticAnesthesia = value;
+    notifyListeners();
+  }
+
+  void setAirwayLaryngealMask(String? value) {
+    if (_current == null) return;
+    _current!.airwayLaryngealMask = value;
+    notifyListeners();
+  }
+
+  void setAirwayObservations(String? value) {
+    if (_current == null) return;
+    _current!.airwayObservations = value;
+    notifyListeners();
+  }
 }
 

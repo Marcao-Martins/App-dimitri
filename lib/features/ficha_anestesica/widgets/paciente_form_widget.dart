@@ -143,7 +143,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
                     children: [
                       DropdownButtonFormField<String>(
                         isExpanded: true,
-                        value: _especie,
+                        initialValue: _especie,
                         decoration: const InputDecoration(
                           labelText: 'Espécie *',
                           border: OutlineInputBorder(),
@@ -155,7 +155,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
                       const SizedBox(height: 8),
                       DropdownButtonFormField<String>(
                         isExpanded: true,
-                        value: _sexo,
+                        initialValue: _sexo,
                         decoration: const InputDecoration(
                           labelText: 'Sexo *',
                           border: OutlineInputBorder(),
@@ -172,7 +172,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           isExpanded: true,
-                          value: _especie,
+                          initialValue: _especie,
                           decoration: const InputDecoration(
                             labelText: 'Espécie *',
                             border: OutlineInputBorder(),
@@ -186,7 +186,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
                       Expanded(
                         child: DropdownButtonFormField<String>(
                           isExpanded: true,
-                          value: _sexo,
+                          initialValue: _sexo,
                           decoration: const InputDecoration(
                             labelText: 'Sexo *',
                             border: OutlineInputBorder(),
@@ -246,7 +246,7 @@ class _PacienteFormWidgetState extends State<PacienteFormWidget> {
               // ASA
               DropdownButtonFormField<String>(
                 isExpanded: true,
-                value: _asa,
+                initialValue: _asa,
                 decoration: const InputDecoration(
                   labelText: 'Classificação ASA *',
                   border: OutlineInputBorder(),

@@ -26,7 +26,7 @@ class DehydrationSection extends StatelessWidget {
         
         // Tempo de reidratação
         DropdownButtonFormField<int>(
-          value: rehydrationTime,
+          initialValue: rehydrationTime,
           isExpanded: true,
           decoration: InputDecoration(
             labelText: 'Tempo para reidratação',

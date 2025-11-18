@@ -112,6 +112,27 @@ if (-not $SkipBackend) {
         Write-Success "Arquivo users.json criado"
     }
     
+    # Garantir que exista um JSON cache: se não existir, gerar a partir do CSV
+    $cacheFile = Join-Path $dataPath "farmacos_veterinarios.json"
+    if (-not (Test-Path $cacheFile)) {
+        Write-Info "JSON cache não encontrado — gerando a partir do CSV..."
+        try {
+            # Executar o gerador a partir do workspace root para resolver imports corretamente
+            $genCmd = "dart"
+            $genArgs = @('run','backend/scripts/generate_json_cache.dart')
+            $proc = Start-Process -FilePath $genCmd -ArgumentList $genArgs -WorkingDirectory $workspaceRoot -NoNewWindow -Wait -PassThru -ErrorAction Stop
+            if ($proc.ExitCode -eq 0) {
+                Write-Success "JSON cache gerado com sucesso"
+            } else {
+                Write-Warning "Geração do JSON retornou código $($proc.ExitCode)"
+            }
+        } catch {
+            Write-Warning "Falha ao gerar JSON: $($_.Exception.Message)"
+        }
+    } else {
+        Write-Info "JSON cache encontrado: $cacheFile"
+    }
+    
     # Iniciar servidor backend
     Write-Info "Iniciando servidor backend na porta $BackendPort..."
     
@@ -174,7 +195,32 @@ if (-not $SkipBackend) {
         }
         exit 1
     }
-    
+    # Forçar inicialização dos provedores no backend (faz uma chamada ao endpoint de fármacos)
+    try {
+        Write-Info "Forçando carregamento inicial dos fármacos no backend..."
+        $farmacosResp = Invoke-WebRequest -Uri "http://localhost:$BackendPort/api/v1/farmacos" -TimeoutSec 5 -ErrorAction SilentlyContinue
+        if ($farmacosResp.StatusCode -eq 200) {
+            Write-Success "Requisição a /api/v1/farmacos concluída (provedores inicializados)"
+        } else {
+            Write-Warning "Requisição a /api/v1/farmacos retornou status $($farmacosResp.StatusCode)"
+        }
+    } catch {
+        Write-Warning "Falha ao requisitar /api/v1/farmacos: $($_.Exception.Message)"
+    }
+
+    # Também solicitar reload no endpoint admin (caso o backend já esteja em execução com estado antigo)
+    try {
+        Write-Info "Solicitando reload de fármacos via /api/v1/admin/reload-farmacos..."
+        $reloadResp = Invoke-RestMethod -Method Post -Uri "http://localhost:$BackendPort/api/v1/admin/reload-farmacos" -TimeoutSec 8 -ErrorAction Stop
+        if ($reloadResp.success -eq $true) {
+            Write-Success "Reload solicitado com sucesso: $($reloadResp.message)"
+        } else {
+            Write-Warning "Reload retornou sucesso=false: $($reloadResp | ConvertTo-Json -Depth 2)"
+        }
+    } catch {
+        Write-Warning "Falha ao chamar endpoint de reload (pode não existir): $($_.Exception.Message)"
+    }
+
     Set-Location $workspaceRoot
 }
 

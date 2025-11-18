@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'rcp_controller.dart';
 import 'widgets/circular_timer.dart';
 import 'widgets/control_buttons.dart';
-import '../../services/medication_service.dart';
 
 /// Página principal do RCP Coach
 /// Timer de 2 minutos com metrônomo para compressões torácicas
@@ -56,58 +55,29 @@ class _RcpPageState extends State<RcpPage> {
           builder: (context, controller, child) {
             return LayoutBuilder(
               builder: (context, constraints) {
-                // Make the page scrollable on small screens / when the keyboard opens,
-                // while keeping existing Expanded widgets working by constraining the
-                // content to at least the viewport height.
                 return SingleChildScrollView(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.all(16.0),
                   child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          // Responsivo: exibe em linha quando houver espaço, empilha em coluna em telas estreitas
-                          LayoutBuilder(builder: (context, constraints) {
-                            if (constraints.maxWidth < 420) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  _buildDrugTable(context),
-                                  const SizedBox(height: 8),
-                                  Align(
-                                    alignment: Alignment.centerRight,
-                                    child: Chip(
-                                      label: Text(
-                                        'Ciclo: ${controller.cycleCount}',
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .titleMedium
-                                            ?.copyWith(fontWeight: FontWeight.bold),
-                                      ),
-                                      avatar: Icon(
-                                        Icons.sync,
-                                        color: Theme.of(context).colorScheme.primary,
-                                      ),
-                                      backgroundColor:
-                                          Theme.of(context).colorScheme.primaryContainer,
-                                      padding: const EdgeInsets.all(12),
-                                    ),
-                                  ),
-                                ],
-                              );
-                            } else {
-                              return Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Tabela de Fármacos (esquerda/centro)
-                                  Expanded(
-                                    child: _buildDrugTable(context),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  // Cycle Counter Badge (direita)
-                                  Chip(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                      minWidth: constraints.maxWidth,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const SizedBox(height: 8),
+                        
+                        // Responsivo: exibe em linha quando houver espaço, empilha em coluna em telas estreitas
+                        LayoutBuilder(builder: (context, constraints) {
+                          if (constraints.maxWidth < 420) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildDrugTable(context),
+                                const SizedBox(height: 8),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: Chip(
                                     label: Text(
                                       'Ciclo: ${controller.cycleCount}',
                                       style: Theme.of(context)
@@ -123,80 +93,112 @@ class _RcpPageState extends State<RcpPage> {
                                         Theme.of(context).colorScheme.primaryContainer,
                                     padding: const EdgeInsets.all(12),
                                   ),
-                                ],
-                              );
-                            }
-                          }),
-              
-                          const SizedBox(height: 16),
-              
-                          // Status Message
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            decoration: BoxDecoration(
-                              color: controller.isRunning
-                                  ? Theme.of(context).colorScheme.primaryContainer
-                                  : Theme.of(context).colorScheme.surfaceVariant,
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(
-                                  controller.isRunning
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: controller.isRunning
-                                      ? Theme.of(context).colorScheme.primary
-                                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                                ),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Text(
-                                    controller.statusMessage,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w500,
-                                          color: controller.isRunning
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .onPrimaryContainer
-                                              : Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                        ),
-                                    textAlign: TextAlign.center,
-                                  ),
                                 ),
                               ],
-                            ),
+                            );
+                          } else {
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Tabela de Fármacos (esquerda/centro)
+                                Expanded(
+                                  child: _buildDrugTable(context),
+                                ),
+                                const SizedBox(width: 8),
+                                // Cycle Counter Badge (direita)
+                                Chip(
+                                  label: Text(
+                                    'Ciclo: ${controller.cycleCount}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium
+                                        ?.copyWith(fontWeight: FontWeight.bold),
+                                  ),
+                                  avatar: Icon(
+                                    Icons.sync,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  ),
+                                  backgroundColor:
+                                      Theme.of(context).colorScheme.primaryContainer,
+                                  padding: const EdgeInsets.all(12),
+                                ),
+                              ],
+                            );
+                          }
+                        }),
+            
+                        const SizedBox(height: 16),
+            
+                        // Status Message
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: controller.isRunning
+                                ? Theme.of(context).colorScheme.primaryContainer
+                                : Theme.of(context).colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(12),
                           ),
-              
-                          // Circular Timer
-                          Expanded(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 32.0),
-                              child: CircularTimer(
-                                progress: controller.progress,
-                                secondsRemaining: controller.secondsRemaining,
+                          child: Row(
+                            children: [
+                              Icon(
+                                controller.isRunning
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: controller.isRunning
+                                    ? Theme.of(context).colorScheme.primary
+                                    : Theme.of(context).colorScheme.onSurfaceVariant,
                               ),
-                            ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Text(
+                                  controller.statusMessage,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                        color: controller.isRunning
+                                            ? Theme.of(context)
+                                                .colorScheme
+                                                .onPrimaryContainer
+                                            : Theme.of(context)
+                                                .colorScheme
+                                                .onSurfaceVariant,
+                                      ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ),
+                            ],
                           ),
-              
-                          // Control Buttons
-                          ControlButtons(
-                            isRunning: controller.isRunning,
-                            isWakeLockEnabled: controller.isWakeLockEnabled,
-                            onStartStop: controller.startStop,
-                            onReset: controller.reset,
-                            onToggleWakeLock: controller.toggleWakeLock,
+                        ),
+            
+                        const SizedBox(height: 32),
+            
+                        // Circular Timer - Removido o Expanded, agora usa ConstrainedBox
+                        SizedBox(
+                          height: MediaQuery.of(context).size.width * 0.6,
+                          width: MediaQuery.of(context).size.width * 0.6,
+                          child: CircularTimer(
+                            progress: controller.progress,
+                            secondsRemaining: controller.secondsRemaining,
                           ),
-              
-                          const SizedBox(height: 16),
-                        ],
-                      ),
+                        ),
+            
+                        const SizedBox(height: 32),
+            
+                        // Control Buttons
+                        ControlButtons(
+                          isRunning: controller.isRunning,
+                          isWakeLockEnabled: controller.isWakeLockEnabled,
+                          onStartStop: _onStartStop,
+                          onReset: _onReset,
+                          onToggleWakeLock: _onToggleWakeLock,
+                        ),
+            
+                        const SizedBox(height: 16),
+                      ],
                     ),
                   ),
                 );
@@ -213,10 +215,10 @@ class _RcpPageState extends State<RcpPage> {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.5),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withAlpha((0.5 * 255).round()),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: Theme.of(context).colorScheme.outline.withOpacity(0.2),
+          color: Theme.of(context).colorScheme.outline.withAlpha((0.2 * 255).round()),
         ),
       ),
       child: Column(
@@ -285,9 +287,9 @@ class _RcpPageState extends State<RcpPage> {
                               Icons.medication,
                               size: 14,
                               color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant
-                                  .withOpacity(0.7),
+                                    .colorScheme
+                                      .onSurfaceVariant
+                                      .withAlpha((0.7 * 255).round()),
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -318,9 +320,9 @@ class _RcpPageState extends State<RcpPage> {
                               Icons.medication,
                               size: 14,
                               color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant
-                                  .withOpacity(0.7),
+                                    .colorScheme
+                                      .onSurfaceVariant
+                                      .withAlpha((0.7 * 255).round()),
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -351,9 +353,9 @@ class _RcpPageState extends State<RcpPage> {
                               Icons.medication,
                               size: 14,
                               color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant
-                                  .withOpacity(0.7),
+                                    .colorScheme
+                                      .onSurfaceVariant
+                                      .withAlpha((0.7 * 255).round()),
                             ),
                             const SizedBox(width: 6),
                             Expanded(
@@ -376,30 +378,6 @@ class _RcpPageState extends State<RcpPage> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        // Lista simples de fármacos carregados (se houver)
-                        Builder(builder: (context) {
-                          final meds = MedicationService.getAllMedications();
-                          if (meds.isEmpty) return const SizedBox();
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const SizedBox(height: 8),
-                              Text(
-                                'Fármacos disponíveis:',
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                              ),
-                              const SizedBox(height: 6),
-                              Wrap(
-                                spacing: 8,
-                                runSpacing: 6,
-                                children: meds.map((m) => Chip(label: Text(m.name))).toList(),
-                              ),
-                            ],
-                          );
-                        }),
                       ],
                     );
                   },
@@ -457,5 +435,21 @@ class _RcpPageState extends State<RcpPage> {
         ],
       ),
     );
+  }
+
+  // Wrappers para callbacks dos botões — adicionam logs e delegam ao controller
+  void _onStartStop() {
+    debugPrint('RCP Page: onStartStop pressed');
+    _controller.startStop();
+  }
+
+  void _onReset() {
+    debugPrint('RCP Page: onReset pressed');
+    _controller.reset();
+  }
+
+  void _onToggleWakeLock() {
+    debugPrint('RCP Page: onToggleWakeLock pressed');
+    _controller.toggleWakeLock();
   }
 }

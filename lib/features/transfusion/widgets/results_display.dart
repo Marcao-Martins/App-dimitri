@@ -89,33 +89,49 @@ class ResultsDisplay extends StatelessWidget {
                 ),
               ),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Volume Necessário',
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                  // Left column takes available space and can wrap
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Volume Necessário',
+                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.error,
+                              ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Volume total a transfundir',
+                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                color: Colors.grey[600],
+                              ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Right side: allow the numeric value to scale down instead of overflowing
+                  const SizedBox(width: 12),
+                  Flexible(
+                    fit: FlexFit.loose,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        '${calculation.volumeMl.toStringAsFixed(1)} mL',
+                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: AppColors.error,
                             ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Volume total a transfundir',
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                            ),
-                      ),
-                    ],
-                  ),
-                  Text(
-                    '${calculation.volumeMl.toStringAsFixed(1)} mL',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.error,
-                        ),
+                    ),
                   ),
                 ],
               ),

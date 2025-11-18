@@ -194,46 +194,86 @@ class _ApgarPageState extends State<ApgarPage> {
 
                   const SizedBox(height: 24),
 
-                  // Botões de ação
-                  Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          onPressed: _calculateScore,
-                          icon: const Icon(Icons.calculate),
-                          label: const Text(
-                            'Calcular Escore',
-                            style: TextStyle(fontSize: 16),
+                  // Botões de ação responsivos: empilhados em telas estreitas
+                  LayoutBuilder(builder: (context, constraints) {
+                    final isNarrow = constraints.maxWidth < 360;
+                    if (isNarrow) {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          SizedBox(
+                            height: 48,
+                            child: ElevatedButton.icon(
+                              onPressed: _calculateScore,
+                              icon: const Icon(Icons.calculate),
+                              label: const Text('Calcular Escore'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFFF9800),
+                                foregroundColor: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFFF9800),
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            height: 48,
+                            child: OutlinedButton.icon(
+                              onPressed: _clearForm,
+                              icon: const Icon(Icons.refresh),
+                              label: const Text('Limpar'),
+                              style: OutlinedButton.styleFrom(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton.icon(
+                            onPressed: _calculateScore,
+                            icon: const Icon(Icons.calculate),
+                            label: const Text(
+                              'Calcular Escore',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFFF9800),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: OutlinedButton.icon(
-                          onPressed: _clearForm,
-                          icon: const Icon(Icons.refresh),
-                          label: const Text(
-                            'Limpar',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 16),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: _clearForm,
+                            icon: const Icon(Icons.refresh),
+                            label: const Text(
+                              'Limpar',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    );
+                  }),
 
                   const SizedBox(height: 24),
 

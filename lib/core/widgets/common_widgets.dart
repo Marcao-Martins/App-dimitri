@@ -152,7 +152,7 @@ class CustomDropdown<T> extends StatelessWidget {
   Widget build(BuildContext context) {
     // Uses default theme for dropdowns
     return DropdownButtonFormField<T>(
-      value: value,
+      initialValue: value,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,

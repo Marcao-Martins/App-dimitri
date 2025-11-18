@@ -182,7 +182,7 @@ class _TransfusionPageState extends State<TransfusionPage> {
 
                         // Espécie
                         DropdownButtonFormField<String>(
-                          value: _selectedSpecies,
+                          initialValue: _selectedSpecies,
                           isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Espécie *',
@@ -242,7 +242,7 @@ class _TransfusionPageState extends State<TransfusionPage> {
 
                         // Fator de cálculo
                         DropdownButtonFormField<int>(
-                          value: _selectedFactor,
+                          initialValue: _selectedFactor,
                           isExpanded: true,
                           decoration: InputDecoration(
                             labelText: 'Fator de cálculo *',

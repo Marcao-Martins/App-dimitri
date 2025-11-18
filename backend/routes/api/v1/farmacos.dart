@@ -4,6 +4,7 @@
 // POST /api/v1/farmacos - Rota protegida (adicionar - admin)
 
 import 'dart:convert';
+import 'dart:io';
 import 'package:dart_frog/dart_frog.dart';
 import '../../../lib/providers/database_provider.dart';
 import '../../../lib/models/farmaco.dart';
@@ -28,6 +29,34 @@ Future<Response> onRequest(RequestContext context) async {
 // GET - Lista/busca fármacos (rota pública)
 Future<Response> _handleGet(RequestContext context) async {
   try {
+    // Prefer reading the prepared JSON cache on disk (deterministic)
+    Future<List<Map<String, dynamic>>?> _loadJsonFromDisk() async {
+      final candidates = <String>[
+        'backend/data/farmacos_veterinarios.json',
+        'data/farmacos_veterinarios.json',
+        'farmacos_veterinarios.json',
+        '../backend/data/farmacos_veterinarios.json',
+        './data/farmacos_veterinarios.json',
+      ];
+
+      for (final p in candidates) {
+        final f = File(p);
+        if (await f.exists()) {
+          try {
+            final content = await f.readAsString();
+            final parsed = jsonDecode(content);
+            if (parsed is List) {
+              return parsed.map((e) => Map<String, dynamic>.from(e)).toList();
+            }
+          } catch (_) {
+            // ignore parse errors and try next candidate
+          }
+        }
+      }
+      return null;
+    }
+
+    final diskList = await _loadJsonFromDisk();
     final dbProvider = context.read<DatabaseProvider>();
     
     // Suporte a query params para filtros
@@ -37,21 +66,43 @@ Future<Response> _handleGet(RequestContext context) async {
 
     List<dynamic> farmacos;
 
-    if (search != null && search.isNotEmpty) {
-      // Busca por nome
-      farmacos = dbProvider.searchByName(search)
-          .map((f) => f.toJson())
-          .toList();
-    } else if (classFilter != null && classFilter.isNotEmpty) {
-      // Filtro por classe
-      farmacos = dbProvider.filterByClass(classFilter)
-          .map((f) => f.toJson())
-          .toList();
+    if (diskList != null) {
+      // Use disk JSON as source of truth and apply filters in-memory
+      var items = diskList;
+      if (search != null && search.isNotEmpty) {
+        final q = search.toLowerCase();
+        items = items.where((m) {
+          final farmaco = (m['farmaco'] ?? '')?.toString() ?? '';
+          final titulo = (m['titulo'] ?? '')?.toString() ?? '';
+          return (farmaco + ' ' + titulo).toLowerCase().contains(q);
+        }).toList();
+      } else if (classFilter != null && classFilter.isNotEmpty) {
+        final c = classFilter.toLowerCase();
+        items = items.where((m) {
+          final cls = (m['classe_farmacologica'] ?? '')?.toString() ?? '';
+          return cls.toLowerCase().contains(c);
+        }).toList();
+      }
+
+      farmacos = items;
     } else {
-      // Retorna todos
-      farmacos = dbProvider.farmacos
-          .map((f) => f.toJson())
-          .toList();
+      // Fallback para provider em memória (compatibilidade)
+      if (search != null && search.isNotEmpty) {
+        // Busca por nome
+        farmacos = dbProvider.searchByName(search)
+            .map((f) => f.toJson())
+            .toList();
+      } else if (classFilter != null && classFilter.isNotEmpty) {
+        // Filtro por classe
+        farmacos = dbProvider.filterByClass(classFilter)
+            .map((f) => f.toJson())
+            .toList();
+      } else {
+        // Retorna todos
+        farmacos = dbProvider.farmacos
+            .map((f) => f.toJson())
+            .toList();
+      }
     }
 
     return Response.json(

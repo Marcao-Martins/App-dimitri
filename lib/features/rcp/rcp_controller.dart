@@ -115,6 +115,7 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
 
   /// Inicia ou para o timer
   void startStop() {
+    debugPrint('RCP: startStop() called. isRunning=$_isRunning');
     if (_isRunning) {
       _pause();
     } else {
@@ -125,6 +126,8 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
   /// Inicia o timer
   void _start() {
     _isRunning = true;
+
+    debugPrint('RCP: _start() - starting timer');
 
     // Inicia o áudio em loop
     _playBeep();
@@ -150,6 +153,8 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
     // Para o áudio
     _stopBeep();
 
+    debugPrint('RCP: _pause() - timer paused');
+
     notifyListeners();
   }
 
@@ -164,6 +169,7 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
     _secondsRemaining = cycleDuration;
     _cycleCount = 0;
 
+    debugPrint('RCP: reset() called');
     notifyListeners();
   }
 
@@ -178,6 +184,7 @@ class RcpController with ChangeNotifier, WidgetsBindingObserver {
   /// Toggle wake lock (manter tela sempre ligada)
   Future<void> toggleWakeLock() async {
     _isWakeLockEnabled = !_isWakeLockEnabled;
+    debugPrint('RCP: toggleWakeLock() -> $_isWakeLockEnabled');
 
     if (_isWakeLockEnabled) {
       await WakelockPlus.enable();

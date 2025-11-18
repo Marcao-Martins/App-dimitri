@@ -83,8 +83,8 @@ class _MonitoringAlarmWidgetState extends State<MonitoringAlarmWidget> {
             const SizedBox(height: 16),
             Text(
               'O alarme tocará a cada ${provider.intervaloMinutos} minutos para lembrar de adicionar dados de monitorização.',
-              style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withAlpha((0.6 * 255).round()),
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -116,7 +116,7 @@ class _MonitoringAlarmWidgetState extends State<MonitoringAlarmWidget> {
                   provider.alarmeAtivo ? Icons.notifications_active : Icons.notifications_outlined,
                   color: provider.alarmeAtivo 
                       ? Theme.of(context).colorScheme.primary
-                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      : Theme.of(context).colorScheme.onSurface.withAlpha((0.5 * 255).round()),
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -185,7 +185,7 @@ class _MonitoringAlarmWidgetState extends State<MonitoringAlarmWidget> {
                 Text(
                   '${provider.intervaloMinutos}min',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context).colorScheme.onSurface.withAlpha((0.7 * 255).round()),
                   ),
                 ),
               ],

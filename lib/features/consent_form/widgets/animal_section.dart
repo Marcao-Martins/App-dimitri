@@ -64,7 +64,7 @@ class AnimalSection extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: selectedSpecies,
+              initialValue: selectedSpecies,
               decoration: const InputDecoration(
                 labelText: 'Espécie *',
                 prefixIcon: Icon(Icons.category),
@@ -101,7 +101,7 @@ class AnimalSection extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             DropdownButtonFormField<String>(
-              value: selectedSex,
+              initialValue: selectedSex,
               decoration: const InputDecoration(
                 labelText: 'Sexo *',
                 prefixIcon: Icon(Icons.wc),

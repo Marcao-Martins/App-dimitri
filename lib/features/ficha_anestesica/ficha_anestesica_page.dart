@@ -8,6 +8,7 @@ import 'widgets/charts_widget.dart';
 import 'widgets/procedure_timer_widget.dart';
 import 'widgets/monitoring_alarm_widget.dart';
 import 'widgets/image_attachment_widget.dart';
+import 'widgets/airway_management.dart';
 import 'pdf/pdf_service.dart';
 
 class FichaAnestesicaPage extends StatefulWidget {
@@ -287,6 +288,10 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
           ),
           const SizedBox(height: 16),
 
+          // Manejo de vias aéreas
+          const AirwayManagement(),
+          const SizedBox(height: 16),
+
           // Seção de Imagens
           Card(
             child: Padding(
@@ -310,7 +315,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
         children: [
           // Referência rápida ao tempo de procedimento
           Card(
-            color: Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.3),
+            color: Theme.of(context).colorScheme.secondaryContainer.withAlpha((0.3 * 255).round()),
             child: Padding(
               padding: const EdgeInsets.all(12.0),
               child: LayoutBuilder(
@@ -327,7 +332,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                         color: Theme.of(context).colorScheme.secondary,
                       ),
                       ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.65),
+                        constraints: BoxConstraints(maxWidth: constraints.maxWidth * 0.55),
                         child: Text(
                           'Tempo de Procedimento: ${_formatTimerDuration(provider.current!.procedureTimeSeconds)}',
                           style: Theme.of(context).textTheme.titleSmall?.copyWith(
@@ -335,6 +340,8 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                             fontWeight: FontWeight.w600,
                           ),
                           softWrap: true,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                       ConstrainedBox(
@@ -342,10 +349,12 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                         child: Text(
                           '(Veja na aba Paciente & Medicações para controlar)',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSecondaryContainer.withOpacity(0.7),
+                            color: Theme.of(context).colorScheme.onSecondaryContainer.withAlpha((0.7 * 255).round()),
                             fontStyle: FontStyle.italic,
                           ),
                           softWrap: true,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
@@ -391,23 +400,33 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Intercorrências',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      // botão responsivo para evitar overflow em telas pequenas
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 140),
-                        child: ElevatedButton.icon(
-                          onPressed: () => _showAddIntercorrenciaDialog(context, provider),
-                          icon: const Icon(Icons.add, size: 16),
-                          label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            textStyle: const TextStyle(fontSize: 13),
-                          ),
+                      Expanded(
+                        child: Text(
+                          'Intercorrências',
+                          style: Theme.of(context).textTheme.titleLarge,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      // botão responsivo para evitar overflow em telas pequenas
+                      LayoutBuilder(builder: (context, constraints) {
+                        final num computed = constraints.maxWidth.isFinite
+                            ? (constraints.maxWidth * 0.35).clamp(80, 140)
+                            : 140;
+                        final double btnW = computed.toDouble();
+                        return SizedBox(
+                          width: btnW,
+                          child: ElevatedButton.icon(
+                            onPressed: () => _showAddIntercorrenciaDialog(context, provider),
+                            icon: const Icon(Icons.add, size: 16),
+                            label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              textStyle: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -427,10 +446,10 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                       return Card(
                         margin: const EdgeInsets.only(bottom: 8),
                         color: inter.gravidade == 'grave'
-                            ? (isDark ? Colors.red.shade900.withOpacity(0.3) : Colors.red.shade50)
+                            ? (isDark ? Colors.red.shade900.withAlpha((0.3 * 255).round()) : Colors.red.shade50)
                             : inter.gravidade == 'moderada'
-                                ? (isDark ? Colors.orange.shade900.withOpacity(0.3) : Colors.orange.shade50)
-                                : (isDark ? Colors.yellow.shade900.withOpacity(0.3) : Colors.yellow.shade50),
+                                ? (isDark ? Colors.orange.shade900.withAlpha((0.3 * 255).round()) : Colors.orange.shade50)
+                                : (isDark ? Colors.yellow.shade900.withAlpha((0.3 * 255).round()) : Colors.yellow.shade50),
                         child: ListTile(
                           leading: Icon(
                             Icons.warning_amber,
@@ -467,22 +486,32 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        'Fármacos Intraoperatórios',
-                        style: Theme.of(context).textTheme.titleLarge,
-                      ),
-                      ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 140),
-                        child: ElevatedButton.icon(
-                          onPressed: () => _showAddFarmacoIntraDialog(context, provider),
-                          icon: const Icon(Icons.add, size: 16),
-                          label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
-                          style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            textStyle: const TextStyle(fontSize: 13),
-                          ),
+                      Expanded(
+                        child: Text(
+                          'Fármacos Intraoperatórios',
+                          style: Theme.of(context).textTheme.titleLarge,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
+                      LayoutBuilder(builder: (context, constraints) {
+                        final num computed = constraints.maxWidth.isFinite
+                            ? (constraints.maxWidth * 0.35).clamp(80, 140)
+                            : 140;
+                        final double btnW = computed.toDouble();
+                        return SizedBox(
+                          width: btnW,
+                          child: ElevatedButton.icon(
+                            onPressed: () => _showAddFarmacoIntraDialog(context, provider),
+                            icon: const Icon(Icons.add, size: 16),
+                            label: FittedBox(fit: BoxFit.scaleDown, child: const Text('Adicionar')),
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              textStyle: const TextStyle(fontSize: 13),
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                   const SizedBox(height: 16),
@@ -568,7 +597,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: gravidade,
+                  initialValue: gravidade,
                   isExpanded: true,
                   decoration: const InputDecoration(
                     labelText: 'Gravidade',
@@ -695,7 +724,7 @@ class _FichaAnestesicaPageState extends State<FichaAnestesicaPage> with SingleTi
                 ),
                 const SizedBox(height: 16),
                 DropdownButtonFormField<String>(
-                  value: via,
+                  initialValue: via,
                   isExpanded: true,
                   decoration: const InputDecoration(
                     labelText: 'Via de Administração',

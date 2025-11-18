@@ -24,6 +24,13 @@ class FichaAnestesica {
   
   /// Se o cronômetro estava rodando quando a ficha foi salva
   bool timerWasRunning;
+  // Manejo de vias aéreas
+  String? airwayIntubation;
+  String? airwayTubeSize;
+  String? airwayPreOxygenation;
+  String? airwayPeriglotticAnesthesia;
+  String? airwayLaryngealMask;
+  String? airwayObservations;
 
   FichaAnestesica({
     required this.paciente,
@@ -39,6 +46,12 @@ class FichaAnestesica {
     List<String>? imagePaths,
     this.procedureTimeSeconds = 0,
     this.timerWasRunning = false,
+    this.airwayIntubation,
+    this.airwayTubeSize,
+    this.airwayPreOxygenation,
+    this.airwayPeriglotticAnesthesia,
+    this.airwayLaryngealMask,
+    this.airwayObservations,
   })  : preAnestesica = preAnestesica ?? [],
         antimicrobianos = antimicrobianos ?? [],
         inducao = inducao ?? [],
@@ -64,6 +77,12 @@ class FichaAnestesica {
         'imagePaths': imagePaths,
         'procedureTimeSeconds': procedureTimeSeconds,
         'timerWasRunning': timerWasRunning,
+        'airwayIntubation': airwayIntubation,
+        'airwayTubeSize': airwayTubeSize,
+        'airwayPreOxygenation': airwayPreOxygenation,
+        'airwayPeriglotticAnesthesia': airwayPeriglotticAnesthesia,
+        'airwayLaryngealMask': airwayLaryngealMask,
+        'airwayObservations': airwayObservations,
       };
 
   factory FichaAnestesica.fromJson(Map<String, dynamic> json) => FichaAnestesica(
@@ -80,5 +99,11 @@ class FichaAnestesica {
         imagePaths: (json['imagePaths'] as List?)?.map((e) => e as String).toList() ?? [],
         procedureTimeSeconds: json['procedureTimeSeconds'] as int? ?? 0,
         timerWasRunning: json['timerWasRunning'] as bool? ?? false,
+        airwayIntubation: json['airwayIntubation'] as String?,
+        airwayTubeSize: json['airwayTubeSize'] as String?,
+        airwayPreOxygenation: json['airwayPreOxygenation'] as String?,
+        airwayPeriglotticAnesthesia: json['airwayPeriglotticAnesthesia'] as String?,
+        airwayLaryngealMask: json['airwayLaryngealMask'] as String?,
+        airwayObservations: json['airwayObservations'] as String?,
       );
 }

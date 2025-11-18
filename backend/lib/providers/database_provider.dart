@@ -27,25 +27,78 @@ class DatabaseProvider {
   /// ```
   Future<void> initialize() async {
     try {
-      final file = File('data/farmacos_veterinarios.csv');
-      
-      if (!await file.exists()) {
-        throw Exception(
-          'Arquivo farmacos_veterinarios.csv não encontrado em data/',
-        );
+      // Tenta localizar arquivos em vários locais possíveis (repo root, backend/, data/)
+      // para cobrir diferentes working directories ao iniciar o servidor.
+      File? _locate(String relativePath) {
+        final candidates = <String>[];
+
+        // Common locations (prefer backend/data and data/)
+        candidates.add('backend/$relativePath');
+        candidates.add('data/$relativePath');
+        candidates.add(relativePath);
+
+        // Relative to parent (in case process cwd is backend/ or repo root)
+        candidates.add('../$relativePath');
+        candidates.add('./$relativePath');
+
+        // Try explicit backend/data path from repo root
+        candidates.add('backend/data/${relativePath.split('/').last}');
+
+        for (final p in candidates) {
+          final f = File(p);
+          if (f.existsSync()) {
+            print('🔎 Localizei arquivo em: $p');
+            return f;
+          }
+        }
+
+        // Fallback: try to search upward a few levels for the file
+        var dir = Directory.current;
+        for (var i = 0; i < 3; i++) {
+          final candidate = File('${dir.path}/$relativePath');
+          if (candidate.existsSync()) {
+            print('🔎 Localizei arquivo em (busca ascendente): ${candidate.path}');
+            return candidate;
+          }
+          dir = dir.parent;
+        }
+
+        return null;
       }
 
-      final input = await file.readAsString();
+      final jsonFile = _locate('data/farmacos_veterinarios.json');
+      if (jsonFile != null) {
+        final content = await jsonFile.readAsString();
+        final parsed = json.decode(content);
+        if (parsed is List) {
+          _farmacos = parsed
+              .map((e) => Farmaco.fromJson(Map<String, dynamic>.from(e)))
+              .toList();
+          print('✅ ${_farmacos.length} fármacos carregados de ${jsonFile.path}');
+          return;
+        }
+      }
+
+      final csvFile = _locate('data/farmacos_veterinarios.csv');
+      if (csvFile == null) {
+        throw Exception('Arquivo farmacos_veterinarios.csv não encontrado em data/ (caminhos verificados)');
+      }
+
+      final input = await csvFile.readAsString();
       
-      // Parse do CSV
-      final fields = const CsvToListConverter().convert(input);
+      // Parse do CSV (arquivo separado por ';')
+      final fields = const CsvToListConverter(
+        fieldDelimiter: ';',
+        eol: '\n',
+        shouldParseNumbers: false,
+      ).convert(input);
       
       if (fields.isEmpty) {
         throw Exception('Arquivo CSV está vazio');
       }
 
-      // Primeira linha contém os headers
-      final headers = fields.first.map((e) => e.toString()).toList();
+      // Primeira linha contém os headers (normalizar para chaves em lowercase)
+      final headers = fields.first.map((e) => e.toString().trim().toLowerCase()).toList();
       
       // Converte cada linha (exceto header) em um objeto Farmaco
       _farmacos = fields.skip(1).map((row) {
@@ -57,6 +110,17 @@ class DatabaseProvider {
       }).toList();
 
       print('✅ ${_farmacos.length} fármacos carregados do CSV');
+
+      // Escrever JSON cache ao lado do CSV para uso em próximas inicializações
+      try {
+        final cacheFile = File('${csvFile.parent.path}/farmacos_veterinarios.json');
+        final encoder = const JsonEncoder.withIndent('  ');
+        final jsonContent = encoder.convert(_farmacos.map((f) => f.toJson()).toList());
+        await cacheFile.writeAsString(jsonContent, flush: true);
+        print('💾 JSON cache escrito em: ${cacheFile.path}');
+      } catch (e) {
+        print('⚠️ Falha ao gravar JSON cache: $e');
+      }
     } catch (e) {
       print('❌ Erro ao carregar fármacos: $e');
       rethrow;
