@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../core/widgets/tool_box.dart';
+import '../../core/constants/tool_colors.dart';
 
 class FlowResult {
   final double flowRate;
@@ -106,8 +108,16 @@ class _OxygenAutonomyCalculatorPageState
           key: _formKey,
           child: ListView(
             children: [
+              // Cabeçalho da ferramenta
+              ToolBox(
+                title: 'Autonomia de O₂',
+                subtitle: 'Estimativa de duração do cilindro por vazão',
+                icon: Icons.propane_tank_outlined,
+                color: ToolColors.autonomyO2,
+              ),
+              const SizedBox(height: 12),
               // Informações gerais
-              Card(
+                Card(
                 color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),

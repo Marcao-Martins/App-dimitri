@@ -19,6 +19,7 @@ class AppColors {
   static const Color categoryGreen = Color(0xFF4CAF50); // Verde escuro
   static const Color categoryPink = Color(0xFFE91E63); // Rosa
   static const Color categoryIndigo = Color(0xFF3F51B5); // Índigo
+  static const Color categoryMaroon = Color(0xFF800020); // Grená / Maroon
   
   // ============================================================================
   // CORES DE STATUS - Para alertas e validações

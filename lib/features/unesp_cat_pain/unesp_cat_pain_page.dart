@@ -5,6 +5,8 @@ import 'widgets/subscale1_widget.dart';
 import 'widgets/subscale2_widget.dart';
 import 'widgets/subscale3_widget.dart';
 import 'widgets/results_display.dart';
+import '../../core/widgets/tool_box.dart';
+import '../../core/constants/tool_colors.dart';
 
 class UnespCatPainPage extends StatefulWidget {
   const UnespCatPainPage({super.key});
@@ -86,6 +88,14 @@ class _UnespCatPainPageState extends State<UnespCatPainPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Cabeçalho da ferramenta usando ToolBox
+            ToolBox(
+              title: 'Escala UNESP - Gatos',
+              subtitle: 'Avaliação de dor comportamental',
+              icon: Icons.pets,
+              color: ToolColors.unespPain,
+            ),
+            const SizedBox(height: 16),
             // Accordion / ExpansionTiles for subscales
             ExpansionTile(
               initiallyExpanded: true,

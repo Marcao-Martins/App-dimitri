@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/widgets/tool_box.dart';
+import '../../core/constants/tool_colors.dart';
 import 'models/apgar_parameters.dart';
 import 'models/species_config.dart';
 import 'widgets/parameter_selector.dart';
@@ -55,33 +57,8 @@ class _ApgarPageState extends State<ApgarPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Informação inicial
-                Card(
-                  color: Theme.of(context).colorScheme.primaryContainer,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.pets,
-                          color: Theme.of(context).colorScheme.primary,
-                          size: 28,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Avalie o neonato nos primeiros 5 minutos de vida',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Theme.of(context).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // Cabeçalho estilizado
+                _buildHeader(),
                 const SizedBox(height: 24),
 
                 // Seleção de espécie
@@ -289,6 +266,16 @@ class _ApgarPageState extends State<ApgarPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return ToolBox(
+      title: 'Escore Apgar',
+      subtitle: 'Avaliação do neonato nos primeiros minutos',
+      icon: Icons.pets,
+      color: ToolColors.apgar,
+      // single-color header (apgar color defined in ToolColors)
     );
   }
 

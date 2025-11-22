@@ -6,17 +6,18 @@ Frequência cardíaca (FC),"70-220 bpm (cães)
 As bradiarritmias são comuns em cães braquicefálicos e cavalos em repouso.
 Não é comum observar FCs próximas ao limite inferior em gatos conscientes.","Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025.
 Lee JA, Drobatz KJ. Historical and physical parameters as predictors of severe hyperkalemia in male cats with urethral obstruction. Journal of Veterinary Emergency and Critical Care. 2006 Jun;16(2):104–11."
-Pressão arterial sistólica (PAS),100-160 mmHg,110-180 mmHg,120-180 mmHg,"Considera-se como pré-hipertenso o animal cuja PAS é 140-159 mmHg.
 Pode ser subestimada pelo método Doppler em mais de 20 mmHg em cães anestesiados.","Feitosa FLF. Semiologia veterinária: a arte do diagnóstico. Rio de Janeiro: Roca; 2025.
 Ambrósio AM, Fantoni DT. Manual de anestesia veterinária: procedimentos e condutas. São Paulo: Manole; 2024.
 Garofalo NA, Teixeira Neto FJ, Alvaides RK, de Oliveira FA, Pignaton W, Pinheiro RT. Agreement between direct, oscillometric and Doppler ultrasound blood pressures using three different cuff positions in anesthetized dogs. Vet Anaesth Analg. 2012 Jul;39(4):324-34."
-Pressão arterial média (PAM),65-120 mmHg,60-120 mmHg,80-120 mmHg,"A PAM pode ser estimada pela fórmula: PAM = PAD + (PAS - PAD) / 3, apesar de o cálculo correto envolver uma integral da área sob curva da pressão.
 O intervalo de concordância para o método oscilométrico é de -17 a 13 mmHg em cães anestesiados.
 Mesmo períodos curtos de hipotensão estão associados a lesão renal aguda e miocárdica em humanos.
 A PAM deve ser mantida acima de 70 mmHg para a adequada perfusão muscular em cavalos em decúbito.","Ambrósio AM, Fantoni DT. Manual de anestesia veterinária: procedimentos e condutas. São Paulo: Manole; 2024.
 Garofalo NA, Teixeira Neto FJ, Alvaides RK, de Oliveira FA, Pignaton W, Pinheiro RT. Agreement between direct, oscillometric and Doppler ultrasound blood pressures using three different cuff positions in anesthetized dogs. Vet Anaesth Analg. 2012 Jul;39(4):324-34.
 Walsh M, Devereaux PJ, Garg AX, Kurz A, Turan A, Rodseth RN et al. Relationship between intraoperative mean arterial pressure and clinical outcomes after noncardiac surgery: toward an empirical definition of hypotension. Anesthesiology. 2013 Sep;119(3):507-15.
 Luna SPL, Carregaro AB. Anestesia e analgesia em equídeos, ruminantes e suínos. São Paulo: MedVet; 2018."
+ # Este arquivo CSV de parâmetros foi removido da cadeia de execução.
+ # O projeto passou a usar o banco de dados remoto para fornecer parâmetros.
+ # Para reabilitar dados locais, restaure o CSV original.
 Pressão arterial diastólica (PAD),60-100 mmHg,60-100 mmHg,60-80 mmHg,Pressão de perfusão coronariana (PPC) = PAD - pressão diastólica final do ventrículo esquerdo (PDFVE),"Ambrósio AM, Fantoni DT. Manual de anestesia veterinária: procedimentos e condutas. São Paulo: Manole; 2024."
 Pressão venosa central (PVC),"Até 7-10 cmH2O, geralmente 0-5 cmH2O",,"15-25 cmH2O (decúbito lateral)
 5-10 cmH2O (decúbito dorsal)

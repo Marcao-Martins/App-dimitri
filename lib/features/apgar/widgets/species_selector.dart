@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/constants/tool_colors.dart';
 
 /// Widget para seleção de espécie
 class SpeciesSelector extends StatelessWidget {
@@ -19,14 +20,14 @@ class SpeciesSelector extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).primaryColor,
-            Theme.of(context).primaryColor.withOpacity(0.8),
+            ToolColors.apgar,
+            ToolColors.apgar.withOpacity(0.8),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Theme.of(context).primaryColor.withOpacity(0.3),
+            color: ToolColors.apgar.withOpacity(0.3),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),

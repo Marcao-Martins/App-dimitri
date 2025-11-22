@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_colors.dart';
+import '../../core/widgets/tool_box.dart';
+import '../../core/constants/tool_colors.dart';
 import '../../core/widgets/common_widgets.dart';
 import 'unit_converter_logic.dart';
 
@@ -96,6 +98,14 @@ class _UnitConverterPageState extends State<UnitConverterPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Cabeçalho da ferramenta
+            ToolBox(
+              title: 'Conversor de Medidas',
+              subtitle: 'Conversões rápidas entre unidades comuns',
+              icon: Icons.swap_horiz,
+              color: ToolColors.converter,
+            ),
+            const SizedBox(height: 12),
             // Category Selector
             CustomDropdown<ConversionCategory>(
               label: 'Categoria',

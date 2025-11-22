@@ -55,6 +55,9 @@ class ApiConfig {
   
   // Admin parametros endpoints
   static String get adminParametrosEndpoint => '$baseUrl$apiVersion/admin/parametros';
+
+  // Public parameters endpoint (non-versioned)
+  static String get parametersEndpoint => '$baseUrl/api/parameters';
   
   /// Timeout padrão para requisições (aumentado para dispositivos físicos)
   static const Duration requestTimeout = Duration(seconds: 60);

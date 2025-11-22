@@ -2,131 +2,88 @@
 // Provedor de dados para usuários (PLACEHOLDER - arquivo JSON)
 // Em produção, substitua por conexão com banco de dados real
 
-import 'dart:convert';
 import 'dart:io';
+import 'package:mysql1/mysql1.dart';
+import 'package:uuid/uuid.dart';
 import '../models/user.dart';
 import '../services/password_service.dart';
 
+/// Provedor de usuários baseado em banco de dados MySQL.
+/// Remove dependência de arquivo local `data/users.json`.
 class UserProvider {
-  final String _filePath = 'data/users.json';
+  MySqlConnection? _conn;
   List<User> _users = [];
 
-  /// Retorna a lista de usuários (somente leitura)
   List<User> get users => List.unmodifiable(_users);
 
-  /// Inicializa o provider carregando os dados do JSON
-  /// 
-  /// Se o arquivo não existir, cria um novo com lista vazia
-  /// 
-  /// Exemplo de uso:
-  /// ```dart
-  /// final userProvider = UserProvider();
-  /// await userProvider.initialize();
-  /// ```
   Future<void> initialize() async {
     try {
-      final file = File(_filePath);
-      
-      if (!await file.exists()) {
-        // Cria arquivo JSON vazio se não existir
-        await file.create(recursive: true);
-        await file.writeAsString('[]');
-        print('✅ Arquivo users.json criado');
-        return;
+      final env = Platform.environment;
+      final dbHost = env['DB_HOST'] ?? env['DB_HOSTNAME'];
+      if (dbHost == null || dbHost.isEmpty) {
+        throw Exception('DB_HOST não configurado. Configure variáveis de ambiente para o banco de dados.');
       }
 
-      final content = await file.readAsString();
-      
-      if (content.trim().isEmpty || content.trim() == '[]') {
-        print('✅ Nenhum usuário encontrado - banco vazio');
-        return;
-      }
+      final settings = ConnectionSettings(
+        host: dbHost,
+        port: int.tryParse(env['DB_PORT'] ?? '3306') ?? 3306,
+        user: env['DB_USER'] ?? env['DB_USERNAME'] ?? 'root',
+        password: env['DB_PASSWORD'] ?? env['DB_PASS'] ?? '',
+        db: env['DB_NAME'] ?? env['DB_DATABASE'] ?? 'gdav_veterinario',
+      );
 
-      final jsonList = jsonDecode(content) as List<dynamic>;
-      _users = jsonList
-          .map((json) => User.fromJson(json as Map<String, dynamic>))
-          .toList();
+      _conn = await MySqlConnection.connect(settings);
 
-      print('✅ ${_users.length} usuários carregados do JSON');
+      final results = await _conn!.query('SELECT id, name, email, password, role, status, created_at, updated_at, deleted_at, last_login_at, failed_login_attempts, locked_until, phone_number, profile_image_url FROM users WHERE deleted_at IS NULL');
+
+      _users = results.map((r) {
+        return User(
+          id: r['id']?.toString() ?? '',
+          name: r['name']?.toString() ?? '',
+          email: r['email']?.toString() ?? '',
+          password: r['password']?.toString() ?? '',
+          role: UserRole.fromString(r['role']?.toString() ?? 'consumer'),
+          status: UserStatus.fromString(r['status']?.toString() ?? 'active'),
+          createdAt: r['created_at'] != null ? DateTime.parse(r['created_at'].toString()) : DateTime.now(),
+          updatedAt: r['updated_at'] != null ? DateTime.parse(r['updated_at'].toString()) : DateTime.now(),
+          deletedAt: r['deleted_at'] != null ? DateTime.parse(r['deleted_at'].toString()) : null,
+          lastLoginAt: r['last_login_at'] != null ? DateTime.parse(r['last_login_at'].toString()) : null,
+          failedLoginAttempts: r['failed_login_attempts'] as int? ?? 0,
+          lockedUntil: r['locked_until'] != null ? DateTime.parse(r['locked_until'].toString()) : null,
+          phoneNumber: r['phone_number']?.toString(),
+          profileImageUrl: r['profile_image_url']?.toString(),
+        );
+      }).toList();
+
+      print('✅ ${_users.length} usuários carregados do banco de dados');
     } catch (e) {
-      print('❌ Erro ao carregar usuários: $e');
+      print('❌ Erro ao inicializar UserProvider: $e');
       rethrow;
     }
   }
 
-  /// Salva os usuários no arquivo JSON
-  /// 
-  /// NOTA: Em produção, cada operação deve persistir diretamente no banco
-  /// Esta abordagem de salvar toda a lista é ineficiente e não escalável
-  Future<void> _saveToFile() async {
-    try {
-      final file = File(_filePath);
-      final jsonList = _users.map((user) => user.toJson()).toList();
-      await file.writeAsString(
-        const JsonEncoder.withIndent('  ').convert(jsonList),
-      );
-    } catch (e) {
-      print('❌ Erro ao salvar usuários: $e');
-      rethrow;
-    }
-  }
-
-  /// Busca um usuário pelo email
-  /// 
-  /// Retorna null se o usuário não for encontrado
-  User? findUserByEmail(String email) {
-    try {
-      return _users.firstWhere(
-        (user) => user.email.toLowerCase() == email.toLowerCase(),
-      );
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Busca um usuário pelo ID
-  User? findUserById(String id) {
-    try {
-      return _users.firstWhere((user) => user.id == id);
-    } catch (e) {
-      return null;
-    }
-  }
-
-  /// Verifica se um email já está em uso
-  bool emailExists(String email) {
-    return findUserByEmail(email) != null;
-  }
-
-  /// Cria um novo usuário
-  /// 
-  /// A senha é automaticamente hasheada antes de salvar
-  /// 
-  /// Retorna o usuário criado (sem a senha)
-  /// Lança exceção se o email já existir
   Future<User> createUser({
     required String name,
     required String email,
     required String password,
     UserRole role = UserRole.consumer,
   }) async {
-    // Validações
-    if (emailExists(email)) {
-      throw Exception('Email já está em uso');
-    }
+    if (_conn == null) throw Exception('Conexão com DB não inicializada');
+
+    final existing = await _conn!.query('SELECT id FROM users WHERE email = ? AND deleted_at IS NULL', [email]);
+    if (existing.isNotEmpty) throw Exception('Email já está em uso');
 
     final passwordError = PasswordService.validatePassword(password);
-    if (passwordError != null) {
-      throw Exception(passwordError);
-    }
+    if (passwordError != null) throw Exception(passwordError);
 
-    // Gera ID único (em produção, use UUID ou ID do banco de dados)
-    final id = DateTime.now().millisecondsSinceEpoch.toString();
-
-    // Hash da senha
+    final id = Uuid().v4();
     final hashedPassword = PasswordService.hashPassword(password);
 
-    // Cria usuário
+    await _conn!.query('''
+      INSERT INTO users (id, name, email, password, role, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, ?, NOW(), NOW())
+    ''', [id, name, email, hashedPassword, role.toJson(), UserStatus.active.toJson()]);
+
     final user = User(
       id: id,
       name: name,
@@ -135,63 +92,56 @@ class UserProvider {
       role: role,
     );
 
-    // Adiciona à lista e salva
     _users.add(user);
-    await _saveToFile();
-
-    print('✅ Usuário criado: ${user.email} (${user.role.name})');
-    
+    print('✅ Usuário criado: ${user.email}');
     return user;
   }
 
-  /// Valida as credenciais do usuário
-  /// 
-  /// Retorna o usuário se as credenciais forem válidas, null caso contrário
-  User? validateCredentials(String email, String password) {
-    final user = findUserByEmail(email);
-    
-    if (user == null) {
-      return null;
-    }
+  Future<User?> validateCredentials(String email, String password) async {
+    if (_conn == null) throw Exception('Conexão com DB não inicializada');
 
-    final isValid = PasswordService.verifyPassword(password, user.password);
-    
-    return isValid ? user : null;
+    final results = await _conn!.query('SELECT id, name, email, password, role, status, created_at, updated_at FROM users WHERE email = ? AND deleted_at IS NULL', [email]);
+    if (results.isEmpty) return null;
+    final r = results.first;
+
+    final hashed = r['password']?.toString() ?? '';
+    if (!PasswordService.verifyPassword(password, hashed)) return null;
+
+    return User(
+      id: r['id']?.toString() ?? '',
+      name: r['name']?.toString() ?? '',
+      email: r['email']?.toString() ?? '',
+      password: hashed,
+      role: UserRole.fromString(r['role']?.toString() ?? 'consumer'),
+      createdAt: r['created_at'] != null ? DateTime.parse(r['created_at'].toString()) : DateTime.now(),
+      updatedAt: r['updated_at'] != null ? DateTime.parse(r['updated_at'].toString()) : DateTime.now(),
+    );
   }
 
-  /// Atualiza um usuário existente
-  /// 
-  /// NOTA: Se alterar a senha, ela deve ser hasheada antes de chamar este método
   Future<bool> updateUser(String id, User updatedUser) async {
-    final index = _users.indexWhere((user) => user.id == id);
-    
-    if (index == -1) {
-      return false;
-    }
+    if (_conn == null) throw Exception('Conexão com DB não inicializada');
 
-    _users[index] = updatedUser;
-    await _saveToFile();
-    
-    print('✅ Usuário atualizado: ${updatedUser.email}');
-    
-    return true;
-  }
+    await _conn!.query('''
+      UPDATE users SET name = ?, email = ?, password = ?, role = ?, status = ?, updated_at = NOW() WHERE id = ?
+    ''', [updatedUser.name, updatedUser.email, updatedUser.password, updatedUser.role.toJson(), updatedUser.status.toJson(), id]);
 
-  /// Remove um usuário
-  Future<bool> deleteUser(String id) async {
-    final initialLength = _users.length;
-    _users.removeWhere((user) => user.id == id);
-    
-    if (_users.length < initialLength) {
-      await _saveToFile();
-      print('✅ Usuário removido: $id');
+    final index = _users.indexWhere((u) => u.id == id);
+    if (index != -1) {
+      _users[index] = updatedUser;
       return true;
     }
-    
     return false;
   }
 
-  /// Obtém estatísticas dos usuários
+  Future<bool> deleteUser(String id) async {
+    if (_conn == null) throw Exception('Conexão com DB não inicializada');
+
+    await _conn!.query('UPDATE users SET deleted_at = NOW() WHERE id = ?', [id]);
+    final initialLength = _users.length;
+    _users.removeWhere((u) => u.id == id);
+    return _users.length < initialLength;
+  }
+
   Map<String, dynamic> getStats() {
     final consumerCount = _users.where((u) => !u.isAdmin).length;
     final adminCount = _users.where((u) => u.isAdmin).length;

@@ -2,17 +2,16 @@
 // Provedor de dados para fármacos (PLACEHOLDER - leitura de CSV)
 // Em produção, substitua por conexão com banco de dados real (PostgreSQL, MongoDB, etc)
 
-import 'dart:convert';
 import 'dart:io';
-import 'package:csv/csv.dart';
+// CSV parsing removed — backend agora exige conexão com DB remoto
 import '../models/farmaco.dart';
+import '../database/database.dart';
 
 class DatabaseProvider {
   // Lista em memória dos fármacos carregados do CSV
   // IMPORTANTE: Esta abordagem é apenas para desenvolvimento!
   // Em produção, use um banco de dados real e implemente paginação
   List<Farmaco> _farmacos = [];
-
   /// Retorna a lista de fármacos (somente leitura)
   List<Farmaco> get farmacos => List.unmodifiable(_farmacos);
 
@@ -27,100 +26,84 @@ class DatabaseProvider {
   /// ```
   Future<void> initialize() async {
     try {
-      // Tenta localizar arquivos em vários locais possíveis (repo root, backend/, data/)
-      // para cobrir diferentes working directories ao iniciar o servidor.
-      File? _locate(String relativePath) {
-        final candidates = <String>[];
+      // Try to load DB config from AWS Secrets Manager if requested
+      final env = Platform.environment;
+      final secretId = env['AWS_SECRET_ID'] ?? 'prod';
+      final region = env['AWS_REGION'] ?? 'us-east-1';
 
-        // Common locations (prefer backend/data and data/)
-        candidates.add('backend/$relativePath');
-        candidates.add('data/$relativePath');
-        candidates.add(relativePath);
-
-        // Relative to parent (in case process cwd is backend/ or repo root)
-        candidates.add('../$relativePath');
-        candidates.add('./$relativePath');
-
-        // Try explicit backend/data path from repo root
-        candidates.add('backend/data/${relativePath.split('/').last}');
-
-        for (final p in candidates) {
-          final f = File(p);
-          if (f.existsSync()) {
-            print('🔎 Localizei arquivo em: $p');
-            return f;
-          }
-        }
-
-        // Fallback: try to search upward a few levels for the file
-        var dir = Directory.current;
-        for (var i = 0; i < 3; i++) {
-          final candidate = File('${dir.path}/$relativePath');
-          if (candidate.existsSync()) {
-            print('🔎 Localizei arquivo em (busca ascendente): ${candidate.path}');
-            return candidate;
-          }
-          dir = dir.parent;
-        }
-
-        return null;
-      }
-
-      final jsonFile = _locate('data/farmacos_veterinarios.json');
-      if (jsonFile != null) {
-        final content = await jsonFile.readAsString();
-        final parsed = json.decode(content);
-        if (parsed is List) {
-          _farmacos = parsed
-              .map((e) => Farmaco.fromJson(Map<String, dynamic>.from(e)))
-              .toList();
-          print('✅ ${_farmacos.length} fármacos carregados de ${jsonFile.path}');
-          return;
-        }
-      }
-
-      final csvFile = _locate('data/farmacos_veterinarios.csv');
-      if (csvFile == null) {
-        throw Exception('Arquivo farmacos_veterinarios.csv não encontrado em data/ (caminhos verificados)');
-      }
-
-      final input = await csvFile.readAsString();
-      
-      // Parse do CSV (arquivo separado por ';')
-      final fields = const CsvToListConverter(
-        fieldDelimiter: ';',
-        eol: '\n',
-        shouldParseNumbers: false,
-      ).convert(input);
-      
-      if (fields.isEmpty) {
-        throw Exception('Arquivo CSV está vazio');
-      }
-
-      // Primeira linha contém os headers (normalizar para chaves em lowercase)
-      final headers = fields.first.map((e) => e.toString().trim().toLowerCase()).toList();
-      
-      // Converte cada linha (exceto header) em um objeto Farmaco
-      _farmacos = fields.skip(1).map((row) {
-        final map = <String, dynamic>{};
-        for (var i = 0; i < headers.length && i < row.length; i++) {
-          map[headers[i]] = row[i];
-        }
-        return Farmaco.fromJson(map);
-      }).toList();
-
-      print('✅ ${_farmacos.length} fármacos carregados do CSV');
-
-      // Escrever JSON cache ao lado do CSV para uso em próximas inicializações
+      DatabaseConfig? config;
       try {
-        final cacheFile = File('${csvFile.parent.path}/farmacos_veterinarios.json');
-        final encoder = const JsonEncoder.withIndent('  ');
-        final jsonContent = encoder.convert(_farmacos.map((f) => f.toJson()).toList());
-        await cacheFile.writeAsString(jsonContent, flush: true);
-        print('💾 JSON cache escrito em: ${cacheFile.path}');
-      } catch (e) {
-        print('⚠️ Falha ao gravar JSON cache: $e');
+        config = await loadConfigFromAwsSecret(secretId: secretId, region: region);
+      } catch (_) {
+        config = null;
       }
+
+      if (config == null) {
+        // Fallback to environment variables
+        final dbHost = env['DB_HOST'] ?? env['DB_HOSTNAME'];
+        if (dbHost != null && dbHost.isNotEmpty) {
+          config = DatabaseConfig.fromEnvironment();
+        }
+      }
+
+      if (config != null) {
+        try {
+          final appDb = AppDatabase(config);
+
+          print('🔌 Tentando conectar ao banco em ${config.host}...');
+
+          // Use pooled connection to load farmacos
+          await appDb.usingConnection((conn) async {
+            final results = await conn.query('''
+              SELECT
+                COALESCE(post_id, id) AS post_id,
+                titulo,
+                farmaco,
+                classe_farmacologica,
+                nome_comercial,
+                mecanismo_de_acao,
+                posologia_caes,
+                posologia_gatos,
+                ivc,
+                comentarios,
+                referencia,
+                IFNULL(post_date, '') AS post_date,
+                IFNULL(link, '') AS link
+              FROM farmacos
+              WHERE deleted_at IS NULL
+            ''');
+
+            _farmacos = results.map((row) {
+              final map = <String, dynamic>{
+                'post_id': row['post_id']?.toString() ?? '',
+                'titulo': row['titulo']?.toString() ?? '',
+                'farmaco': row['farmaco']?.toString() ?? '',
+                'classe_farmacologica': row['classe_farmacologica']?.toString() ?? '',
+                'nome_comercial': row['nome_comercial']?.toString() ?? '',
+                'mecanismo_de_acao': row['mecanismo_de_acao']?.toString() ?? '',
+                'posologia_caes': row['posologia_caes']?.toString() ?? '',
+                'posologia_gatos': row['posologia_gatos']?.toString() ?? '',
+                'ivc': row['ivc']?.toString() ?? '',
+                'comentarios': row['comentarios']?.toString() ?? '',
+                'referencia': row['referencia']?.toString() ?? '',
+                'post_date': row['post_date']?.toString() ?? '',
+                'link': row['link']?.toString() ?? '',
+              };
+              return Farmaco.fromJson(map);
+            }).toList();
+          });
+
+          print('✅ ${_farmacos.length} fármacos carregados do banco de dados');
+          return;
+        } catch (e) {
+          print('⚠️ Falha ao carregar do DB: $e — fallback para arquivo local');
+        }
+      }
+
+      // A partir desta alteração, o backend NÃO usa mais arquivos CSV/JSON locais.
+      // É necessário configurar variáveis de ambiente de conexão ao banco (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME).
+      // Se a conexão falhar ou não estiver configurada, lançamos uma exceção para forçar a correção do ambiente.
+      throw Exception('Conexão ao banco de dados não configurada ou falhou. Configure variáveis de ambiente DB_HOST/DB_USER/DB_PASSWORD/DB_NAME.');
     } catch (e) {
       print('❌ Erro ao carregar fármacos: $e');
       rethrow;

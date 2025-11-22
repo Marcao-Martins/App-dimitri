@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/species_config.dart';
+import '../models/apgar_parameters.dart';
+import '../../../core/constants/tool_colors.dart';
 
 /// Widget para seleção de parâmetros do Apgar
 class ParameterSelector extends StatelessWidget {
@@ -43,12 +45,12 @@ class ParameterSelector extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: Theme.of(context).primaryColor.withOpacity(0.1),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+                color: ToolColors.apgar.withOpacity(0.1),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
               ),
-            ),
             child: Text(
               label,
               style: TextStyle(
@@ -62,6 +64,7 @@ class ParameterSelector extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(16),
             child: DropdownButtonFormField<int>(
+              itemHeight: 56,
               value: selectedScore,
               decoration: InputDecoration(
                 hintText: 'Selecione uma opção',
@@ -101,7 +104,7 @@ class ParameterSelector extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       // Label e descrição
-                      Expanded(
+                      Flexible(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
@@ -112,6 +115,8 @@ class ParameterSelector extends StatelessWidget {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                             Text(
                               option.description,
@@ -119,6 +124,8 @@ class ParameterSelector extends StatelessWidget {
                                 fontSize: 12,
                                 color: Theme.of(context).textTheme.bodySmall?.color,
                               ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ],
                         ),
@@ -137,14 +144,6 @@ class ParameterSelector extends StatelessWidget {
   }
 
   Color _getScoreColor(int score) {
-    switch (score) {
-      case 2:
-        return Colors.green;
-      case 1:
-        return Colors.orange;
-      case 0:
-      default:
-        return Colors.red;
-    }
+    return Color(ApgarParameters.getScoreColor(score));
   }
 }

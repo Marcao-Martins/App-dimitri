@@ -1,16 +1,4 @@
-import 'package:backend/providers/database_provider.dart';
-
+// Script de teste atualizado: a carga local foi removida.
 Future<void> main() async {
-  final provider = DatabaseProvider();
-  try {
-    await provider.initialize();
-    print('Loaded ${provider.farmacos.length} farmacos');
-    if (provider.farmacos.isNotEmpty) {
-      final f = provider.farmacos.first;
-      print('First: ${f.titulo} (${f.postId})');
-    }
-  } catch (e, st) {
-    print('ERROR during load: $e');
-    print(st);
-  }
+  print('test_load descontinuado. Inicialize o backend com variáveis de ambiente do DB e verifique os endpoints.');
 }

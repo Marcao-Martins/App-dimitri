@@ -1,6 +1,8 @@
 // lib/database/database.dart
 // Configuração do banco de dados MySQL
 import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 import 'package:mysql1/mysql1.dart';
 
 /// Configuração de conexão com MySQL
@@ -23,13 +25,36 @@ class DatabaseConfig {
 
   /// Cria configuração a partir de variáveis de ambiente
   factory DatabaseConfig.fromEnvironment() {
+    // Use runtime environment variables (Platform.environment) instead of
+    // compile-time String.fromEnvironment so values set by scripts or the
+    // OS are picked up at runtime.
+    final env = Platform.environment;
+    final host = env['DB_HOST'] ?? env['HOST'] ?? 'localhost';
+    final port = int.tryParse(env['DB_PORT'] ?? '') ?? 3306;
+    final database = env['DB_NAME'] ?? env['DB_DATABASE'] ?? 'gdav_veterinario';
+    final user = env['DB_USER'] ?? env['DB_USERNAME'] ?? 'root';
+    final password = env['DB_PASSWORD'] ?? env['DB_PASS'] ?? '';
+    final maxConnections = int.tryParse(env['DB_MAX_CONNECTIONS'] ?? '') ?? 10;
+
     return DatabaseConfig(
-      host: const String.fromEnvironment('DB_HOST', defaultValue: 'localhost'),
-      port: int.fromEnvironment('DB_PORT', defaultValue: 3306),
-      database: const String.fromEnvironment('DB_NAME', defaultValue: 'gdav_veterinario'),
-      user: const String.fromEnvironment('DB_USER', defaultValue: 'root'),
-      password: const String.fromEnvironment('DB_PASSWORD', defaultValue: ''),
-      maxConnections: int.fromEnvironment('DB_MAX_CONNECTIONS', defaultValue: 10),
+      host: host,
+      port: port,
+      database: database,
+      user: user,
+      password: password,
+      maxConnections: maxConnections,
+    );
+  }
+
+  /// Create configuration from a secrets JSON map
+  factory DatabaseConfig.fromMap(Map<String, dynamic> map) {
+    return DatabaseConfig(
+      host: map['host']?.toString() ?? map['hostname']?.toString() ?? 'localhost',
+      port: int.tryParse(map['port']?.toString() ?? '') ?? 3306,
+      database: map['database']?.toString() ?? map['db']?.toString() ?? map['dbname']?.toString() ?? 'gdav_veterinario',
+      user: map['username']?.toString() ?? map['user']?.toString() ?? 'root',
+      password: map['password']?.toString() ?? '',
+      maxConnections: int.tryParse(map['max_connections']?.toString() ?? '') ?? 10,
     );
   }
 }
@@ -37,25 +62,41 @@ class DatabaseConfig {
 /// Gerenciador de conexão com o banco de dados MySQL
 class AppDatabase {
   static AppDatabase? _instance;
-  MySqlConnection? _connection;
+  MySqlPool? _pool;
+  MySqlConnection? _sharedConnection;
   final DatabaseConfig config;
 
   AppDatabase._internal(this.config);
 
   /// Singleton - retorna sempre a mesma instância
   factory AppDatabase([DatabaseConfig? config]) {
-    _instance ??= AppDatabase._internal(config ?? DatabaseConfig());
+    _instance ??= AppDatabase._internal(config ?? DatabaseConfig.fromEnvironment());
     return _instance!;
   }
 
   /// Obtém a conexão com o banco (cria se não existir)
+  /// Acquire a connection from the pool
+  Future<MySqlConnection> acquireConnection() async {
+    _pool ??= MySqlPool(
+      ConnectionSettings(
+        host: config.host,
+        port: config.port,
+        user: config.user,
+        password: config.password,
+        db: config.database,
+        timeout: const Duration(seconds: 10),
+      ),
+      maxConnections: config.maxConnections,
+    );
+
+    return _pool!.acquire();
+  }
+
+  /// Backwards-compatible shared connection (single long-lived connection)
   Future<MySqlConnection> get connection async {
-    if (_connection == null) {
-      print('🔌 Conectando ao MySQL...');
-      print('   Host: ${config.host}:${config.port}');
-      print('   Database: ${config.database}');
-      
-      _connection = await MySqlConnection.connect(
+    if (_sharedConnection == null) {
+      print('🔌 Conectando ao MySQL (shared)...');
+      _sharedConnection = await MySqlConnection.connect(
         ConnectionSettings(
           host: config.host,
           port: config.port,
@@ -65,18 +106,46 @@ class AppDatabase {
           timeout: const Duration(seconds: 10),
         ),
       );
-      
-      print('✅ Conectado ao MySQL!');
+      print('✅ Conectado ao MySQL (shared)');
     }
-    return _connection!;
+    return _sharedConnection!;
+  }
+
+  /// Release a connection back to the pool
+  void releaseConnection(MySqlConnection conn) {
+    _pool?.release(conn);
+  }
+
+  /// Convenience: run function with acquired connection and ensure release/close
+  Future<T> usingConnection<T>(Future<T> Function(MySqlConnection) fn) async {
+    final conn = await acquireConnection();
+    try {
+      return await fn(conn);
+    } finally {
+      // We try to return to the pool instead of closing
+      try {
+        releaseConnection(conn);
+      } catch (_) {
+        try {
+          await conn.close();
+        } catch (_) {}
+      }
+    }
   }
 
   /// Fecha a conexão com o banco
   Future<void> close() async {
-    if (_connection != null) {
-      await _connection!.close();
-      _connection = null;
-      print('🔌 Conexão com MySQL fechada');
+    if (_pool != null) {
+      await _pool!.close();
+      _pool = null;
+      print('🔌 Pool de conexões fechado');
+    }
+    if (_sharedConnection != null) {
+      try {
+        await _sharedConnection!.close();
+      } catch (_) {}
+      _sharedConnection = null;
+      print('🔌 Conexão compartilhada fechada');
     }
   }
 
@@ -138,17 +207,19 @@ class AppDatabase {
 
   /// Executa a migração inicial - cria tabelas
   Future<void> runMigrations() async {
-    final conn = await connection;
-
     print('🔄 Executando migrações...');
+    final conn = await acquireConnection();
+    try {
+      // Cria tabela de usuários
+      await _createUsersTable(conn);
 
-    // Cria tabela de usuários
-    await _createUsersTable(conn);
+      // Cria tabela de fichas
+      await _createFichasTable(conn);
 
-    // Cria tabela de fichas
-    await _createFichasTable(conn);
-
-    print('✅ Migrações concluídas!');
+      print('✅ Migrações concluídas!');
+    } finally {
+      await conn.close();
+    }
   }
 
   /// Cria a tabela de usuários com estrutura robusta
@@ -214,5 +285,91 @@ class AppDatabase {
     ''');
 
     print('✅ Tabela fichas criada!');
+  }
+}
+
+/// Simple MySQL connection pool for `mysql1` package.
+class MySqlPool {
+  final ConnectionSettings settings;
+  final int maxConnections;
+  final _available = <MySqlConnection>[];
+  int _total = 0;
+  final _waiters = <Completer<MySqlConnection>>[];
+
+  MySqlPool(this.settings, {this.maxConnections = 10});
+
+  Future<MySqlConnection> acquire() async {
+    // return immediately if available
+    if (_available.isNotEmpty) {
+      return _available.removeLast();
+    }
+
+    // create new if under limit
+    if (_total < maxConnections) {
+      _total++;
+      final conn = await MySqlConnection.connect(settings);
+      return conn;
+    }
+
+    // otherwise wait
+    final completer = Completer<MySqlConnection>();
+    _waiters.add(completer);
+    return completer.future;
+  }
+
+  void release(MySqlConnection conn) {
+    if (_waiters.isNotEmpty) {
+      final waiter = _waiters.removeAt(0);
+      waiter.complete(conn);
+      return;
+    }
+
+    _available.add(conn);
+  }
+
+  Future<void> close() async {
+    for (final c in _available) {
+      try {
+        await c.close();
+      } catch (_) {}
+    }
+    _available.clear();
+    _total = 0;
+  }
+}
+
+/// Helper to obtain DatabaseConfig from AWS Secrets Manager using AWS CLI
+/// The secret must be a JSON string containing at least host, username, password, database
+Future<DatabaseConfig?> loadConfigFromAwsSecret({String secretId = 'prod', String region = 'us-east-1'}) async {
+  try {
+    final useAws = Platform.environment['USE_AWS_SECRETS']?.toLowerCase() == 'true';
+    if (!useAws) return null;
+
+    final result = await Process.run('aws', [
+      'secretsmanager',
+      'get-secret-value',
+      '--secret-id',
+      secretId,
+      '--region',
+      region,
+      '--query',
+      'SecretString',
+      '--output',
+      'text',
+    ]);
+
+    if (result.exitCode != 0) {
+      print('⚠️ AWS CLI returned error: ${result.stderr}');
+      return null;
+    }
+
+    final jsonStr = (result.stdout as String).trim();
+    if (jsonStr.isEmpty) return null;
+
+    final map = json.decode(jsonStr) as Map<String, dynamic>;
+    return DatabaseConfig.fromMap(map);
+  } catch (e) {
+    print('⚠️ Falha ao obter secret do AWS Secrets Manager: $e');
+    return null;
   }
 }

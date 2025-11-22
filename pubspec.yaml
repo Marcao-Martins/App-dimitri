@@ -60,7 +60,7 @@ flutter:
   assets:
     - assets/sounds/
     - assets/images/
-    - Tabela_parâmetros.csv
+    # Local CSV parameters removed; parameters now served by backend DB
 
   # Fontes customizadas (opcional)
   # fonts:

@@ -1,0 +1,29 @@
+File size: 48719 chars
+First 200 chars:
+esp├®cie                                                 , c├úo                                   , gato                               , cavalo                           , coment├írios                   
+
+Normalized lines: 52
+Header: esp├®cie                                                 , c├úo                                   , ga
+Row 2 preview: Frequ├¬ncia card├¡aca (FC)                                , "70-220 bpm (c├úes) 70-180 bpm (ra├ºas toy) 
+
+Normalized CSV preview (first 500 chars):
+esp├®cie                                                 , c├úo                                   , gato                               , cavalo                           , coment├írios                                                                                                                                        , refer├¬ncias
+Frequ├¬ncia card├¡aca (FC)                                , "70-220 bpm (c├úes) 70-180 bpm (ra├ºas toy) 70-160 bpm (ra├ºas standard) 60-140 bpm (ra├ºas grandes)"           , 1
+
+...
+
+Normalized CSV total chars: 31628
+Normalized CSV line count: 52
+
+DEBUG - Header line length: 330
+DEBUG - Header contains newline: false
+DEBUG - Header contains \r: false
+DEBUG - No special control characters found
+
+DEBUG - Exact header:
+esp├®cie                                                 , c├úo                                   , gato                               , cavalo                           , coment├írios                                                                                                                                        , refer├¬ncias
+
+
+=== PARSED RESULT ===
+Total rows: 1
+Header row length: 597
